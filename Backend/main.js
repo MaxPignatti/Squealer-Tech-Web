@@ -26,7 +26,19 @@ const schema = new mongoose.schema({
     password: String,
     rem_char: Number,
     deb_char: Number,
-    channel: NodeList,
+    channel: String,
     account_type: Number,
     smm: Boolean
+})
+
+const Model = mongoose.model("UtenteFantastico", schema);
+
+const insertUser = async (obj) => {
+    const user = new Model(obj);
+
+    await user.save();
+}
+
+insertUser({
+    
 })

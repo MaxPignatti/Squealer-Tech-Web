@@ -12,7 +12,9 @@ const RegistrationPage = () => {
     socialMediaManagerEmail: "",
   });
 
-  const handleRegister = (event) => {};
+  const handleRegister = (event) => {
+    
+  };
 
   return (
     <Container>

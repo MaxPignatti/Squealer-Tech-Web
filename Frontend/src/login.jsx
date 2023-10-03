@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -18,7 +19,7 @@ const LoginPage = () => {
           <Card>
             <Card.Body>
               <div className="text-center mb-4">
-                <img src="/Logo.png" alt="Logo" />
+                <img src="pic/logo.png" alt="Logo" />
               </div>
               <h2 className="text-center">Login</h2>
               {/*Bisogna aggiungere roba per validare il form (vedere se mail e password sono stati scritti correttamente) */}
@@ -57,7 +58,7 @@ const LoginPage = () => {
             </Card.Body>
             <Card.Footer className="text-center">
               <p>
-                Don't have an account? <a href="/register">Register</a>
+              Don't have an account? <Link to="/registration">Register</Link>
               </p>
             </Card.Footer>
           </Card>

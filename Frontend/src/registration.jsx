@@ -23,7 +23,7 @@ const RegistrationPage = () => {
           <Card>
             <Card.Body>
               <div className="text-center mb-4">
-                <img src="/Logo.png" alt="Logo" />
+                <img src="pic/logo.png" alt="Logo" />
               </div>
               <h2 className="text-center">Registration</h2>
               <Form onSubmit={handleRegister}>

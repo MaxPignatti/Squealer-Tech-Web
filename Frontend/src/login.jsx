@@ -1,15 +1,46 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
-  const handleLogin = (event) => {
-    /*da fare*/
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    try {
+      // Create a request object
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      };
+
+      // Send a POST request to your backend login endpoint
+      const response = await fetch('http://localhost:3500/login', requestOptions);
+
+      // Check if the response status is 200 (OK)
+      if (response.status === 200) {
+        navigate('/home');
+      } else {
+        const data = await response.json();
+        setErrorMessage(data.error); // Set the error message
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -22,43 +53,60 @@ const LoginPage = () => {
                 <img src="pic/logo.png" alt="Logo" />
               </div>
               <h2 className="text-center">Login</h2>
-              {/*Bisogna aggiungere roba per validare il form (vedere se mail e password sono stati scritti correttamente) */}
               <Form onSubmit={handleLogin}>
-                <Form.Group controlId="formBasicEmail">
-                  <Form.Label>Email address</Form.Label>
+                <Form.Group controlId="formBasicUsername">
+                  <Form.Label>Username</Form.Label>
                   <Form.Control
-                    type="email"
-                    placeholder="Enter email"
-                    value={formData.email}
+                    type="text"
+                    placeholder="Enter username"
+                    value={formData.username}
                     onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
+                      setFormData({ ...formData, username: e.target.value })
                     }
-                    aria-label="Email Address"
-                    aria-describedby="emailHelp"
+                    aria-label="Username"
                   />
                 </Form.Group>
 
                 <Form.Group controlId="formBasicPassword">
                   <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
-                    aria-label="Password"
-                  />
+                  <div className="password-input">
+                    <Form.Control
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
+                      aria-label="Password"
+                    />
+                    <span
+                      className="password-toggle"
+                      onClick={togglePasswordVisibility}
+                    >
+                      {showPassword ? (
+                        <FontAwesomeIcon icon={faEyeSlash} />
+                      ) : (
+                        <FontAwesomeIcon icon={faEye} />
+                      )}
+                    </span>
+                  </div>
                 </Form.Group>
 
                 <Button variant="primary" type="submit" block>
                   Login
                 </Button>
+
+                {errorMessage && (
+                  <div className="text-danger mt-2">
+                    {errorMessage}
+                  </div>
+                )}
+
               </Form>
             </Card.Body>
             <Card.Footer className="text-center">
               <p>
-              Don't have an account? <Link to="/registration">Register</Link>
+                Don't have an account? <Link to="/registration">Register</Link>
               </p>
             </Card.Footer>
           </Card>

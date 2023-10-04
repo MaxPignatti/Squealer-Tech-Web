@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const RegistrationPage = () => {
   const [formData, setFormData] = useState({
@@ -12,8 +13,31 @@ const RegistrationPage = () => {
     socialMediaManagerEmail: "",
   });
 
-  const handleRegister = (event) => {
-    
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
+
+  const handleRegister = async (event) => {
+    event.preventDefault();
+
+    try {
+      // Send a POST request to your backend registration endpoint
+      const response = await fetch('http://localhost:3500/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.status === 201) {
+        // Registration successful, you can redirect to the login page or do something else
+        window.location.href = '/login'; // Redirect to the login page
+      } else {
+        const data = await response.json();
+        setErrorMessage(data.error); // Set the error message
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -36,6 +60,7 @@ const RegistrationPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, firstName: e.target.value })
                     }
+                    required 
                   />
                 </Form.Group>
 
@@ -48,6 +73,7 @@ const RegistrationPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, lastName: e.target.value })
                     }
+                    required 
                   />
                 </Form.Group>
 
@@ -60,6 +86,7 @@ const RegistrationPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, username: e.target.value })
                     }
+                    required 
                   />
                 </Form.Group>
 
@@ -72,6 +99,7 @@ const RegistrationPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
                     }
+                    required 
                   />
                 </Form.Group>
 
@@ -84,6 +112,7 @@ const RegistrationPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, password: e.target.value })
                     }
+                    required
                   />
                 </Form.Group>
 
@@ -99,6 +128,7 @@ const RegistrationPage = () => {
                         confirmPassword: e.target.value,
                       })
                     }
+                    required 
                   />
                 </Form.Group>
 
@@ -115,16 +145,23 @@ const RegistrationPage = () => {
                       })
                     }
                   />
+                  
                 </Form.Group>
 
                 <Button variant="primary" type="submit" block>
                   Register
                 </Button>
+
+                {errorMessage && (
+                  <div className="text-danger mt-2">
+                    {errorMessage}
+                  </div>
+                )}
               </Form>
             </Card.Body>
             <Card.Footer className="text-center">
               <p>
-                Already have an account? <a href="/login">Login</a>
+                Already have an account? <Link to="/login">Login</Link>
               </p>
             </Card.Footer>
           </Card>

@@ -2,12 +2,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const cors = require('cors'); // Import the cors middleware
+
 const app = express();
 const port = 3500;
 
 // Load environment variables
 require('./config/env');
 
+app.use(cors({
+  origin: 'http://localhost:3000', // Replace with your frontend's origin
+  credentials: true, // You may need this if you are sending cookies or sessions
+}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 

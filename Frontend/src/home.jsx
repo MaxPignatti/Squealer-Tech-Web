@@ -1,9 +1,13 @@
 import React from 'react';
+import Navbar from './home_components/Navbar';
+
 import { Container, Row, Col } from 'react-bootstrap';
 
 const HomePage = () => {
   return (
+    
     <Container>
+      <Navbar/>
       <Row className="justify-content-center mt-5">
         <Col md={6}>
           <div className="text-center">
@@ -12,7 +16,10 @@ const HomePage = () => {
           </div>
         </Col>
       </Row>
+      
     </Container>
+    
+
   );
 };
 

@@ -2,8 +2,17 @@ import React from 'react';
 import Navbar from './home_components/Navbar';
 
 import { Container, Row, Col } from 'react-bootstrap';
+import { useAuth } from './AuthContext'; // Import the useAuth hook
+import { Navigate } from 'react-router-dom';
 
 const HomePage = () => {
+  const { isAuthenticated } = useAuth(); // Use the useAuth hook to get authentication status
+
+  // If the user is not authenticated, redirect to the login page
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
   return (
     
     <Container>

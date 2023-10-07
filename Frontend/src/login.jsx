@@ -4,8 +4,11 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "./AuthContext";
+
 
 const LoginPage = () => {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -17,22 +20,22 @@ const LoginPage = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      // Create a request object
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       };
 
-      // Send a POST request to your backend login endpoint
       const response = await fetch('http://localhost:3500/login', requestOptions);
 
       // Check if the response status is 200 (OK)
       if (response.status === 200) {
-        navigate('/home');
+        login();
+        console.log('Navigating to /home...');
+        navigate('/');
       } else {
         const data = await response.json();
-        setErrorMessage(data.error); // Set the error message
+        setErrorMessage(data.error); 
       }
     } catch (error) {
       console.error(error);

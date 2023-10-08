@@ -21,6 +21,7 @@ app.use(cookieParser());
 const authRoutes = require('./routes/authRoutes');
 const secureRoutes = require('./routes/secureRoutes');
 const userRoutes = require('./routes/userRoutes');
+const messageRoutes = require('./routes/messageRoutes');
 
 app.use(authRoutes);
 app.use(secureRoutes);
@@ -38,5 +39,7 @@ db.on('connected', console.error.bind(console, 'MongoDB connected:'));
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+app.use('/messages', messageRoutes);
 
 module.exports = app;

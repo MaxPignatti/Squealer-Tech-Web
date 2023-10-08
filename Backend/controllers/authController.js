@@ -32,10 +32,8 @@ exports.register = async (req, res) => {
 
 // User login
 exports.login = async (req, res) => {
+  const { username, password } = req.body;
   try {
-    const { username, password } = req.body;
-
-    // Find the user by their username in the database
     const user = await User.findOne({ username });
 
     if (!user) {
@@ -49,9 +47,17 @@ exports.login = async (req, res) => {
     }
 
     const accessToken = jwt.sign({ username: user.username }, process.env.SECRET_KEY, { expiresIn: '1h' });
-    res.cookie('access_token', accessToken, { httpOnly: true });
 
-    res.json({ message: 'Login successful' });
+    // Set the access_token cookie
+    res.cookie('access_token', accessToken, {
+      path: '/',
+      domain: 'localhost:3000', 
+      httpOnly: true, // Cookie cannot be accessed via JavaScript
+      secure: true,   // Requires HTTPS
+      sameSite: 'Strict', // Recommended for security
+    });
+
+    res.json({ message: 'Login successful', access_token: accessToken });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -64,8 +70,14 @@ exports.logout = async (req, res) => {
   res.json({ message: 'Logout successful' });
 };
 
-// A protected endpoint
 exports.protectedEndpoint = async (req, res) => {
-  const user = req.user;
-  res.json({ message: 'This is a protected endpoint', user });
+  try {
+
+    const user = req.user;
+
+    res.json({ message: 'This is a protected endpoint', user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 };

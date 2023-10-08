@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "./AuthContext";
-
+import Cookies from 'js-cookie'; // Import the 'js-cookie' library
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -28,14 +28,23 @@ const LoginPage = () => {
 
       const response = await fetch('http://localhost:3500/login', requestOptions);
 
-      // Check if the response status is 200 (OK)
       if (response.status === 200) {
-        login();
-        console.log('Navigating to /home...');
-        navigate('/');
+        const data = await response.json();
+
+        if (data && data.access_token) {
+          const accessToken = data.access_token;
+
+          Cookies.set('access_token', accessToken, { expires: 2});
+
+          login();
+          console.log('Navigating to /home...');
+          navigate('/');
+        } else {
+          setErrorMessage('Access token not found in the response');
+        }
       } else {
         const data = await response.json();
-        setErrorMessage(data.error); 
+        setErrorMessage(data.error);
       }
     } catch (error) {
       console.error(error);

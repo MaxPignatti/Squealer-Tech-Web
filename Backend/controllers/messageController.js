@@ -113,9 +113,7 @@ exports.updateMessage = async (req, res) => {
     if (message.type === 'text') {
       charCount = message.content.length;
     } else if (message.type === 'image') {
-      charCount = 50; // Images count as 50 characters
-    } else if (message.type === 'video') {
-      // Implement logic for counting video characters if needed
+      charCount = 50; // Images count as 50 characters (non ricordo le specifiche)
     }
   
     // Count the number of pictures in the content

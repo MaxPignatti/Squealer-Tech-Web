@@ -1,41 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
+import { useNavigate } from "react-router-dom";
 
 function AutoLogin() {
   const { isAuthenticated, login } = useAuth();
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [error, setError] = useState(null); // Add error state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  const navigate = useNavigate();
   useEffect(() => {
-    const token = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('access_token='));
+    // Check if the 'access_token' cookie is present
+    const existingToken = getCookie('access_token');
 
-    if (token) {
-      const tokenValue = token.split('=')[1];
-
-      // Call your API to check authentication status
-      fetch('http://localhost:3500/protected-endpoint', {
+    if (existingToken) {
+      console.log('Existing Token:', existingToken);
+      // Check if the existing token is still valid on the server
+      fetch('http://localhost:3500/protectedEndpoint', {
         method: 'POST',
-        credentials: 'include', // Include credentials (cookies)
+        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${existingToken}`,
+        },
       })
         .then((response) => {
           if (response.status === 200) {
-            login(); // User is authenticated, set isAuthenticated to true
+            login(); 
+            navigate("/");
           } else {
-            setError('Authentication failed'); // Authentication failed
+            setError('Authentication failed, non va protectedEndpoint');
           }
         })
         .catch((error) => {
-          setError('Authentication failed'); // Handle fetch error
+          setError('Authentication failed, qualche errore: '+error); // Handle fetch error
         })
         .finally(() => {
           setLoading(false); // Request completed, set loading to false
         });
     } else {
-      setLoading(false); // No token found, set loading to false
+      console.log('Token not found');
+      setLoading(false);
     }
   }, [login]);
+
+  // Helper function to get a cookie by name
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
 
   if (loading) {
     return <div>Loading...</div>;
@@ -45,7 +57,7 @@ function AutoLogin() {
     return <div>{error}</div>;
   }
 
-  return null; // Return null when not loading or when no error occurred
+  return null;
 }
 
 export default AutoLogin;

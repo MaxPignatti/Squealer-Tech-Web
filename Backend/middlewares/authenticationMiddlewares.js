@@ -1,25 +1,26 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const authenticateWithToken = (req, res, next) => {
-    const token = req.cookies.access_token;
+module.exports = async (req, res, next) => {
+  // Check if the access_token cookie is present in the request
+  const token = req.cookies.access_token;
 
   if (!token) {
-    return next();
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  // Verify and decode the token
-  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-    if (err) {
-      res.clearCookie('access_token');
-      return next();
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const user = await User.findOne({ username: decoded.username });
+
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // Token is valid, set the user in the request object
-    req.user = { username: decoded.username };
+    req.user = user;
 
     next();
-  });
+  } catch (error) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 };
-
-module.exports = authenticateWithToken;

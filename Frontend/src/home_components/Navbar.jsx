@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import './Navbar.css'; 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faBars, faXmark} from "@fortawesome/free-solid-svg-icons";
+import './Navbar.css';
+
 
 const Navbar = () => {
+
   const [isVerticalNavbarOpen, setVerticalNavbarOpen] = useState(false);
 
   const verBar = () => {
@@ -9,24 +13,29 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar">
-      <div className="left-section">
-        <img src="pic/logo.png" alt="Logo" className="logo" />
-        <h1 className="title">Squealer</h1>
-      </div>
-      <div className="right-section">
-        <button className="nav-button">
-            <img src="pic/campanella.png" alt="Logo" className="logo_not"/>
-        </button>
-        <button className="nav-button"onClick={verBar}>Menù</button>
-        {isVerticalNavbarOpen && (
-          <div className="vertical-navbar">
-            {}
-            <button onClick={verBar}>Close Vertical Navbar</button>
-          </div>
+    <>
+      <nav>
+        <a href=""><img src="pic/logo.png" alt="Logo" className="logo" /></a>
+        <div id="navbar">
+          <li> <a href="/Profile">Profilo</a> </li>
+          <li> <a href="">Canali</a> </li>
+          <li> <a href="">Shop</a> </li>
+          <li> <a href="">Assistenza</a> </li>
+        </div>
+
+        <div id = "mobile" onClick={verBar}>
+
+        {isVerticalNavbarOpen ? (
+          <FontAwesomeIcon icon={faXmark} beat id = "simbol"/> ) : (
+          <FontAwesomeIcon icon={faBars} spin  id = "simbol"/>
         )}
-      </div>
-    </div>
+
+        </div>
+
+      </nav>
+    </>
+
+
   );
 };
 

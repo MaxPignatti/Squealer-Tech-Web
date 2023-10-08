@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faBars, faXmark} from "@fortawesome/free-solid-svg-icons";
+import {Link, NavLink} from 'react-router-dom';
 import './Navbar.css';
 
 
@@ -15,21 +16,22 @@ const Navbar = () => {
   return (
     <>
       <nav>
-        <a href=""><img src="pic/logo.png" alt="Logo" className="logo" /></a>
-        <div id="navbar">
-          <li> <a href="/Profile">Profilo</a> </li>
-          <li> <a href="">Canali</a> </li>
-          <li> <a href="">Shop</a> </li>
-          <li> <a href="">Assistenza</a> </li>
+        <Link to="/"><img src="pic/logo.png" alt="Logo" className="logo" /></Link>
+        <div>
+          <ul id="navbar" className= {isVerticalNavbarOpen ? "open" : ""}>
+            <li> <NavLink to="/Profile">Profilo</NavLink> </li>
+            <li> <NavLink to="">Canali</NavLink> </li>
+            <li> <NavLink to="">Shop</NavLink> </li>
+            <li> <NavLink to="">Assistenza</NavLink> </li>
+          </ul>
+
         </div>
 
-        <div id = "mobile" onClick={verBar}>
-
+        <div className = "menu" onClick={verBar}>
         {isVerticalNavbarOpen ? (
           <FontAwesomeIcon icon={faXmark} beat id = "simbol"/> ) : (
           <FontAwesomeIcon icon={faBars} spin  id = "simbol"/>
         )}
-
         </div>
 
       </nav>
@@ -40,6 +42,8 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
 
 
 

@@ -1,7 +1,12 @@
-body, html {
-  margin: 0;
-  padding: 0;
+* {
+  box-sizing: border-box;
 }
+
+body{
+  margin: 0;
+}
+
+
 .logo {
   width: 40px; 
   height: 40px; 
@@ -13,9 +18,10 @@ nav{
   align-items: center;
   justify-content: space-between;
   background: #ADD8E6;
-
-  padding: 20px 80px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+  padding: 20px 50px;
+  position: sticky;
+  top:0;
+  
 
 }
 #navbar{
@@ -37,13 +43,14 @@ nav{
   color: white;
   transition: 0.3s ease-in-out;
 }
+
 #navbar li a:hover{
-  color:gray;
+  color:black;
 }
 
 #navbar li a:hover::after{
   content:"";
-  background:gray;
+  background:black;
   position:absolute;
   bottom:-4px;
   left:20px;
@@ -59,18 +66,15 @@ nav{
   align-items: center;
 
 }
-/*
-#mobile{
-  display: none;
+
+#simbol:hover{
+  color:black;
+
+
 }
-  
-  .vertical-navbar {
-    position: absolute;
-    top: 60px; 
-    right: 10px; 
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    border-radius: 5px;
-  }
-  */
+
+
+
+
+
+

@@ -6,19 +6,23 @@ const authenticateWithToken = require('../middlewares/authenticationMiddlewares'
 // Register a new user
 exports.register = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { firstName, lastName,username, password, email } = req.body;
 
     // Check if the user already exists in the database
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ error: 'Username already exists' });
     }
+    const existingMail= await User.findOne({ email });
+    if (existingMail) {
+      return res.status(400).json({ error: 'UMail already exists' });
+    }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new User instance with the hashed password
-    const newUser = new User({ username, password: hashedPassword });
+    const newUser = new User({ firstName, lastName,username, email, password: hashedPassword,socialMediaMenager, remChar:150, debChar:0, accountType:0, smm:false});
 
     // Save the user to the database
     await newUser.save();
@@ -72,9 +76,7 @@ exports.logout = async (req, res) => {
 
 exports.protectedEndpoint = async (req, res) => {
   try {
-
     const user = req.user;
-
     res.json({ message: 'This is a protected endpoint', user });
   } catch (error) {
     console.error(error);

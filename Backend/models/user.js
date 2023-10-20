@@ -3,40 +3,24 @@ const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
   firstName: {
-    type: String,
-    required: true,
+    type: String
   },
   lastName: {
-    type: String,
-    required: true,
+    type: String
   },
   fotoProfilo: {
-    type: String,
-    required: true,
+    type: String
   },
   username: {
-    type: String,
-    required: true,
+    type: String
   },
   email: {
     type: String,
-    required: true,
     unique: true,
     match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
   },
   password: {
-    type: String,
-    required: true,
-  },
-  confirmPassword: {
-    type: String,
-    required: true,
-    validate: {
-      validator: function (value) {
-        return this.password === value;
-      },
-      message: 'Passwords do not match',
-    },
+    type: String
   },
   socialMediaManagerEmail: {
     type: String,
@@ -47,16 +31,13 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   debChar: {
-    type: Number,
-    required: true,
+    type: Number
   },
   accountType: {
-    type: Number,
-    required: true,
+    type: Number
   },
   smm: {
-    type: Boolean,
-    required: true,
+    type: Boolean
   },
 });
 

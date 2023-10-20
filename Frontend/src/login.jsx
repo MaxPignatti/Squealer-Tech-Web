@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "./AuthContext";
-import Cookies from 'js-cookie'; // Import the 'js-cookie' library
+import Cookies from 'js-cookie';
 
 const LoginPage = () => {
   const { login } = useAuth();

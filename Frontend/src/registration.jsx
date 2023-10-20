@@ -29,8 +29,7 @@ const RegistrationPage = () => {
       });
 
       if (response.status === 201) {
-        // Registration successful, you can redirect to the login page or do something else
-        window.location.href = '/login'; // Redirect to the login page
+            window.location.href = '/login'; // Redirect to the login page
       } else {
         const data = await response.json();
         setErrorMessage(data.error); // Set the error message

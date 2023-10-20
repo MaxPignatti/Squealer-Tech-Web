@@ -104,7 +104,7 @@ const LoginPage = () => {
                   </div>
                 </Form.Group>
 
-                <Button variant="primary" type="submit" block>
+                <Button variant="primary" type="submit" block={true.toString()}>
                   Login
                 </Button>
 

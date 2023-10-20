@@ -147,9 +147,9 @@ const RegistrationPage = () => {
                   
                 </Form.Group>
 
-                <Button variant="primary" type="submit" block>
+               <Button variant="primary" type="submit" block={true.toString()}>
                   Register
-                </Button>
+              </Button>
 
                 {errorMessage && (
                   <div className="text-danger mt-2">

@@ -22,7 +22,7 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new User instance with the hashed password
-    const newUser = new User({ firstName, lastName,username, email, password: hashedPassword,socialMediaMenager, remChar:150, debChar:0, accountType:0, smm:false});
+    const newUser = new User({ firstName, lastName,username, email, password: hashedPassword, remChar:150, debChar:0, accountType:0, smm:false});
 
     // Save the user to the database
     await newUser.save();

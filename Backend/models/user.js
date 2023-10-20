@@ -24,11 +24,9 @@ const userSchema = new mongoose.Schema({
   },
   socialMediaManagerEmail: {
     type: String,
-    required: true,
   },
   remChar: {
     type: Number,
-    required: true,
   },
   debChar: {
     type: Number

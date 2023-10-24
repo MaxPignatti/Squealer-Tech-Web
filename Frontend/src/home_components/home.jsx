@@ -16,7 +16,29 @@ const HomePage = () => {
     return <Navigate to="/login" />;
   }
 
-  let Component;
+  
+  return (
+    <>
+      <Navbar />
+      <div className="container">
+        <Routes>
+          <Route path="/*" element={<InputSqueel />} />
+          <Route path="/Profile" element={<Profile />} />
+        </Routes>
+      </div>
+    </>
+
+    
+
+  );
+};
+
+export default HomePage;
+
+
+    /*
+
+      let Component;
   switch(window.location.pathname){
 
     case"/Profile":
@@ -26,24 +48,21 @@ const HomePage = () => {
     Component = <InputSqueel/>;
     break;
   }
-  return (
+    <Router>
+      <>
+        <Navbar />
+        <div className="container">
+          <Routes>
+            <Route path="/" element={<InputSqueel />} />
+            <Route path="/Profile" element={<Profile />} />
+          </Routes>
+        </div>
+      </>
+    </Router>
+
+  
+    #######################################################
     
-    <>
-      <Navbar/>
-      <div className='container' >
-        {Component}
-      </div>
-      
-    </>
-
-    /*
-    <Route path="/Profile" element={<Profile />} />
-          <div>
-        <Routes>
-          <Route path="/Profile" element={<Profile />} />
-        </Routes>
-
-      </div>
     <Container>
       <Navbar/>
       <Row className="justify-content-center mt-5">
@@ -57,20 +76,4 @@ const HomePage = () => {
       
     </Container>
 
-    
-  let Component;
-  switch(window.location.pathname){
-    
-    case"/":
-      Component = Home;
-      break;
-    case"/Profile":
-      break;
-  }
     */
-    
-
-  );
-};
-
-export default HomePage;

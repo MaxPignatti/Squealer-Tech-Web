@@ -58,12 +58,18 @@ nav{
   width: 30%;
 
 }
-
+#logoProfilo{
+  color:white;
+  width: 30px; 
+  height: 30px;
+  align-items: center;
+}
 #simbol{
   color:white;
   width: 30px; 
   height: 30px;
   align-items: center;
+  display: none;
 
 }
 

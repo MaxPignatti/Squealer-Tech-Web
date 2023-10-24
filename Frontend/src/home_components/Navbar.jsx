@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faBars, faXmark} from "@fortawesome/free-solid-svg-icons";
+import {faUser, faBars, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {Link, NavLink} from 'react-router-dom';
 import './Navbar.css';
 
@@ -19,7 +19,7 @@ const Navbar = () => {
         <Link to="/"><img src="pic/logo.png" alt="Logo" className="logo" /></Link>
         <div>
           <ul id="navbar" className= {isVerticalNavbarOpen ? "open" : ""}>
-            <li> <NavLink to="/Profile">Profilo</NavLink> </li>
+            <li> <NavLink to="/Profile"><FontAwesomeIcon icon={faUser} /></NavLink> </li>
             <li> <NavLink to="">Canali</NavLink> </li>
             <li> <NavLink to="">Shop</NavLink> </li>
             <li> <NavLink to="">Assistenza</NavLink> </li>

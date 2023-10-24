@@ -6,6 +6,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useAuth } from '../AuthContext'; // Import the useAuth hook
 import { Navigate } from 'react-router-dom';
+import InputSqueel from './InputSqueel';
 
 const HomePage = () => {
   const {isAuthenticated } = useAuth(); // Use the useAuth hook to get authentication status
@@ -20,6 +21,9 @@ const HomePage = () => {
 
     case"/Profile":
     Component =<Profile/>;
+    break;
+    default:
+    Component = <InputSqueel/>;
     break;
   }
   return (

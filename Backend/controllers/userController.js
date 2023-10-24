@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const bcrypt = require('bcrypt'); // Importa il modulo bcrypt
 
 // Controller function to get user data by ID
 exports.getUserById = async (req, res) => {
@@ -26,24 +27,39 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// Controller function to update user profile
+//
 exports.updateUserProfile = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { username, email, newPassword } = req.body;
+    const { firstName, lastName, username, email, newPassword } = req.body;
 
-    // Find the user by their ID in the database
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+    // Check if the new email is already in use
+    if (email && email !== user.email) {
+      const existingUserWithEmail = await User.findOne({ email });
+      if (existingUserWithEmail) {
+        return res.status(400).json({ error: 'Email is already in use' });
+      }
+    }
 
-    // Update user data based on the provided information
+    // Check if the new username is already in use
+    if (username && username !== user.username) {
+      const existingUserWithUsername = await User.findOne({ username });
+      if (existingUserWithUsername) {
+        return res.status(400).json({ error: 'Username is already in use' });
+      }
+    }
+
     user.username = username || user.username;
     user.email = email || user.email;
-
-    // If a new password is provided, hash and update it
+    user.firstName=firstName|| user.firstName;
+    user.lastName=lastName|| user.lastName;
+    
+    // If password changed, crypt and hast it.
     if (newPassword) {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       user.password = hashedPassword;
@@ -52,7 +68,6 @@ exports.updateUserProfile = async (req, res) => {
     // Save the updated user data to the database
     await user.save();
 
-    // Return a success message
     res.json({ message: 'User profile updated successfully' });
   } catch (error) {
     console.error(error);

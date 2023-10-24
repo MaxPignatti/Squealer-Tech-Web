@@ -11,8 +11,8 @@ const port = 3500;
 require('./config/env');
 
 app.use(cors({
-  origin: 'http://localhost:3000', // Replace with your frontend's origin
-  credentials: true, // You may need this if you are sending cookies or sessions
+  origin: 'http://localhost:3000',
+  credentials: true,
 }));
 app.use(bodyParser.json());
 app.use(cookieParser());

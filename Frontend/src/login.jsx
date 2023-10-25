@@ -25,17 +25,21 @@ const LoginPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       };
-
+  
       const response = await fetch('http://localhost:3500/login', requestOptions);
-
       if (response.status === 200) {
         const data = await response.json();
-
-        if (data && data.access_token) {
-          const accessToken = data.access_token;
-
-          Cookies.set('access_token', accessToken, { expires: 2});
-
+        console.log(data);
+        if (data && data.user_data) {
+          const { username, accessToken } = data.user_data;
+  
+          const userData = {
+            username: username,
+            access_token: accessToken,
+          };
+  
+          Cookies.set('user_data', JSON.stringify(userData), { expires: 1 });
+  
           login();
           console.log('Navigating to /home...');
           navigate('/');
@@ -50,6 +54,9 @@ const LoginPage = () => {
       console.error(error);
     }
   };
+  
+  
+  
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);

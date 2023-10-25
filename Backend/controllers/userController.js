@@ -1,33 +1,24 @@
 const User = require('../models/user');
-const bcrypt = require('bcrypt'); // Importa il modulo bcrypt
+const bcrypt = require('bcrypt');
 
 // Controller function to get user data by ID
 exports.getUserById = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userid } = req.params;
 
-    // Find the user by their ID in the database
-    const user = await User.findById(userId);
+    const user = await User.findById(userid);
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Return user data (excluding sensitive information like the password)
-    const userData = {
-      username: user.username,
-      email: user.email,
-      // Add other user properties as needed
-    };
-
-    res.json(userData);
+    res.json(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-//
 exports.updateUserProfile = async (req, res) => {
   try {
     const { userId } = req.params;

@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
     }
     const existingMail= await User.findOne({ email });
     if (existingMail) {
-      return res.status(400).json({ error: 'UMail already exists' });
+      return res.status(400).json({ error: 'Email already exists' });
     }
 
     // Hash the password
@@ -34,7 +34,6 @@ exports.register = async (req, res) => {
   }
 };
 
-// User login
 exports.login = async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -50,23 +49,26 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid password' });
     }
 
-    const accessToken = jwt.sign({ username: user.username }, process.env.SECRET_KEY, { expiresIn: '1h' });
+    const userData = {
+      username: user.username,
+      accessToken: jwt.sign({ username: user.username }, process.env.SECRET_KEY, { expiresIn: '1h' }),
+    };
 
-    // Set the access_token cookie
-    res.cookie('access_token', accessToken, {
+  
+    res.cookie('user_data', JSON.stringify(userData), {
       path: '/',
-      domain: 'localhost:3000', 
-      httpOnly: true, // Cookie cannot be accessed via JavaScript
-      secure: true,   // Requires HTTPS
-      sameSite: 'Strict', // Recommended for security
+      domain: 'localhost:3000',
+      httpOnly: true,
     });
 
-    res.json({ message: 'Login successful', access_token: accessToken });
+    res.json({ message: 'Login successful', user_data: userData });  
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+
 
 // Logout
 exports.logout = async (req, res) => {

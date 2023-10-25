@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Button } from 'react-bootstrap';
 
 const InputSqueel = () => {
   const [message, setMessage] = useState('');
   const [showImageInput, setShowImageInput] = useState(false);
   const [image, setImage] = useState(null);
-  const [savedImage, setSavedImage] = useState(null);
-
+  const [imagePreview, setImagePreview] = useState(null);
 
   const handleInputChange = (e) => {
     setMessage(e.target.value);
@@ -18,11 +16,8 @@ const InputSqueel = () => {
   };
 
   const handleConfirmImage = () => {
-    if (image) {
-      const savedImageCopy = new File([image], image.name, { type: image.type });
-      setImage(null);
-      setSavedImage(savedImageCopy);
-    }
+    setImagePreview(URL.createObjectURL(image));
+    setShowImageInput(false);
   };
 
   const handleImageInputChange = (e) => {
@@ -35,27 +30,26 @@ const InputSqueel = () => {
     const savedMessageLength = message.length;
 
     setMessage('');
-    setShowImageInput(false);
     setImage(null);
+    setImagePreview(null);
 
     try {
       const data = {
         userName: "a",
-        image: savedImage,
-        imageType: (image !== null) ? savedImage.type : null,
+        image: (image !== null) ? imagePreview : null,
+        imageType: (image !== null) ? image.type : null,
         text: savedMessage,
         charCount: savedMessageLength
       };
-      
+
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       };
-      
-    
+
       const response = await fetch('http://localhost:3500/create', requestOptions);
-    
+
       if (response.status === 201) {
         const data = await response.json();
         console.log('Messaggio creato:', data);
@@ -66,7 +60,6 @@ const InputSqueel = () => {
     } catch (error) {
       console.error('Errore 2 nella creazione del messaggio:', error);
     }
-    
   };
 
   return (
@@ -100,6 +93,13 @@ const InputSqueel = () => {
             </>
           )}
         </>
+      )}
+      {imagePreview && (
+        <img
+          src={imagePreview}
+          alt="Anteprima"
+          style={{ maxWidth: '100%', maxHeight: '100px' }}
+        />
       )}
       <Button variant="success" onClick={handlePublish}>
         Pubblica

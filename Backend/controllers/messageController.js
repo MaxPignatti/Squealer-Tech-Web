@@ -4,23 +4,27 @@ const User = require('../models/user');
 // Create a new message
 exports.createMessage = async (req, res) => {
     try {
-        const { userId, type, content, reaction } = req.body;
+      console.log(req.body)
+        const { userName, image, imageType, text, charCount} = req.body;
     
         // Calculate the character count for the message
-        const charCount = calculateCharacterCount({ type, content });
+        //const charCount = calculateCharacterCount({ type, text });
     
         // Check if the user has enough remaining characters
-        const user = await User.findById(userId);
+        const user = await User.findOne({username: userName});
+        if (user == null) {
+          return res.status(400).json({ error: 'User not found'});
+        }
         if (user.remainingCharacters < charCount) {
           return res.status(400).json({ error: 'Not enough remaining characters' });
         }
     
         // Create the message
         const message = new Message({
-          user: userId,
-          type,
-          content,
-          reaction,
+          user: userName,
+          image: image,
+          imageType:imageType,
+          text: text,
         });
     
         // Save the message
@@ -56,16 +60,16 @@ exports.getMessage = async (req, res) => {
 exports.updateMessage = async (req, res) => {
     try {
       const messageId = req.params.id;
-      const { content, reaction } = req.body;
+      const { text, reaction } = req.body;
   
       const message = await Message.findById(messageId);
       if (!message) {
         return res.status(404).json({ error: 'Message not found' });
       }
   
-      // Update message content and/or reaction as needed
-      if (content) {
-        message.content = content;
+      // Update message text and/or reaction as needed
+      if (text) {
+        message.text = text;
       }
       if (reaction) {
         message.reaction = reaction;
@@ -100,27 +104,27 @@ exports.updateMessage = async (req, res) => {
       user.remainingCharacters += charCount;
       await user.save();
   
-      return res.status(204).send(); // 204 No Content for successful deletion
+      return res.status(204).send(); // 204 No text for successful deletion
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Server error' });
     }
   };
 
-  const calculateCharacterCount = (message) => {
+  /*const calculateCharacterCount = (message) => {
     let charCount = 0;
   
     if (message.type === 'text') {
-      charCount = message.content.length;
+      charCount = message.text.length;
     } else if (message.type === 'image') {
       charCount = 50; // Images count as 50 characters (non ricordo le specifiche)
     }
   
-    // Count the number of pictures in the content
-    const pictureCount = message.content.split(' ').filter((word) => word.startsWith('![image]')).length;
+    // Count the number of pictures in the text
+    const pictureCount = message.text.split(' ').filter((word) => word.startsWith('![image]')).length;
   
     // Calculate the total character count for the message
     charCount += pictureCount * 50;
   
     return charCount;
-  };
+  };*/

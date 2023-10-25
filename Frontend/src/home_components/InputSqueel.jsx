@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { Button } from 'react-bootstrap';
 
 const InputSqueel = () => {
@@ -29,7 +30,7 @@ const InputSqueel = () => {
     setImage(file);
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     const savedMessage = message;
     const savedMessageLength = message.length;
 
@@ -37,7 +38,35 @@ const InputSqueel = () => {
     setShowImageInput(false);
     setImage(null);
 
-    // qui bisognerà aggiungere la roba al db
+    try {
+      const data = {
+        userName: "a",
+        image: savedImage,
+        imageType: (image !== null) ? savedImage.type : null,
+        text: savedMessage,
+        charCount: savedMessageLength
+      };
+      
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      };
+      
+    
+      const response = await fetch('http://localhost:3500/create', requestOptions);
+    
+      if (response.status === 201) {
+        const data = await response.json();
+        console.log('Messaggio creato:', data);
+      } else {
+        const data = await response.json();
+        console.error('Errore 1 nella creazione del messaggio:', data.error);
+      }
+    } catch (error) {
+      console.error('Errore 2 nella creazione del messaggio:', error);
+    }
+    
   };
 
   return (

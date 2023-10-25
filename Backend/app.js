@@ -26,6 +26,7 @@ const messageRoutes = require('./routes/messageRoutes');
 app.use(authRoutes);
 app.use(secureRoutes);
 app.use(userRoutes);
+app.use(messageRoutes);
 
 mongoose.connect('mongodb://localhost:27017/test', {
   useNewUrlParser: true,

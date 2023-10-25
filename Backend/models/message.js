@@ -2,26 +2,36 @@ const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'User',
     required: true,
   },
-  type: {
-    type: String,
-    enum: ['text', 'image', 'video'],
-    required: true,
+  image: {
+    type: Buffer,
+    required: false,
   },
-  content: {
+  imageType: {
     type: String,
-    required: true,
+    required: false,
+  },
+  text: {
+    type: String,
+    required: false,
   },
   createdAt: {
     type: Date,
     default: Date.now,
     required: true,
   },
-  reaction: {
-    type: String,
+  positiveReactions: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
+  negativeReactions: {
+    type: Number,
+    default: 0,
+    required: true,
   },
 });
 

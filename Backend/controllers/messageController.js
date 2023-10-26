@@ -3,43 +3,64 @@ const User = require('../models/user');
 
 // Create a new message
 exports.createMessage = async (req, res) => {
-    try {
-      console.log(req.body)
-        const { userName, image, imageType, text, charCount} = req.body;
+  try {
+    const { userName, image, imageType, text, charCount } = req.body;
+
+    // Calculate the character count for the message
+    //const charCount = calculateCharacterCount({ type, text });
+
+    // Check if the user has enough remaining characters
+    const user = await User.findOne({ username: userName });
+    if (user == null) {
+      return res.status(400).json({ error: 'User not found' });
+    }
+    if (user.remainingCharacters < charCount) {
+      return res.status(400).json({ error: 'Not enough remaining characters' });
+    }
+
+    // Create the message
+    const message = new Message({
+      user: userName,
+      image: image, // Salva la stringa Base64 nel campo immagine
+      imageType: imageType,
+      text: text,
+    });
+
+    // Save the message
+    await message.save();
+
+    // Update the user's remaining characters
+    user.remainingCharacters -= charCount;
+    await user.save();
+
+    return res.status(201).json(message);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
+
+exports.getAllSqueels = async (req, res) => {
+  try {
+    //const userId = req.user.id;
+    const {username} = req.params;
     
-        // Calculate the character count for the message
-        //const charCount = calculateCharacterCount({ type, text });
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
     
-        // Check if the user has enough remaining characters
-        const user = await User.findOne({username: userName});
-        if (user == null) {
-          return res.status(400).json({ error: 'User not found'});
-        }
-        if (user.remainingCharacters < charCount) {
-          return res.status(400).json({ error: 'Not enough remaining characters' });
-        }
-    
-        // Create the message
-        const message = new Message({
-          user: userName,
-          image: image,
-          imageType:imageType,
-          text: text,
-        });
-    
-        // Save the message
-        await message.save();
-    
-        // Update the user's remaining characters
-        user.remainingCharacters -= charCount;
-        await user.save();
-    
-        return res.status(201).json(message);
-      } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Server error' });
-      }
-    };
+    const userChannels = await User.findOne({username: username}).select('channels');
+
+    const messages = await Message.find({ channel: { $in: userChannels.channels } });
+
+    res.json(messages);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 // Retrieve a message by ID
 exports.getMessage = async (req, res) => {

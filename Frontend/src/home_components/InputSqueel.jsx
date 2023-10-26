@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
+import Cookies from 'js-cookie';
 
 const InputSqueel = () => {
   const [message, setMessage] = useState('');
@@ -33,32 +34,36 @@ const InputSqueel = () => {
     setImage(null);
     setImagePreview(null);
 
-    try {
-      const data = {
-        userName: "a",
-        image: (image !== null) ? imagePreview : null,
-        imageType: (image !== null) ? image.type : null,
-        text: savedMessage,
-        charCount: savedMessageLength
-      };
+    const userDataCookie = Cookies.get('user_data');
+    if (userDataCookie) {
+      try {
+        const userData = JSON.parse(userDataCookie);
+        const data = {
+          userName: userData.username,
+          image: (image !== null) ? imagePreview : null,
+          imageType: (image !== null) ? image.type : null,
+          text: savedMessage,
+          charCount: savedMessageLength
+        };
 
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      };
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        };
 
-      const response = await fetch('http://localhost:3500/create', requestOptions);
+        const response = await fetch('http://localhost:3500/create', requestOptions);
 
-      if (response.status === 201) {
-        const data = await response.json();
-        console.log('Messaggio creato:', data);
-      } else {
-        const data = await response.json();
-        console.error('Errore 1 nella creazione del messaggio:', data.error);
+        if (response.status === 201) {
+          const data = await response.json();
+          console.log('Messaggio creato:', data);
+        } else {
+          const data = await response.json();
+          console.error('Errore 1 nella creazione del messaggio:', data.error);
+        }
+      } catch (error) {
+        console.error('Errore 2 nella creazione del messaggio:', error);
       }
-    } catch (error) {
-      console.error('Errore 2 nella creazione del messaggio:', error);
     }
   };
 

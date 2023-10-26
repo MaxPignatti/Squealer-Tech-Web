@@ -7,7 +7,7 @@ const messageSchema = new mongoose.Schema({
     required: true,
   },
   image: {
-    type: Buffer,
+    type: String,
     required: false,
   },
   imageType: {
@@ -17,6 +17,11 @@ const messageSchema = new mongoose.Schema({
   text: {
     type: String,
     required: false,
+  },
+  channel: {
+    type: String,
+    default: "public",
+    required: true,
   },
   createdAt: {
     type: Date,

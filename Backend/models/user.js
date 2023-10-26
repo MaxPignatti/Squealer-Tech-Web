@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String
   },
+  channels: {
+    type: [String], // Array di stringhe
+    default: ["public"],
+  },
   socialMediaManagerEmail: {
     type: String,
   },

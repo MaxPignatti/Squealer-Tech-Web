@@ -6,7 +6,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useAuth } from '../AuthContext';
 import { Navigate } from 'react-router-dom';
-import InputSqueel from './InputSqueel';
+import MainPage from './MainPage';
 
 const HomePage = () => {
   const {isAuthenticated } = useAuth();
@@ -20,7 +20,7 @@ const HomePage = () => {
       <Navbar />
       <div className="container">
         <Routes>
-          <Route path="/*" element={<InputSqueel />} />
+          <Route path="/*" element={<MainPage />} />
           <Route path="/Profile" element={<Profile />} />
         </Routes>
       </div>

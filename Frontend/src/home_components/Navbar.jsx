@@ -16,22 +16,39 @@ const Navbar = () => {
   return (
     <>
       <nav>
-        <Link to="/"><img src="pic/logo.png" alt="Logo" className="logo" /></Link>
-        <div>
-          <ul id="navbar" className= {isVerticalNavbarOpen ? "open" : ""}>
-            <li> <NavLink to="/Profile"><FontAwesomeIcon icon={faUser} /></NavLink> </li>
-            <li> <NavLink to="">Canali</NavLink> </li>
-            <li> <NavLink to="">Shop</NavLink> </li>
-            <li> <NavLink to="">Assistenza</NavLink> </li>
-          </ul>
-
+        <div className="left-section">
+            <Link to="/">
+              <img src="pic/logo.png" alt="Logo" className="logo" />
+            </Link>
         </div>
 
-        <div className = "menu" onClick={verBar}>
-        {isVerticalNavbarOpen ? (
-          <FontAwesomeIcon icon={faXmark} beat id = "simbol"/> ) : (
-          <FontAwesomeIcon icon={faBars} spin  id = "simbol"/>
-        )}
+        <div className="right-section">
+          <div>
+            <NavLink to="/Profile">
+              <FontAwesomeIcon icon={faUser} className="profile-icon" />
+            </NavLink>
+          </div>
+          <div className="menu" onClick={verBar}>
+            {isVerticalNavbarOpen ? (
+              <FontAwesomeIcon icon={faXmark} beat id="simbol" />
+            ) : (
+              <FontAwesomeIcon icon={faBars} spin id="simbol" />
+            )}
+          </div>
+
+          {isVerticalNavbarOpen && (
+            <ul className="vertical-navbar">
+              <li>
+                <NavLink to="/Canali">Canali</NavLink>
+              </li>
+              <li>
+                <NavLink to="/Assistenza">Assistenza</NavLink>
+              </li>
+              <li>
+                <NavLink to="/Shop">Shop</NavLink>
+              </li>
+            </ul>
+          )}
         </div>
 
       </nav>

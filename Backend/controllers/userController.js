@@ -22,10 +22,9 @@ exports.getUserById = async (req, res) => {
 
 exports.updateUserProfile = async (req, res) => {
   try {
-    const { userId } = req.params;
     const { firstName, lastName, username, email, newPassword } = req.body;
 
-    const user = await User.findById(userId);
+    const user = await User.findOne({username});
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -59,7 +58,6 @@ exports.updateUserProfile = async (req, res) => {
 
     // Save the updated user data to the database
     await user.save();
-
     res.json({ message: 'User profile updated successfully' });
   } catch (error) {
     console.error(error);

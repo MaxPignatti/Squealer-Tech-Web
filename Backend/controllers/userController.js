@@ -4,9 +4,10 @@ const bcrypt = require('bcrypt');
 // Controller function to get user data by ID
 exports.getUserById = async (req, res) => {
   try {
-    const { userid } = req.params;
+    
+    const { username} = req.params;
 
-    const user = await User.findById(userid);
+    const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });

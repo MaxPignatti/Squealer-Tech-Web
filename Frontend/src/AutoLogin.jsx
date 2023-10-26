@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 function AutoLogin() {
   const { isAuthenticated, login } = useAuth();
@@ -8,13 +9,15 @@ function AutoLogin() {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
-  useEffect(() => {
-    // Check if the 'access_token' cookie is present
-    const existingToken = getCookie('access_token');
 
-    if (existingToken) {
+  useEffect(() => {
+    const userDataCookie = Cookies.get('user_data');
+    if (userDataCookie) {
+      const userData = JSON.parse(userDataCookie);
+      const existingToken = userData.access_token;
+
       console.log('Existing Token:', existingToken);
-      // Check if the existing token is still valid on the server
+
       fetch('http://localhost:3500/protectedEndpoint', {
         method: 'POST',
         credentials: 'include',
@@ -24,14 +27,14 @@ function AutoLogin() {
       })
         .then((response) => {
           if (response.status === 200) {
-            login(); 
-            navigate("/");
+            login();
+            navigate('/');
           } else {
             setError('Authentication failed, non va protectedEndpoint');
           }
         })
         .catch((error) => {
-          setError('Authentication failed, qualche errore: '+error); // Handle fetch error
+          setError('Authentication failed, qualche errore: ' + error); // Handle fetch error
         })
         .finally(() => {
           setLoading(false); // Request completed, set loading to false

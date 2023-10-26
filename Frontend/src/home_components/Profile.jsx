@@ -21,7 +21,7 @@ const Profile = () => {
       const userData = JSON.parse(userDataCookie);
       const username = userData.username;
 
-      fetch(`http://localhost/usr/${username}`)
+      fetch(`http://localhost:3500/usr/${username}`)
         .then((response) => {
           if (response.status === 200) {
             return response.json();

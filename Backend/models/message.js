@@ -7,7 +7,7 @@ const messageSchema = new mongoose.Schema({
     required: true,
   },
   image: {
-    type: String,
+    type: String, // Cambiato da Buffer a String
     required: false,
   },
   imageType: {

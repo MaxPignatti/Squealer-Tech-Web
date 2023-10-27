@@ -38,7 +38,7 @@ const Squeels = () => {
                 </Card.Text>
                 {message.image && (
                   <div className="text-center mb-3">
-                    <img src={message.image} alt="Message Image" style={{ maxWidth: '30%' }} />
+                    <img src={`data:image;base64,${message.image}`} alt="Message Image" style={{ maxWidth: '30%' }} />
                   </div>
                 )}
                 <div className="d-flex justify-content-end">

@@ -4,7 +4,7 @@ const User = require('../models/user');
 // Create a new message
 exports.createMessage = async (req, res) => {
   try {
-    const { userName, image, imageType, text, charCount } = req.body;
+    const { userName, image, text, charCount } = req.body;
 
     // Calculate the character count for the message
     //const charCount = calculateCharacterCount({ type, text });
@@ -21,8 +21,7 @@ exports.createMessage = async (req, res) => {
     // Create the message
     const message = new Message({
       user: userName,
-      image: image, // Salva la stringa Base64 nel campo immagine
-      imageType: imageType,
+      image: (image !== null) ? image.toString('base64') : null, // Salva l'immagine come stringa Base64
       text: text,
     });
 

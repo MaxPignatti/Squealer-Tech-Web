@@ -10,11 +10,13 @@ const port = 3500;
 // Load environment variables
 require('./config/env');
 
+
+app.use(bodyParser.json({ limit: '10mb' })); // Imposta il limite di dimensioni del body a 100 MB
+
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
 }));
-app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Routes
@@ -27,6 +29,8 @@ app.use(authRoutes);
 app.use(secureRoutes);
 app.use(userRoutes);
 app.use(messageRoutes);
+
+
 
 mongoose.connect('mongodb://localhost:27017/test', {
   useNewUrlParser: true,

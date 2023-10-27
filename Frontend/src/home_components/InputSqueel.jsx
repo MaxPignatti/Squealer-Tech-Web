@@ -17,13 +17,21 @@ const InputSqueel = () => {
   };
 
   const handleConfirmImage = () => {
-    setImagePreview(URL.createObjectURL(image));
     setShowImageInput(false);
+    setImagePreview(`data:image;base64,${image}`);
   };
+  
 
   const handleImageInputChange = (e) => {
     const file = e.target.files[0];
-    setImage(file);
+    const reader = new FileReader();
+  
+    reader.onload = (e) => {
+      const base64String = e.target.result.split(',')[1]; // Rimuove il prefisso "data:image/jpeg;base64,"
+      setImage(base64String);
+    };
+  
+    reader.readAsDataURL(file);
   };
 
   const handlePublish = async () => {
@@ -40,8 +48,7 @@ const InputSqueel = () => {
         const userData = JSON.parse(userDataCookie);
         const data = {
           userName: userData.username,
-          image: (image !== null) ? imagePreview : null,
-          imageType: (image !== null) ? image.type : null,
+          image: (image !== null) ? image : null,
           text: savedMessage,
           charCount: savedMessageLength
         };
@@ -88,7 +95,7 @@ const InputSqueel = () => {
           {image && (
             <>
               <img
-                src={URL.createObjectURL(image)}
+                src={`data:image;base64,${image}`}
                 alt="Anteprima"
                 style={{ maxWidth: '100%', maxHeight: '100px' }}
               />

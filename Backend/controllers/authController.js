@@ -6,7 +6,7 @@ const authenticateWithToken = require('../middlewares/authenticationMiddlewares'
 // Register a new user
 exports.register = async (req, res) => {
   try {
-    const { firstName, lastName,username, password, email } = req.body;
+    const { firstName, lastName,username, password,confirmPassword, email } = req.body;
 
     // Check if the user already exists in the database
     const existingUser = await User.findOne({ username });
@@ -17,7 +17,9 @@ exports.register = async (req, res) => {
     if (existingMail) {
       return res.status(400).json({ error: 'Email already exists' });
     }
-
+    if (password != confirmPassword) {
+      return res.status(400).json({ error: 'Passwords do not match' });
+    }
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 

@@ -21,6 +21,7 @@ exports.createMessage = async (req, res) => {
     // Create the message
     const message = new Message({
       user: userName,
+      profileImage: user.profileImage,
       image: (image !== null) ? image.toString('base64') : null, // Salva l'immagine come stringa Base64
       text: text,
     });
@@ -49,7 +50,7 @@ exports.getAllSqueels = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
+
     const userChannels = await User.findOne({username: username}).select('channels');
 
     const messages = await Message.find({ channel: { $in: userChannels.channels } });

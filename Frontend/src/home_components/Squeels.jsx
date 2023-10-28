@@ -32,27 +32,44 @@ const Squeels = () => {
         <Col xs={12} md={8}>
           {sortedMessages.map((message) => (
             <Card key={message._id} className="mb-3">
-              <Card.Body>
-                <Card.Text className="text-left"> {/* Qui è stata aggiunta la classe */}
-                  <strong>{message.user}:</strong> {message.text}
-                </Card.Text>
-                {message.image && (
-                  <div className="text-center mb-3">
-                    <img src={`data:image;base64,${message.image}`} alt="Message Image" style={{ maxWidth: '30%' }} />
-                  </div>
-                )}
-                <div className="d-flex justify-content-end">
-                  <small className="text-muted">
-                    <em>Posted at: {new Date(message.createdAt).toLocaleString()}</em>
-                  </small>
+            <Card.Body>
+              <div className="d-flex align-items-center">
+                <div className="mr-3">
+                  <img
+                    src={message.profileImage}
+                    alt="Profile Image"
+                    style={{ maxWidth: '50px', borderRadius: '50%' }}
+                  />
                 </div>
-              </Card.Body>
-            </Card>
+                <div>
+                  <strong>{message.user}:</strong> <br />
+                  "{message.text}"
+                </div>
+              </div>
+              {message.image && (
+                <div className="text-center my-3">
+                  <img
+                    src={message.image}
+                    alt="Message Image"
+                    style={{ maxWidth: '100%' }}
+                  />
+                </div>
+              )}
+              <div className="d-flex">
+                <small className="text-muted text-right">
+                  <em>
+                    Posted at: {new Date(message.createdAt).toLocaleString([], { hour: '2-digit', minute: '2-digit' })}
+                  </em>
+                </small>
+              </div>
+            </Card.Body>
+          </Card>
           ))}
         </Col>
       </Row>
     </Container>
   );
+  
 };
 
 export default Squeels;

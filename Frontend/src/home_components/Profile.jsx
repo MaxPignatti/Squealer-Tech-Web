@@ -83,7 +83,7 @@ const Profile = () => {
             <Card>
               <Card.Body>
                 <div>
-                  <FontAwesomeIcon icon={faUser} id="userLogo" />
+                  <img src={`${userData.profileImage}`} alt="Profile Image" style={{ maxWidth: '20%' }} />
                 </div>
                 {editChange ? (
                   <Form>

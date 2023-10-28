@@ -18,7 +18,7 @@ const InputSqueel = () => {
 
   const handleConfirmImage = () => {
     setShowImageInput(false);
-    setImagePreview(`data:image;base64,${image}`);
+    setImagePreview(`${image}`);
   };
   
 
@@ -27,7 +27,7 @@ const InputSqueel = () => {
     const reader = new FileReader();
   
     reader.onload = (e) => {
-      const base64String = e.target.result.split(',')[1]; // Rimuove il prefisso "data:image/jpeg;base64,"
+      const base64String = e.target.result; // Rimuove il prefisso "data:image/jpeg;base64,"
       setImage(base64String);
     };
   
@@ -95,7 +95,7 @@ const InputSqueel = () => {
           {image && (
             <>
               <img
-                src={`data:image;base64,${image}`}
+                src={`${image}`}
                 alt="Anteprima"
                 style={{ maxWidth: '100%', maxHeight: '100px' }}
               />

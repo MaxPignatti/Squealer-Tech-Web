@@ -13,6 +13,9 @@ const Profile = () => {
   const { isAuthenticated } = useAuth();
   const [userData, setUserData] = useState({});
   const [editChange, seteditChange] = useState(false);
+  const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
+
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
@@ -48,6 +51,13 @@ const Profile = () => {
   }, []);   
 
 
+  const handleModificaPassword = () => {
+    setShowChangePasswordForm(true);
+  };
+
+  const handleAnnullaPassword = () => {
+    setShowChangePasswordForm(false);
+  };
   
   const handleModifica = () => {
     seteditChange(true);
@@ -73,8 +83,11 @@ const Profile = () => {
         Cookies.set('user_data', JSON.stringify(updatedUserData), { expires: 1 });
   
         seteditChange(false);
+        setShowChangePasswordForm(false);
       } else {
-        console.error('Failed to save data:', response.status);
+        //console.error('Failed to save data:', response.status);
+        const data = await response.json();
+        setErrorMessage(data.error);
       }
     } catch (error) {
       console.error('API call error:', error);
@@ -173,7 +186,7 @@ const Profile = () => {
                       />
                     </Form.Group>
 
-                    
+                              
 
                     <Button variant="success" onClick={handleUserChange}>
                       Salva Modifiche
@@ -191,8 +204,52 @@ const Profile = () => {
                     <Button variant="primary" onClick={handleModifica}>
                       Modifica Profilo
                     </Button>
+                    {showChangePasswordForm ? (
+                    <Form>
+                      <Form.Group controlId="formBasicOldPassword">
+                        <Form.Label>Vecchia Password</Form.Label>
+                        <Form.Control
+                          type="password"
+                          name="oldPassword"
+                          placeholder="Vecchia Password"
+                          onChange={(e) =>
+                            setUserData({ ...userData, oldPassword: e.target.value })
+                          }
+                          />
+                      </Form.Group>
+
+                      <Form.Group controlId="formBasicPassword">
+                        <Form.Label>Nuova Password</Form.Label>
+                        <Form.Control
+                          type="password"
+                          name="newPassword"
+                          placeholder="Nuova Password"
+                          onChange={(e) =>
+                            setUserData({ ...userData, newPassword: e.target.value })
+                          }
+                          />
+                      </Form.Group>
+            
+                          <Button variant="primary" onClick={handleUserChange}>
+                            Salva Modifiche
+                          </Button>
+                          <Button variant="secondary" onClick={handleAnnullaPassword}>
+                            Annulla
+                          </Button>
+                          {errorMessage && (
+                      <div className="text-danger mt-2">
+                        {errorMessage}
+                      </div>
+                    )}
+                    </Form>
+                      ) : (
+                        <Button variant="info" onClick={handleModificaPassword}>
+                          Modifica Password
+                        </Button>
+                      )}
                   </div>
                 )}
+
               </Card.Body>
             </Card>
           </Col>

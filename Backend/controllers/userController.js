@@ -23,7 +23,7 @@ exports.getUserById = async (req, res) => {
 
 exports.updateUserProfile = async (req, res) => {
   try {
-    let { profileImage, firstName, lastName, oldUserName, username, email, newPassword } = req.body;
+    let { profileImage, firstName, lastName, oldUserName, username, email, newPassword, oldPassword } = req.body;
 
     const newUserName = username;
     username = oldUserName;
@@ -33,6 +33,32 @@ exports.updateUserProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+    
+
+    if (oldPassword) 
+    {
+      //check if the olderpassward match
+      const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+      if(passwordMatch)
+      {
+        if (newPassword)
+        {
+          const hashedPassword = await bcrypt.hash(newPassword, 10);
+          user.password = hashedPassword;
+        }
+        else
+        {
+          return res.status(401).json({ error: 'new password miss' });
+        }
+      }
+      else
+      {
+        return res.status(401).json({ error: 'the older password is incorrect' });
+      }
+    }
+
+
 
     // Check if the new email is already in use
     if (email && email !== user.email) {
@@ -56,11 +82,7 @@ exports.updateUserProfile = async (req, res) => {
     user.lastName=lastName|| user.lastName;
     user.profileImage = profileImage || user.profileImage;
     
-    // If password changed, crypt and hast it.
-    if (newPassword) {
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      user.password = hashedPassword;
-    }
+
 
     await Message.updateMany({ user: oldUserName }, { $set: { user: user.username, profileImage: user.profileImage } });
 

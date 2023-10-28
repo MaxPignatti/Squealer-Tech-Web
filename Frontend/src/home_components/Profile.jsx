@@ -33,7 +33,11 @@ const Profile = () => {
           }
         })
         .then((data) => {
-          setUserData(data);
+          const newData = {
+            ...data,
+            oldUserName: username
+          };
+          setUserData(newData);
         })
         .catch((error) => {
           console.error('API call error:', error);
@@ -51,15 +55,23 @@ const Profile = () => {
 
   const handleUserChange = async () => {
     try {
-      const response = await fetch(`http://localhost:3500/usr/${userData.username}`, {
+      const response = await fetch(`http://localhost:3500/usr/${userData.oldUserName}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(userData),
       });
-
+  
       if (response.status === 200) {
+        // Dopo che la modifica è stata completata con successo
+        // Aggiorna i cookies con il nuovo username
+        const updatedUserData = {
+          ...userData,
+          username: userData.username || userData.oldUserName
+        };
+        Cookies.set('user_data', JSON.stringify(updatedUserData), { expires: 1 });
+  
         seteditChange(false);
       } else {
         console.error('Failed to save data:', response.status);
@@ -87,6 +99,26 @@ const Profile = () => {
                 </div>
                 {editChange ? (
                   <Form>
+
+                    <Form.Group controlId="formBasicProfileImage">
+                      <Form.Label>Profile Image</Form.Label>
+                      <Form.Control
+                        type="file"
+                        accept="image/*"
+                        name="profileImage"
+                        onChange={(e) => {
+                          const reader = new FileReader();
+                          reader.onload = () => {
+                            setUserData({
+                              ...userData,
+                              profileImage: reader.result
+                            });
+                          };
+                          reader.readAsDataURL(e.target.files[0]);
+                        }}
+                      />
+                    </Form.Group>
+
                     <Form.Group controlId="formBasicFirstName">
                       <Form.Label>First Name</Form.Label>
                       <Form.Control
@@ -152,12 +184,12 @@ const Profile = () => {
                   </Form>
                 ) : (
                   <div>
-                    <p>First Name: {userData.firstName}</p>
-                    <p>Last Name: {userData.lastName}</p>
-                    <p>Username: {userData.username}</p>
-                    <p>Email: {userData.email}</p>
+                    <p className="d-flex justify-content-center">First Name: {userData.firstName}</p>
+                    <p className="d-flex justify-content-center">Last Name: {userData.lastName}</p>
+                    <p className="d-flex justify-content-center">Username: {userData.username}</p>
+                    <p className="d-flex justify-content-center">Email: {userData.email}</p>
                     <Button variant="primary" onClick={handleModifica}>
-                      Modifica i tuoi dati
+                      Modifica Profilo
                     </Button>
                   </div>
                 )}

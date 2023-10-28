@@ -76,7 +76,7 @@ const Profile = () => {
 
   return (
     <>
-      <Navbar/>
+      <Navbar />
       <Container>
         <Row className="justify-content-center mt-5">
           <Col md={6}>
@@ -149,26 +149,26 @@ const Profile = () => {
                     <Button variant="secondary" onClick={handleAnnulla}>
                       Annulla
                     </Button>
-                  </Form>
-                ) : (
-                  <div>
-                    <p>First Name: {userData.firstName}</p>
-                    <p>Last Name: {userData.lastName}</p>
-                    <p>Username: {userData.username}</p>
-                    <p>Email: {userData.email}</p>
-                    <Button variant="primary" onClick={handleModifica}>
-                      Modifica i tuoi dati
-                    </Button>
-                  </div>
-                )}
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    </>
-  );
-};
+                    </Form>
+              ) : (
+                <div >
+                  <p className="d-flex justify-content-center">First Name: {userData.firstName}</p>
+                  <p className="d-flex justify-content-center">Last Name: {userData.lastName}</p>
+                  <p className="d-flex justify-content-center">Username: {userData.username}</p>
+                  <p className="d-flex justify-content-center">Email: {userData.email}</p>
+                  <Button variant="primary" onClick={handleModifica}>
+                    Modifica i tuoi dati
+                  </Button>
+                </div>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  </>
+);
+              }
 
 export default Profile;
 

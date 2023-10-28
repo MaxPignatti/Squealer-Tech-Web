@@ -55,8 +55,8 @@ const Squeels = () => {
                   />
                 </div>
               )}
-              <div className="d-flex">
-                <small className="text-muted text-right">
+              <div className="d-flex justify-content-end">
+                <small className="text-muted">
                   <em>
                     Posted at: {new Date(message.createdAt).toLocaleString([], { hour: '2-digit', minute: '2-digit' })}
                   </em>

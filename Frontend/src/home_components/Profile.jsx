@@ -88,7 +88,7 @@ const Profile = () => {
 
   return (
     <>
-      <Navbar/>
+      <Navbar />
       <Container>
         <Row className="justify-content-center mt-5">
           <Col md={6}>

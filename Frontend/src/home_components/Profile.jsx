@@ -14,7 +14,7 @@ const Profile = () => {
   const [userData, setUserData] = useState({});
   const [editChange, seteditChange] = useState(false);
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(""); // State for error message
+  const [errorMessage, setErrorMessage] = useState("");
 
 
   if (!isAuthenticated) {

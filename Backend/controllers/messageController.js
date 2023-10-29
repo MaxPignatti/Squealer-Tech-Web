@@ -6,23 +6,16 @@ exports.createMessage = async (req, res) => {
   try {
     const { userName, image, text, charCount } = req.body;
 
-    // Calculate the character count for the message
-    //const charCount = calculateCharacterCount({ type, text });
-
-    // Check if the user has enough remaining characters
     const user = await User.findOne({ username: userName });
     if (user == null) {
       return res.status(400).json({ error: 'User not found' });
-    }
-    if (user.remainingCharacters < charCount) {
-      return res.status(400).json({ error: 'Not enough remaining characters' });
     }
 
     // Create the message
     const message = new Message({
       user: userName,
       profileImage: user.profileImage,
-      image: (image !== null) ? image.toString('base64') : null, // Salva l'immagine come stringa Base64
+      image: (image !== null) ? image.toString('base64') : null,
       text: text,
     });
 
@@ -30,7 +23,7 @@ exports.createMessage = async (req, res) => {
     await message.save();
 
     // Update the user's remaining characters
-    user.remainingCharacters -= charCount;
+    user.remainingCharacters = charCount;
     await user.save();
 
     return res.status(201).json(message);
@@ -39,6 +32,7 @@ exports.createMessage = async (req, res) => {
     return res.status(500).json({ error: 'Server error' });
   }
 };
+
 
 exports.getAllSqueels = async (req, res) => {
   try {

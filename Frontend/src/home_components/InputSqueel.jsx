@@ -1,19 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import { Button } from 'react-bootstrap';
 import Cookies from 'js-cookie';
 
 const InputSqueel = () => {
+  const [charLimit, setCharLimit]=useState(null);
   const [message, setMessage] = useState('');
   const [showImageInput, setShowImageInput] = useState(false);
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [charCount, setCharCount] = useState(0);
+  const [photoUploaded, setPhotoUploaded] = useState(false);
+  useEffect(() => {
+    const userDataCookie = Cookies.get('user_data');
+    if (userDataCookie) {
+      const userData = JSON.parse(userDataCookie);
+      const username = userData.username;
+
+      fetch(`http://localhost:3500/usr/${username}`)
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          } else {
+            throw new Error('API call failed');
+          }
+        })
+        .then((data) => {
+          setCharLimit(data.remChar);
+          setCharCount(data.remChar);
+        })
+        .catch((error) => {
+          console.error('API call error:', error);
+        });
+    } else {
+      console.error('User data not found in cookies');
+    }
+  }, []);
+
 
   const handleInputChange = (e) => {
-    setMessage(e.target.value);
+    const inputMessage = e.target.value;
+    if (inputMessage.length <= charLimit - photoUploaded*50) {
+      setMessage(inputMessage);
+      let remainingChars = charLimit - inputMessage.length;
+      if (photoUploaded) {
+        remainingChars -= 50;
+      }
+      setCharCount(remainingChars);
+    }
   };
 
   const handleAttachImage = () => {
-    setShowImageInput(true);
+    if (charCount >= 50) {
+      setShowImageInput(true);
+      setPhotoUploaded(true);
+      setCharCount(charCount - 50);
+    } else {
+      alert('Not enough characters for an image upload.');
+    }
   };
 
   const handleConfirmImage = () => {
@@ -36,8 +79,6 @@ const InputSqueel = () => {
 
   const handlePublish = async () => {
     const savedMessage = message;
-    const savedMessageLength = message.length;
-
     setMessage('');
     setImage(null);
     setImagePreview(null);
@@ -50,7 +91,7 @@ const InputSqueel = () => {
           userName: userData.username,
           image: (image !== null) ? image : null,
           text: savedMessage,
-          charCount: savedMessageLength
+          charCount: charCount
         };
 
         const requestOptions = {
@@ -63,7 +104,6 @@ const InputSqueel = () => {
 
         if (response.status === 201) {
           const data = await response.json();
-          console.log('Messaggio creato:', data);
         } else {
           const data = await response.json();
           console.error('Errore 1 nella creazione del messaggio:', data.error);
@@ -73,7 +113,7 @@ const InputSqueel = () => {
       }
     }
   };
-
+  
   return (
     <div className="input-squeel">
       <input
@@ -82,6 +122,7 @@ const InputSqueel = () => {
         onChange={handleInputChange}
         placeholder="Inserisci il tuo messaggio..."
       />
+        <small>Caratteri rimanenti: {charCount}</small>
       <Button variant="primary" onClick={handleAttachImage}>
         Allega Foto
       </Button>

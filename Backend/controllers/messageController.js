@@ -23,7 +23,7 @@ exports.createMessage = async (req, res) => {
     await message.save();
 
     // Update the user's remaining characters
-    user.remainingCharacters = charCount;
+    user.remChar= charCount;
     await user.save();
 
     return res.status(201).json(message);

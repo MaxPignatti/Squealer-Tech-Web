@@ -50,12 +50,17 @@ const InputSqueel = () => {
   };
 
   const handleAttachImage = () => {
+    if(!photoUploaded){
+
+    
     if (charCount >= 50) {
       setShowImageInput(true);
       setPhotoUploaded(true);
       setCharCount(charCount - 50);
     } else {
       alert('Not enough characters for an image upload.');
+    }}else{
+      alert('You have already inserted a photo.');
     }
   };
 
@@ -82,7 +87,7 @@ const InputSqueel = () => {
     setMessage('');
     setImage(null);
     setImagePreview(null);
-
+    if(savedMessage){
     const userDataCookie = Cookies.get('user_data');
     if (userDataCookie) {
       try {
@@ -112,6 +117,9 @@ const InputSqueel = () => {
         console.error('Errore 2 nella creazione del messaggio:', error);
       }
     }
+  }else{
+    alert('You have to write something')
+  }
   };
   
   return (

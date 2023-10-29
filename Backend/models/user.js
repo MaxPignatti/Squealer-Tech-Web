@@ -38,6 +38,10 @@ const userSchema = new mongoose.Schema({
   debChar: {
     type: Number
   },
+  reactionsGiven: {
+    type: [mongoose.Schema.Types.ObjectId], // Array di ObjectID dei messaggi
+    default: [],
+  },
   accountType: {
     type: Number
   },

@@ -56,6 +56,46 @@ exports.getAllSqueels = async (req, res) => {
   }
 };
 
+exports.addReaction = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const { reaction, username } = req.body;
+    
+    const message = await Message.findById(messageId);
+
+    if (!message) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
+    const user = await User.findOne({username});
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (user.reactionsGiven.includes(messageId)) {
+      return res.status(400).json({ error: 'User has already reacted to this message' });
+    }
+
+    if (reaction) {
+      message.positiveReactions += 1;
+    } else {
+      message.negativeReactions += 1;
+    }
+
+    user.reactionsGiven.push(messageId);
+
+    await Promise.all([message.save(), user.save()]);
+
+    res.json({ message: 'Reaction added successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+
 // Retrieve a message by ID
 exports.getMessage = async (req, res) => {
   try {

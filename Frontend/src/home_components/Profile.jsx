@@ -65,6 +65,7 @@ const Profile = () => {
 
   const handleUserChange = async () => {
     try {
+
       const response = await fetch(`http://localhost:3500/usr/${userData.oldUserName}`, {
         method: 'POST',
         headers: {
@@ -83,16 +84,42 @@ const Profile = () => {
         Cookies.set('user_data', JSON.stringify(updatedUserData), { expires: 1 });
   
         seteditChange(false);
-        setShowChangePasswordForm(false);
       } else {
         //console.error('Failed to save data:', response.status);
         const data = await response.json();
         setErrorMessage(data.error);
       }
+
     } catch (error) {
       console.error('API call error:', error);
     }
   };
+
+  const handleUserPsw = async () => {
+    try{
+      const responsePassword = await fetch(`http://localhost:3500/usr/${userData.oldUserName}/password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (responsePassword.status === 200) {
+        // Dopo che la modifica della password è stata completata con successo
+        // Puoi gestire ulteriori azioni qui, ad esempio, reindirizzare l'utente
+        setShowChangePasswordForm(false);
+      } else {
+        //console.error('Failed to update password:', responsePassword.status);
+        const data = await responsePassword.json();
+        setErrorMessage(data.error);
+      }
+    }
+    catch (error) {
+      console.error('API call error:', error);
+    }
+
+  }
 
   const handleAnnulla = () => {
     seteditChange(false);
@@ -230,7 +257,7 @@ const Profile = () => {
                           />
                       </Form.Group>
             
-                          <Button variant="primary" onClick={handleUserChange}>
+                          <Button variant="primary" onClick={handleUserPsw}>
                             Salva Modifiche
                           </Button>
                           <Button variant="secondary" onClick={handleAnnullaPassword}>

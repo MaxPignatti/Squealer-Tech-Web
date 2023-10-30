@@ -23,7 +23,7 @@ exports.getUserById = async (req, res) => {
 
 exports.updateUserProfile = async (req, res) => {
   try {
-    let { profileImage, firstName, lastName, oldUserName, username, email, newPassword, oldPassword } = req.body;
+    let { profileImage, firstName, lastName, oldUserName, username, email} = req.body;
 
     const newUserName = username;
     username = oldUserName;
@@ -35,30 +35,6 @@ exports.updateUserProfile = async (req, res) => {
     }
 
     
-
-    if (oldPassword) 
-    {
-      //check if the olderpassward match
-      const passwordMatch = await bcrypt.compare(oldPassword, user.password);
-      if(passwordMatch)
-      {
-        if (newPassword)
-        {
-          const hashedPassword = await bcrypt.hash(newPassword, 10);
-          user.password = hashedPassword;
-        }
-        else
-        {
-          return res.status(401).json({ error: 'new password miss' });
-        }
-      }
-      else
-      {
-        return res.status(401).json({ error: 'the older password is incorrect' });
-      }
-    }
-
-
 
     // Check if the new email is already in use
     if (email && email !== user.email) {
@@ -94,3 +70,58 @@ exports.updateUserProfile = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+
+exports.updateUserPassword = async (req, res) => {
+  try {
+    let { oldUserName, newPassword, oldPassword, username } = req.body;
+
+
+    const user = await User.findOne({ username});
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (oldPassword) 
+    {
+      //check if the olderpassward match
+      const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+      if(passwordMatch)
+      {
+        if (newPassword)
+        {
+          const hashedPassword = await bcrypt.hash(newPassword, 10);
+          user.password = hashedPassword;
+        }
+        else
+        {
+          return res.status(401).json({ error: 'new password miss' });
+        }
+      }
+      else
+      {
+        return res.status(401).json({ error: 'the older password is incorrect' });
+      }
+    }else{
+      return res.status(401).json({ error: 'olser psw miss' });
+    }
+
+    // Save the updated user data to the database
+    await user.save();
+
+    // Create a new token with the updated user data
+    /*const token = jwt.sign(
+      { username: user.username, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+    */
+
+    res.json({ message: 'Password updated successfully'});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+

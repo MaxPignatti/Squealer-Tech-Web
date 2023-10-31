@@ -41,20 +41,13 @@ const Squeels = () => {
         });
 
         if (response.status === 200) {
-          const updatedMessages = messages.map((message) =>
-            message._id === messageId
-              ? {
-                  ...message,
-                  positiveReactions: isPositiveReaction
-                    ? message.positiveReactions + 1
-                    : message.positiveReactions,
-                  negativeReactions: !isPositiveReaction
-                    ? message.negativeReactions + 1
-                    : message.negativeReactions,
-                }
-              : message
-          );
-          setMessages(updatedMessages);
+          const updatedMessage = messages.find((message) => message._id === messageId);
+          const updatedData = await response.json();
+          
+            updatedMessage.positiveReactions = updatedData.positiveReactions;
+            updatedMessage.negativeReactions = updatedData.negativeReactions;
+  
+          setMessages([...messages]); // Aggiorna lo stato
         } else {
           console.error('Failed to update reaction:', response.status);
         }

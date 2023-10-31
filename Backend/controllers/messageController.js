@@ -73,21 +73,33 @@ exports.addReaction = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (user.reactionsGiven.includes(messageId)) {
+    if ((reaction && user.positiveReactionsGiven.includes(messageId)) || (!reaction && user.negativeReactionsGiven.includes(messageId))) {
       return res.status(400).json({ error: 'User has already reacted to this message' });
     }
 
     if (reaction) {
+      if (user.negativeReactionsGiven.includes(messageId)) {
+        message.negativeReactions -= 1;
+        user.negativeReactionsGiven.pop(messageId);
+      }
       message.positiveReactions += 1;
+      user.positiveReactionsGiven.push(messageId);
     } else {
+      if (user.positiveReactionsGiven.includes(messageId)) {
+        message.positiveReactions -= 1;
+        user.positiveReactionsGiven.pop(messageId);
+      }
       message.negativeReactions += 1;
+      user.negativeReactionsGiven.push(messageId);
     }
-
-    user.reactionsGiven.push(messageId);
 
     await Promise.all([message.save(), user.save()]);
 
-    res.json({ message: 'Reaction added successfully' });
+    res.json({ 
+      message: 'Reaction added successfully',
+      positiveReactions: message.positiveReactions, // Invia il numero aggiornato di reazioni positive
+      negativeReactions: message.negativeReactions // Invia il numero aggiornato di reazioni negative
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

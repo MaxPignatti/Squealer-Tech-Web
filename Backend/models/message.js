@@ -14,7 +14,7 @@ const messageSchema = new mongoose.Schema({
     required: true
   }, 
   image: {
-    type: String, // Cambiato da Buffer a String
+    type: String,
     required: false,
   },
   imageType: {
@@ -25,9 +25,9 @@ const messageSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  channel: {
-    type: String,
-    default: "public",
+  channel: { //Deve essere un oggetto teoricamente
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Channel',
     required: true,
   },
   createdAt: {

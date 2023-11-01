@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     type: String
   },
   channels: {
-    type: [String], // Array di stringhe
+    type: [String],
     default: ["public"],
   },
   socialMediaManagerEmail: {

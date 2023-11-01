@@ -10,6 +10,7 @@ const InputSqueel = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [charCount, setCharCount] = useState(0);
   const [photoUploaded, setPhotoUploaded] = useState(false);
+  
   useEffect(() => {
     const userDataCookie = Cookies.get('user_data');
     if (userDataCookie) {
@@ -55,8 +56,6 @@ const InputSqueel = () => {
     
     if (charCount >= 50) {
       setShowImageInput(true);
-      setPhotoUploaded(true);
-      setCharCount(charCount - 50);
     } else {
       alert('Not enough characters for an image upload.');
     }}else{
@@ -65,6 +64,8 @@ const InputSqueel = () => {
   };
 
   const handleConfirmImage = () => {
+    setPhotoUploaded(true);
+    setCharCount(charCount - 50);
     setShowImageInput(false);
     setImagePreview(`${image}`);
   };

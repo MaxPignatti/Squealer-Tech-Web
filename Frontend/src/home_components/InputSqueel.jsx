@@ -122,6 +122,7 @@ const InputSqueel = () => {
 
         if (response.status === 201) {
           const data = await response.json();
+          window.location.reload();
         } else {
           const data = await response.json();
           console.error('Errore 1 nella creazione del messaggio:', data.error);

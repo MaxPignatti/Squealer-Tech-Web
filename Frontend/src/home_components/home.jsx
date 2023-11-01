@@ -7,6 +7,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { useAuth } from '../AuthContext';
 import { Navigate } from 'react-router-dom';
 import MainPage from './MainPage';
+import ChannelsPage from './ChannelsPage';
 
 const HomePage = () => {
   const {isAuthenticated } = useAuth();
@@ -22,6 +23,7 @@ const HomePage = () => {
         <Routes>
           <Route path="/*" element={<MainPage />} />
           <Route path="/Profile" element={<Profile />} />
+          <Route path="/Channels" element={<ChannelsPage />} />
         </Routes>
       </div>
     </>

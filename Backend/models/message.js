@@ -26,8 +26,8 @@ const messageSchema = new mongoose.Schema({
     required: false,
   },
   channel: { //Deve essere un oggetto teoricamente
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Channel',
+    type: String,
+    default: "public",
     required: true,
   },
   createdAt: {

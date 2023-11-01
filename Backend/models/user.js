@@ -25,9 +25,13 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String
   },
+  createdChannels: {
+    type: [String],
+    default: [],
+  },
   channels: {
     type: [String],
-    default: ["public"],
+    default: ['public'],
   },
   socialMediaManagerEmail: {
     type: String,

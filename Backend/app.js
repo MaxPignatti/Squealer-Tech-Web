@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors'); // Import the cors middleware
+const Channel = require('./models/channel');
 
 const app = express();
 const port = 3500;
@@ -24,11 +25,13 @@ const authRoutes = require('./routes/authRoutes');
 const secureRoutes = require('./routes/secureRoutes');
 const userRoutes = require('./routes/userRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const channelRoutes = require('./routes/channelRoutes');
 
 app.use(authRoutes);
 app.use(secureRoutes);
 app.use(userRoutes);
 app.use(messageRoutes);
+app.use(channelRoutes);
 
 
 
@@ -41,6 +44,11 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.on('connected', console.error.bind(console, 'MongoDB connected:'));
 
+const channel = Channel.findOne({ name: 'public' });
+if (!channel) {
+  const publicChannel = new Channel({ name: 'public', founder: 'Squealer'});
+  publicChannel.save();
+}
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

@@ -39,10 +39,10 @@ const Navbar = () => {
           {isVerticalNavbarOpen && (
             <ul className="vertical-navbar">
               <li>
-                <NavLink to="/Canali">Canali</NavLink>
+                <NavLink to="/Channels">Canali</NavLink>
               </li>
               <li>
-                <NavLink to="/Assistenza">Assistenza</NavLink>
+                <NavLink to="/Assistance">Assistenza</NavLink>
               </li>
               <li>
                 <NavLink to="/Shop">Shop</NavLink>

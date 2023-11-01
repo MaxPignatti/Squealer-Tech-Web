@@ -10,7 +10,8 @@ const InputSqueel = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [charCount, setCharCount] = useState(0);
   const [photoUploaded, setPhotoUploaded] = useState(false);
-  
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
+
   useEffect(() => {
     const userDataCookie = Cookies.get('user_data');
     if (userDataCookie) {
@@ -50,15 +51,26 @@ const InputSqueel = () => {
     }
   };
 
+  const handleDeleteImage = () => {
+    setPhotoUploaded(false);
+    setImage(null);
+    setImagePreview(null);
+    setShowDeleteButton(false);
+  };
+  
   const handleAttachImage = () => {
-    if(!photoUploaded){
-
-    
-    if (charCount >= 50) {
-      setShowImageInput(true);
+    if (!photoUploaded) {
+      if (charCount >= 50) {
+        setShowImageInput(!showImageInput);
+        if (!showImageInput) {
+          setImage(null);
+          setImagePreview(null);
+          setShowDeleteButton(false);
+        }
+      } else {
+        alert('Not enough characters for an image upload.');
+      }
     } else {
-      alert('Not enough characters for an image upload.');
-    }}else{
       alert('You have already inserted a photo.');
     }
   };
@@ -133,7 +145,7 @@ const InputSqueel = () => {
       />
         <small>Caratteri rimanenti: {charCount}</small>
       <Button variant="primary" onClick={handleAttachImage}>
-        Allega Foto
+        {showImageInput ? "Annulla Foto" : "Allega Foto"}
       </Button>
       {showImageInput && (
         <>

@@ -50,6 +50,18 @@ const userSchema = new mongoose.Schema({
     type: [mongoose.Schema.Types.ObjectId], 
     default: [],
   },
+  positiveMessages: {
+    type: Number,
+    default: 0,
+    required: true,
+
+  },
+  negativeMessages: {
+    type: Number,
+    default: 0,
+    required: true,
+
+  },
   accountType: {
     type: Number
   },

@@ -53,7 +53,7 @@ exports.getAllSqueels = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
-  }
+  } 
 };
 
 exports.addReaction = async (req, res) => {
@@ -93,12 +93,33 @@ exports.addReaction = async (req, res) => {
       user.negativeReactionsGiven.push(messageId);
     }
 
+    const cm = 0.5 * (message.positiveReactions + message.negativeReactions); //massa critica
+    const newChar = 10; // caratteri da aggiungere o togliere
+
+    if(message.positiveReactions > cm && message.negativeReactions <= cm){ //il messaggio è popolare
+      user.positiveMessages += 1; 
+    }
+    else if(message.positiveReactions <= cm && message.negativeReactions > cm){ //il messaggio è impopolare
+      user.negativeMessages += 1; 
+    }
+    //else if(message.positiveReactions > cm && message.negativeReactions > cm) ; // il messaggio è controverso
+  
+    if(user.positiveMessages > 10){
+      user.remChar += newChar;
+      user.positiveMessages = 0
+    }
+    else if(user.negativeMessages > 3){
+      user.remChar -= newChar;
+      user.negativeMessages = 0;
+    }
+    
+
     await Promise.all([message.save(), user.save()]);
 
     res.json({ 
       message: 'Reaction added successfully',
       positiveReactions: message.positiveReactions, // Invia il numero aggiornato di reazioni positive
-      negativeReactions: message.negativeReactions // Invia il numero aggiornato di reazioni negative
+      negativeReactions: message.negativeReactions, // Invia il numero aggiornato di reazioni negative
     });
   } catch (error) {
     console.error(error);

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Cookies from 'js-cookie';
 
-const CreateChannel = () => {
+const CreateChannel = ({ onChannelCreated }) => { // Aggiunto il prop "onChannelCreated"
   const [showForm, setShowForm] = useState(false);
   const [channelName, setChannelName] = useState("");
   const [channelDescription, setChannelDescription] = useState("");
@@ -26,7 +26,9 @@ const CreateChannel = () => {
 
             if (response.status === 201) {
                 console.log("Canale creato con successo.");
-                setShowForm(false); 
+                setShowForm(false);
+                // Aggiungi la seguente riga per notificare ChannelsPage dell'aggiornamento
+                onChannelCreated();
             } else {
                 console.error("Errore durante la creazione del canale:", response.status);
             }

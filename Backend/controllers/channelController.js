@@ -25,7 +25,7 @@ exports.createChannel = async (req, res) => {
     // Aggiunge il canale agli array dello user
     await User.updateOne(
       { username: creator },
-      { $push: { createdChannels: name, channels: name } }
+      { $push: { createdChannels: name} }
     );
 
     res.status(201).json({ message: "Canale creato con successo.", channel: newChannel });
@@ -77,5 +77,36 @@ exports.deleteChannel = async (req, res) => {
   } catch (error) {
     console.error("Errore durante l'eliminazione del canale:", error);
     res.status(500).json({ error: "Errore interno del server." });
+  }
+}
+
+
+exports.getSubscribedChannels = async (req, res) => {
+  try {
+    const username = req.params.username;
+    console.log(username);
+    const subscribedChannels = await Channel.find({ members: username });
+    res.json(subscribedChannels);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+exports.unsubscribe = async (req, res) => {
+  try {
+    const { username } = req.body;
+    const channelId = req.params.id;
+    const channel = await Channel.findById(channelId);
+
+    if (!channel) {
+      return res.status(404).json({ message: 'Canale non trovato' });
+    }
+
+    channel.members = channel.members.filter(member => member !== username);
+    await channel.save();
+    
+    res.json({ message: 'Disiscrizione avvenuta con successo' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 }

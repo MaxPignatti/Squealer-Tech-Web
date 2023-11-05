@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-const cors = require('cors'); // Import the cors middleware
+const cors = require('cors');
 const Channel = require('./models/channel');
 
 const app = express();
@@ -11,9 +11,7 @@ const port = 3500;
 // Load environment variables
 require('./config/env');
 
-
-app.use(bodyParser.json({ limit: '10mb' })); // Imposta il limite di dimensioni del body a 100 MB
-
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
@@ -33,8 +31,6 @@ app.use(userRoutes);
 app.use(messageRoutes);
 app.use(channelRoutes);
 
-
-
 mongoose.connect('mongodb://localhost:27017/test', {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -46,9 +42,13 @@ db.on('connected', console.error.bind(console, 'MongoDB connected:'));
 
 const channel = Channel.findOne({ name: 'public' });
 if (!channel) {
-  const publicChannel = new Channel({ name: 'public', founder: 'Squealer'});
+  const publicChannel = new Channel({ name: 'public', founder: 'Squealer' });
   publicChannel.save();
 }
+
+const { checkAndSendTempMessages } = require('./background-task/tempMessageTask');
+checkAndSendTempMessages();
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

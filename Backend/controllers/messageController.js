@@ -4,7 +4,7 @@ const User = require('../models/user');
 // Create a new message
 exports.createMessage = async (req, res) => {
   try {
-    const { userName, image, text, charCount } = req.body;
+    const { userName, image, text, charCount, isTemp, updateInterval, maxSendCount } = req.body;
 
     const user = await User.findOne({ username: userName });
     if (user == null) {
@@ -17,13 +17,16 @@ exports.createMessage = async (req, res) => {
       profileImage: user.profileImage,
       image: (image !== null) ? image.toString('base64') : null,
       text: text,
+      isTemp: isTemp,
+      updateInterval: isTemp ? updateInterval : 0,
+      maxSendCount: maxSendCount,
     });
 
     // Save the message
     await message.save();
 
     // Update the user's remaining characters
-    user.remChar= charCount;
+    user.remChar = charCount;
     await user.save();
 
     return res.status(201).json(message);

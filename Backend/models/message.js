@@ -11,8 +11,8 @@ const messageSchema = new mongoose.Schema({
   profileImage: {
     type: String,
     default: defaultProfileImage,
-    required: true
-  }, 
+    required: true,
+  },
   image: {
     type: String,
     required: false,
@@ -25,7 +25,7 @@ const messageSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  channel: { //Deve essere un oggetto teoricamente
+  channel: {
     type: String,
     default: "public",
     required: true,
@@ -45,6 +45,21 @@ const messageSchema = new mongoose.Schema({
     default: 0,
     required: true,
   },
+  isTemp: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  updateInterval: {
+    type: Number,
+    required: false,
+    default: null,
+  },
+  maxSendCount: {
+    type: Number,
+    required: false,
+    default: null,
+  }
 });
 
 module.exports = mongoose.model('Message', messageSchema);

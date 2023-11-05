@@ -10,8 +10,10 @@ const InputSqueel = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [charCount, setCharCount] = useState(0);
   const [photoUploaded, setPhotoUploaded] = useState(false);
-  const [showDeleteButton, setShowDeleteButton] = useState(false);
 
+  const [isTemp, setIsTemp] = useState(false);
+  const [updateInterval, setUpdateInterval] = useState('');
+  const [maxSendCount, setMaxSendCount] = useState(''); 
   useEffect(() => {
     const userDataCookie = Cookies.get('user_data');
     if (userDataCookie) {
@@ -50,13 +52,6 @@ const InputSqueel = () => {
       setCharCount(remainingChars);
     }
   };
-
-  const handleDeleteImage = () => {
-    setPhotoUploaded(false);
-    setImage(null);
-    setImagePreview(null);
-    setShowDeleteButton(false);
-  };
   
   const handleAttachImage = () => {
     if (!photoUploaded) {
@@ -82,6 +77,25 @@ const InputSqueel = () => {
     setImagePreview(`${image}`);
   };
   
+  const handleToggleTemp = () => {
+    setIsTemp(!isTemp);
+  };  
+  const handleIntervalChange = (e) => {
+    const value = e.target.value;
+    if (/^\d+$/.test(value)) {
+      const numericValue = parseInt(value);
+      if (numericValue >= 1 && numericValue <= 15) {
+        setUpdateInterval(numericValue);
+      } else {
+        setUpdateInterval(numericValue < 1 ? 1 : 60);
+      }
+    } 
+  };
+  
+  const handleConfirmInterval = () => {
+    setIsTemp(false); 
+  };
+  
 
   const handleImageInputChange = (e) => {
     const file = e.target.files[0];
@@ -95,6 +109,19 @@ const InputSqueel = () => {
     reader.readAsDataURL(file);
   };
 
+  const handleMaxSendCountChange = (e) => {
+    const value = e.target.value;
+    if (/^\d+$/.test(value)) {
+      const numericValue = parseInt(value);
+      if (numericValue >= 1 && numericValue <= 20) {
+        setMaxSendCount(numericValue);
+      } else {
+        setMaxSendCount(numericValue < 1 ? 1 : 20);
+      }
+    } 
+  };
+  
+  
   const handlePublish = async () => {
     const savedMessage = message;
     setMessage('');
@@ -107,10 +134,14 @@ const InputSqueel = () => {
         const userData = JSON.parse(userDataCookie);
         const data = {
           userName: userData.username,
-          image: (image !== null) ? image : null,
+          image: image !== null ? image : null,
           text: savedMessage,
-          charCount: charCount
+          charCount: charCount,
+          isTemp: isTemp,
+          updateInterval: isTemp ? updateInterval : 0,
+          maxSendCount: maxSendCount,
         };
+        
 
         const requestOptions = {
           method: 'POST',
@@ -144,7 +175,7 @@ const InputSqueel = () => {
         onChange={handleInputChange}
         placeholder="Inserisci il tuo messaggio..."
       />
-        <small>Caratteri rimanenti: {charCount}</small>
+      <small>Caratteri rimanenti: {charCount}</small>
       <Button variant="primary" onClick={handleAttachImage}>
         {showImageInput ? "Annulla Foto" : "Allega Foto"}
       </Button>
@@ -179,8 +210,26 @@ const InputSqueel = () => {
       <Button variant="success" onClick={handlePublish}>
         Pubblica
       </Button>
+      <Button variant="info" onClick={handleToggleTemp}>
+        {isTemp ? "Cancel Update" : "Set Update"}
+      </Button>
+      {isTemp && (
+        <div>
+          <input
+            type="number"
+            value={updateInterval}
+            onChange={handleIntervalChange}
+            placeholder="Intervallo Update(minutes)"
+          />
+          <input
+            type="number"
+            value={maxSendCount}
+            onChange={handleMaxSendCountChange}
+            placeholder="Max Send Count"
+          />
+        </div>
+      )}
     </div>
   );
-};
-
-export default InputSqueel;
+}
+  export default InputSqueel;

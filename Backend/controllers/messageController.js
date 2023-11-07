@@ -95,26 +95,51 @@ exports.addReaction = async (req, res) => {
       message.negativeReactions += 1;
       user.negativeReactionsGiven.push(messageId);
     }
-
+    
+    //console.log("reazioni positive: ", message.positiveReactions);
     const cm = 0.5 * (message.positiveReactions + message.negativeReactions); //massa critica
     const newChar = 10; // caratteri da aggiungere o togliere
 
-    if(message.positiveReactions > cm && message.negativeReactions <= cm){ //il messaggio è popolare
-      user.positiveMessages += 1; 
+    if(message.positiveReactions > cm && message.negativeReactions <= cm)//il messaggio è popolare
+    { 
+      //console.log("popolare");
+      if(user.negativeMessages.includes(messageId)) // il messaggio è controverso
+      {
+        //user.negativeMessages.pop(messageId);
+        if(!user.controversialMessages.includes(messageId)){
+          user.controversialMessages.push(messageId);
+        };
+
+      }
+
+      if(!user.positiveMessages.includes(messageId))
+      {
+        user.positiveMessages.push(messageId);
+        user.remChar += charforReaction(user, newChar);//modifico caratteri
+        //console.log("fatto");
+      }
+      
     }
-    else if(message.positiveReactions <= cm && message.negativeReactions > cm){ //il messaggio è impopolare
-      user.negativeMessages += 1; 
+    else if(message.positiveReactions <= cm && message.negativeReactions > cm)//il messaggio è impopolare
+    {
+      //console.log("impopolare");
+      if(user.positiveMessages.includes(messageId))
+      {
+        //user.positiveMessages.pop(messageId);
+        //console.log("tolto");
+        if(!user.controversialMessages.includes(messageId)){
+          user.controversialMessages.push(messageId);
+        };
+      }
+
+      if (!user.negativeMessages.includes(messageId))
+      {
+        user.negativeMessages.push(messageId);
+        user.remChar += charforReaction(user, newChar);//modifico i caratteri
+      } 
     }
-    //else if(message.positiveReactions > cm && message.negativeReactions > cm) ; // il messaggio è controverso
-  
-    if(user.positiveMessages > 10){
-      user.remChar += newChar;
-      user.positiveMessages = 0
-    }
-    else if(user.negativeMessages > 3){
-      user.remChar -= newChar;
-      user.negativeMessages = 0;
-    }
+    //console.log("hey  ", user.positiveMessages.length);
+
     
 
     await Promise.all([message.save(), user.save()]);
@@ -201,6 +226,22 @@ exports.updateMessage = async (req, res) => {
       return res.status(500).json({ error: 'Server error' });
     }
   };
+
+  const charforReaction = (user, newChar) => {
+    
+    let char = 0;
+
+    if(user.positiveMessages && user.positiveMessages.length > 10){
+      char += newChar;
+      
+    }
+    else if(user.negativeMessages && user.negativeMessages.length > 3){
+      //console.log("hey");
+      char -= newChar;
+      
+    }
+    return char;
+  }
 
   /*const calculateCharacterCount = (message) => {
     let charCount = 0;

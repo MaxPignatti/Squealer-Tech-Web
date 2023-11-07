@@ -53,15 +53,18 @@ const userSchema = new mongoose.Schema({
     default: [],
   },
   positiveMessages: {
-    type: Number,
-    default: 0,
-    required: true,
+    type: [mongoose.Schema.Types.ObjectId], 
+    default: [],
 
   },
   negativeMessages: {
-    type: Number,
-    default: 0,
-    required: true,
+    type: [mongoose.Schema.Types.ObjectId], 
+    default: [],
+
+  },
+  controversialMessages: {
+    type: [mongoose.Schema.Types.ObjectId], 
+    default: [],
 
   },
   accountType: {

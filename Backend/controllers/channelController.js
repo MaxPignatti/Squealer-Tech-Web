@@ -110,3 +110,44 @@ exports.unsubscribe = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 }
+
+exports.subscribe = async (req, res) => {
+  try {
+    const { channelId } = req.params;
+    const { username } = req.body;
+
+    const channel = await Channel.findById(channelId);
+
+    if (!channel) {
+      return res.status(404).json({ message: 'Canale non trovato' });
+    }
+
+    // Verifica se l'utente è già iscritto al canale
+    if (channel.members.includes(username)) {
+      return res.status(400).json({ message: 'Sei già iscritto a questo canale' });
+    }
+
+    // Aggiungi l'utente come membro del canale
+    channel.members.push(username);
+    await channel.save();
+
+    res.json({ message: 'Iscrizione avvenuta con successo' });
+  } catch (error) {
+    console.error("Errore durante la sottoscrizione del canale:", error);
+    res.status(500).json({ error: "Errore interno del server." });
+  }
+};
+
+exports.getAllChannels = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    // Trova tutti i canali eccetto quelli a cui l'utente è iscritto
+    const allChannels = await Channel.find({ members: { $nin: [username] } });
+
+    res.json(allChannels);
+  } catch (error) {
+    console.error("Errore durante il recupero di tutti i canali:", error);
+    res.status(500).json({ error: "Errore interno del server." });
+  }
+};

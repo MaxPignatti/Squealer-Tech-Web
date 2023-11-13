@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Cookies from 'js-cookie';
 
-const CreateChannel = ({ onChannelCreated }) => { // Aggiunto il prop "onChannelCreated"
+const CreateChannel = ({ onChannelSubscribed, onYourChannelsUpdated, onAllChannelsUpdated }) => {
   const [showForm, setShowForm] = useState(false);
   const [channelName, setChannelName] = useState("");
   const [channelDescription, setChannelDescription] = useState("");
@@ -11,32 +11,37 @@ const CreateChannel = ({ onChannelCreated }) => { // Aggiunto il prop "onChannel
     if (userDataCookie) {
       const userData = JSON.parse(userDataCookie);
       const username = userData.username;
-        try {
+      try {
         const response = await fetch("http://localhost:3500/channels", {
-            method: "POST",
-            headers: {
+          method: "POST",
+          headers: {
             "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
+          },
+          body: JSON.stringify({
             name: channelName,
             description: channelDescription,
-            creator: username
-            }),
-            });
+            creator: username,
+          }),
+        });
 
-            if (response.status === 201) {
-                console.log("Canale creato con successo.");
-                setShowForm(false);
-                // Aggiungi la seguente riga per notificare ChannelsPage dell'aggiornamento
-                onChannelCreated();
-            } else {
-                console.error("Errore durante la creazione del canale:", response.status);
-            }
-        } catch (error) {
-            console.error("Errore durante la richiesta POST:", error);
+        if (response.status === 201) {
+          console.log("Canale creato con successo.");
+          setShowForm(false);
+
+          // Aggiorna ChannelsPage quando viene creato un nuovo canale
+          onYourChannelsUpdated();
+          // Aggiorna SubscribedChannels quando viene creato un nuovo canale
+          onChannelSubscribed();
+          // Aggiorna AllChannels quando viene creato un nuovo canale
+          onAllChannelsUpdated();
+        } else {
+          console.error("Errore durante la creazione del canale:", response.status);
         }
+      } catch (error) {
+        console.error("Errore durante la richiesta POST:", error);
+      }
     } else {
-        console.error('User data not found in cookies');
+      console.error('User data not found in cookies');
     }
   };
 

@@ -8,5 +8,7 @@ router.get("/channels/created", channelController.yourChannels);
 router.delete('/channels/delete/:channelId', channelController.deleteChannel);
 router.get('/channels/subscribed/:username', channelController.getSubscribedChannels);
 router.post('/channels/unsubscribe/:id', channelController.unsubscribe);
+router.get("/channels/all/:username", channelController.getAllChannels);
+router.post("/channels/subscribe/:channelId", channelController.subscribe);
 
 module.exports = router;

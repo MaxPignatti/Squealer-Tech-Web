@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
 
-const SubscribedChannels = () => {
+const SubscribedChannels = ({ subscribedChannelsUpdated, onUnsubscribeChannel }) => {
   const [subscribedChannels, setSubscribedChannels] = useState([]);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ const SubscribedChannels = () => {
         .then((data) => setSubscribedChannels(data))
         .catch((error) => console.error("Errore durante il recupero dei canali:", error));
     }
-  }, []);
+  }, [subscribedChannelsUpdated]);
 
   const handleUnsubscribe = async (channelId) => {
     try {
@@ -34,8 +34,8 @@ const SubscribedChannels = () => {
 
         if (response.status === 200) {
           console.log("Disiscrizione avvenuta con successo.");
-          const updatedChannels = subscribedChannels.filter(channel => channel._id !== channelId);
-          setSubscribedChannels(updatedChannels);
+          // Aggiorna SubscribedChannels con i canali aggiornati
+          onUnsubscribeChannel(channelId);
         } else {
           console.error("Errore durante la disiscrizione:", response.status);
         }
@@ -43,6 +43,11 @@ const SubscribedChannels = () => {
     } catch (error) {
       console.error("Errore durante la richiesta di disiscrizione:", error);
     }
+  };
+
+  // Nuova funzione per gestire l'iscrizione di un nuovo canale
+  const handleSubscribeNewChannel = (newChannel) => {
+    setSubscribedChannels((prevChannels) => [...prevChannels, newChannel]);
   };
 
   return (

@@ -24,12 +24,19 @@ const secureRoutes = require('./routes/secureRoutes');
 const userRoutes = require('./routes/userRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const channelRoutes = require('./routes/channelRoutes');
+const shopRoutes = require('./routes/shopRoutes');
 
 app.use(authRoutes);
 app.use(secureRoutes);
 app.use(userRoutes);
 app.use(messageRoutes);
 app.use(channelRoutes);
+app.use(shopRoutes);
+
+/*mongoose.connect('mongodb://site222327:uo9feeGu@mongo_site222327:27017/test', { Pazzesco non funziona niente :D
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}); */
 
 mongoose.connect('mongodb://localhost:27017/test', {
   useNewUrlParser: true,

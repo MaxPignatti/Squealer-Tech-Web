@@ -172,34 +172,32 @@ exports.getMessage = async (req, res) => {
   }
 };
 
-// Update a message by ID
+
 exports.updateMessage = async (req, res) => {
-    try {
-      const messageId = req.params.id;
-      const { text, reaction } = req.body;
-  
-      const message = await Message.findById(messageId);
-      if (!message) {
-        return res.status(404).json({ error: 'Message not found' });
-      }
-  
-      // Update message text and/or reaction as needed
-      if (text) {
-        message.text = text;
-      }
-      if (reaction) {
-        message.reaction = reaction;
-      }
-  
-      // Save the updated message
-      await message.save();
-  
-      return res.status(200).json(message);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Server error' });
+  try {
+    const { messageId } = req.params;
+    const { text } = req.body; 
+
+    const message = await Message.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ error: 'Message not found' });
     }
-  };
+
+    if (text) {
+      message.text = text;
+    }
+
+    await message.save();
+
+    res.json({ 
+      text: message.text,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
+
   
   // Delete a message by ID
   exports.deleteMessage = async (req, res) => {

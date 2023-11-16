@@ -7,6 +7,7 @@ import Message from './Message';
 
 const Squeels = () => {
   const [messages, setMessages] = useState([]);
+  const [editMessage, seteditMessage] = useState(false);
 
   useEffect(() => {
     const fetchSqueels = async () => {
@@ -58,6 +59,51 @@ const Squeels = () => {
     }
   };
 
+  const handleEditButtonClick = (messageId) => {
+    setMessages((prevMessages) =>
+      prevMessages.map((message) => ({
+        ...message,
+        isEditing: message._id === messageId ? !message.isEditing : message.isEditing,
+      }))
+    );
+  };
+
+
+
+  const handleSaveChanges = async (messageId, editedText) => {
+
+      try {
+        const response = await fetch(`http://localhost:3500/Squeels/edit/${messageId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ text: editedText }),
+        });
+  
+        if (response.status === 200) {
+  
+          const updatedMessage = messages.find((message) => message._id === messageId);
+          const updatedData = await response.json();
+  
+          updatedMessage.text = updatedData.text;
+
+          setMessages([...messages]);
+
+          handleEditButtonClick(messageId);
+        
+        } else {
+          console.error('Failed to save changes:', response.status);
+        }
+      } catch (error) {
+        console.error('API call error:', error);
+      }
+
+
+  };
+
+
+
   const sortedMessages = [...messages].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
@@ -69,6 +115,9 @@ const Squeels = () => {
               key={message._id}
               message={message}
               handleReaction={handleReaction}
+              editMessage = {message.isEditing}
+              seteditMessage={() => handleEditButtonClick(message._id)}
+              handleSaveChanges={handleSaveChanges}
             />
           ))}
         </Col>

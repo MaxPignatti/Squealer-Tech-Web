@@ -1,9 +1,21 @@
-import React from 'react';
-import { Card } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Card, Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+import { faThumbsUp, faThumbsDown, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
-const Message = ({ message, handleReaction }) => {
+const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSaveChanges}) => {
+
+  const [editedText, setEditedText] = useState(message.text);
+
+  const handleTextChange = (e) => {
+    setEditedText(e.target.value);
+  };
+
+  const handleSaveClick = () => {
+    handleSaveChanges(message._id, editedText);
+    
+  };
+
   return (
     <Card key={message._id} className="mb-3">
       <Card.Body>
@@ -36,6 +48,9 @@ const Message = ({ message, handleReaction }) => {
             </em>
           </small>
         </div>
+        <div className= "d-flex justify-content-between" >
+            <Button onClick={() => seteditMessage(true)}><FontAwesomeIcon icon={faPenToSquare}/></Button>
+        </div>
         <div className="d-flex justify-content-between">
           <div>
             <button
@@ -56,6 +71,31 @@ const Message = ({ message, handleReaction }) => {
             <span>{message.negativeReactions}</span>
           </div>
         </div>
+        {editMessage && (
+
+          <div>
+            <Form>
+              <Form.Group controlId="formBasicOldPassword">
+                <Form.Label>Vecchia Password</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="editedText"
+                  value = {editedText}
+                  onChange={handleTextChange}
+                  />
+              </Form.Group>
+            </Form>
+
+          <Button variant="primary" onClick={handleSaveClick}>
+            Salva Modifiche
+          </Button>
+          <Button variant="secondary" onClick={() => seteditMessage(false)}>
+            Annulla
+          </Button>
+        </div>
+
+        )}
+
       </Card.Body>
     </Card>
   );

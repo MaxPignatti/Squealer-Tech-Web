@@ -151,3 +151,38 @@ exports.getAllChannels = async (req, res) => {
     res.status(500).json({ error: "Errore interno del server." });
   }
 };
+
+exports.removeMember = async (req, res) => {
+  try {
+    const { channelId } = req.params;
+    const { username } = req.body;
+
+    const channel = await Channel.findById(channelId);
+    const user = await User.findOne({username})
+
+    if (!channel) {
+      return res.status(404).json({ error: 'Canale non trovato' });
+    }
+    if (!user) {
+      console.log("zio pera 2")
+      return res.status(404).json({ error: 'User non trovato' });
+    }
+
+    // Verifica se il membro è effettivamente presente nel canale
+    if (!channel.members.includes(username)) {
+      return res.status(400).json({ error: 'Membro non trovato in questo canale' });
+    }
+
+    // Rimuovi il membro dal canale
+    channel.members.pull(username);
+    await channel.save();
+
+    user.channels.pull(channel.name)
+    await user.save();
+
+    res.status(200).json({ message: 'Membro rimosso con successo' });
+  } catch (error) {
+    console.error('Errore durante la rimozione del membro dal canale:', error);
+    res.status(500).json({ error: 'Si è verificato un errore durante la rimozione del membro dal canale' });
+  }
+}

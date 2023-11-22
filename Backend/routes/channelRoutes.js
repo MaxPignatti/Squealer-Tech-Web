@@ -10,5 +10,6 @@ router.get('/channels/subscribed/:username', channelController.getSubscribedChan
 router.post('/channels/unsubscribe/:id', channelController.unsubscribe);
 router.get("/channels/all/:username", channelController.getAllChannels);
 router.post("/channels/subscribe/:channelId", channelController.subscribe);
+router.post("/channels/removeMember/:channelId", channelController.removeMember);
 
 module.exports = router;

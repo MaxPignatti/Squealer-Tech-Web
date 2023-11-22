@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import Maps from './Maps';
 
 const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSaveChanges}) => {
 
@@ -41,6 +42,11 @@ const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSa
             />
           </div>
         )}
+
+        {message.location && message.location[0] != null && message.location[1] != null && (
+          <Maps position= {message.location}/>
+        )}
+
         <div className="d-flex justify-content-end">
           <small className="text-muted">
             <em>
@@ -75,8 +81,8 @@ const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSa
 
           <div>
             <Form>
-              <Form.Group controlId="formBasicOldPassword">
-                <Form.Label>Vecchia Password</Form.Label>
+              <Form.Group controlId="formBasicEditText">
+                <Form.Label>Modifica Testo</Form.Label>
                 <Form.Control
                   type="text"
                   name="editedText"
@@ -102,3 +108,4 @@ const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSa
 };
 
 export default Message;
+

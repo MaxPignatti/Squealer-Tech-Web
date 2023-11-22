@@ -59,7 +59,12 @@ const messageSchema = new mongoose.Schema({
     type: Number,
     required: false,
     default: null,
-  }
+  },
+  location: {
+    type: [Number], 
+    index: '2dsphere', 
+    default: [0, 0],
+  },
 });
 
 module.exports = mongoose.model('Message', messageSchema);

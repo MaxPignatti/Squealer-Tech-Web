@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from 'react-bootstrap';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import Cookies from 'js-cookie';
 
 const InputSqueel = () => {
@@ -13,7 +14,11 @@ const InputSqueel = () => {
 
   const [isTemp, setIsTemp] = useState(false);
   const [updateInterval, setUpdateInterval] = useState('');
-  const [maxSendCount, setMaxSendCount] = useState(''); 
+  const [maxSendCount, setMaxSendCount] = useState('');
+
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [showMap, setShowMap] = useState(false);
+
   useEffect(() => {
     const userDataCookie = Cookies.get('user_data');
     if (userDataCookie) {
@@ -60,7 +65,7 @@ const InputSqueel = () => {
         if (!showImageInput) {
           setImage(null);
           setImagePreview(null);
-          setShowDeleteButton(false);
+          //setShowDeleteButton(false);
         }
       } else {
         alert('Not enough characters for an image upload.');
@@ -121,7 +126,37 @@ const InputSqueel = () => {
     } 
   };
   
+  const handleCloseMap = () => {
+    setShowMap(false);
+    setCurrentLocation(null);
+  };
+
+  const handleGetLocation = () => {
+    setShowMap(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        if (latitude != null && longitude != null) {
+          setCurrentLocation([latitude, longitude]);
+          //console.log([latitude, longitude]);
+        } else {
+          console.error('Invalid coordinates received');
+        }
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+      }
+    );
+  };
   
+  
+  //da finire
+  const handleConfirmMap = () => {
+
+    setCharCount(charCount - 50);
+
+  };
+
   const handlePublish = async () => {
     const savedMessage = message;
     setMessage('');
@@ -131,6 +166,7 @@ const InputSqueel = () => {
     const userDataCookie = Cookies.get('user_data');
     if (userDataCookie) {
       try {
+        console.log('Current Location:', currentLocation);
         const userData = JSON.parse(userDataCookie);
         const data = {
           userName: userData.username,
@@ -140,6 +176,7 @@ const InputSqueel = () => {
           isTemp: isTemp,
           updateInterval: isTemp ? updateInterval : 0,
           maxSendCount: maxSendCount,
+          location: currentLocation ? { latitude: currentLocation[0], longitude: currentLocation[1] } : null,
         };
         
 
@@ -207,6 +244,21 @@ const InputSqueel = () => {
           style={{ maxWidth: '100%', maxHeight: '100px' }}
         />
       )}
+
+      <Button variant="warning" onClick={handleGetLocation}>
+        Condividi la tua Posizione
+      </Button>
+      
+      {showMap && (
+        <div>
+          <small>posizione aggiunta</small>
+          <Button variant="danger" onClick={handleCloseMap}>
+            Annulla
+          </Button>
+        </div>
+      )}
+
+
       <Button variant="success" onClick={handlePublish}>
         Pubblica
       </Button>

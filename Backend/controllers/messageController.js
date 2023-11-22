@@ -4,7 +4,7 @@ const User = require('../models/user');
 // Create a new message
 exports.createMessage = async (req, res) => {
   try {
-    const { userName, image, text, charCount, isTemp, updateInterval, maxSendCount } = req.body;
+    const { userName, image, text, charCount, isTemp, updateInterval, maxSendCount, location} = req.body;
 
     const user = await User.findOne({ username: userName });
     if (user == null) {
@@ -20,6 +20,7 @@ exports.createMessage = async (req, res) => {
       isTemp: isTemp,
       updateInterval: isTemp ? updateInterval : 0,
       maxSendCount: maxSendCount,
+      location: location ? [location.latitude, location.longitude] : null,
     });
 
     // Save the message
@@ -176,18 +177,29 @@ exports.getMessage = async (req, res) => {
 exports.updateMessage = async (req, res) => {
   try {
     const { messageId } = req.params;
-    const { text } = req.body; 
+    const { text, username } = req.body; 
 
     const message = await Message.findById(messageId);
     if (!message) {
       return res.status(404).json({ error: 'Message not found' });
     }
+    const user = await User.findOne({username});
 
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const oldTextLength = message.text.length;
     if (text) {
       message.text = text;
     }
 
-    await message.save();
+    const newTextLength = message.text.length;
+
+    const charDifference = newTextLength - oldTextLength;
+
+    user.remChar -= charDifference;
+
+    await Promise.all([message.save(), user.save()]);
 
     res.json({ 
       text: message.text,

@@ -71,14 +71,17 @@ const Squeels = () => {
 
 
   const handleSaveChanges = async (messageId, editedText) => {
-
+    const userDataCookie = Cookies.get('user_data');
+    if (userDataCookie) {
+      const userData = JSON.parse(userDataCookie);
+      const username = userData.username;
       try {
         const response = await fetch(`http://localhost:3500/Squeels/edit/${messageId}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ text: editedText }),
+          body: JSON.stringify({ text: editedText,  username: username }),
         });
   
         if (response.status === 200) {
@@ -98,6 +101,8 @@ const Squeels = () => {
       } catch (error) {
         console.error('API call error:', error);
       }
+    }  
+      
 
 
   };

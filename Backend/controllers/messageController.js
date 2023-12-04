@@ -4,7 +4,7 @@ const User = require('../models/user');
 // Create a new message
 exports.createMessage = async (req, res) => {
   try {
-    const { userName, image, text, charCount, isTemp, updateInterval, maxSendCount, location} = req.body;
+    const { userName, image, text, charCount, isTemp, channel, updateInterval, maxSendCount, location} = req.body;
 
     const user = await User.findOne({ username: userName });
     if (user == null) {
@@ -18,8 +18,10 @@ exports.createMessage = async (req, res) => {
       image: (image !== null) ? image.toString('base64') : null,
       text: text,
       isTemp: isTemp,
+      channel: channel.name,
       updateInterval: isTemp ? updateInterval : 0,
       maxSendCount: maxSendCount,
+
       location: location ? [location.latitude, location.longitude] : null,
     });
 

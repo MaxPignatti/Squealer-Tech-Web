@@ -18,6 +18,26 @@ const InputSqueel = () => {
 
   const [currentLocation, setCurrentLocation] = useState(null);
   const [showMap, setShowMap] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+
+  const [recipientType, setRecipientType] = useState('user'); // 'user' o 'channel'
+  const [filteredChannels, setFilteredChannels] = useState([]); // Canali filtrati
+  const [searchTerm, setSearchTerm] = useState('');
+  const [channels, setChannels] = useState([]); // Stato per i canali sottoscritti
+  const [selectedChannel, setSelectedChannel] = useState(null);
+
+  useEffect(() => {
+    const userDataCookie = Cookies.get('user_data');
+    if (userDataCookie) {
+      const userData = JSON.parse(userDataCookie);
+      const username = userData.username;
+
+      fetch(`http://localhost:3500/channels/subscribed/${username}`)
+        .then((response) => response.json())
+        .then((data) => setChannels(data)) // Imposta i canali sottoscritti nel tuo stato
+        .catch((error) => console.error("Errore durante il recupero dei canali:", error));
+    }
+  }, []);
 
   useEffect(() => {
     const userDataCookie = Cookies.get('user_data');
@@ -45,6 +65,22 @@ const InputSqueel = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const filtered = channels.filter(channel => channel.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    setFilteredChannels(filtered);
+  }, [searchTerm, channels]);
+
+  const handleNewSqueelClick = () => {
+    setShowOptions(true);
+  };  
+
+  const handleRecipientChange = (event) => {
+    setRecipientType(event.target.value);
+  };
+
+  const handleChannelSelect = (channel) => {
+    setSelectedChannel(channel); // Imposta il canale selezionato
+  };
 
   const handleInputChange = (e) => {
     const inputMessage = e.target.value;
@@ -174,6 +210,7 @@ const InputSqueel = () => {
           text: savedMessage,
           charCount: charCount,
           isTemp: isTemp,
+          channel: selectedChannel,
           updateInterval: isTemp ? updateInterval : 0,
           maxSendCount: maxSendCount,
           location: currentLocation ? { latitude: currentLocation[0], longitude: currentLocation[1] } : null,
@@ -205,83 +242,152 @@ const InputSqueel = () => {
   };
   
   return (
-    <div className="input-squeel">
-      <input
-        type="text"
-        value={message}
-        onChange={handleInputChange}
-        placeholder="Inserisci il tuo messaggio..."
-      />
-      <small>Caratteri rimanenti: {charCount}</small>
-      <Button variant="primary" onClick={handleAttachImage}>
-        {showImageInput ? "Annulla Foto" : "Allega Foto"}
-      </Button>
-      {showImageInput && (
-        <>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageInputChange}
-          />
-          {image && (
-            <>
-              <img
-                src={`${image}`}
-                alt="Anteprima"
-                style={{ maxWidth: '100%', maxHeight: '100px' }}
+    <div className="input-squeel" style={{ padding: '20px', maxWidth: '500px', margin: 'auto' }}>
+    {!showOptions ? (
+      <div style={{ textAlign: 'center', padding: '20px' }}>
+        <Button variant="primary" onClick={() => setShowOptions(true)} style={{ width: 'auto' }}>
+          Nuovo Squeel
+        </Button>
+      </div>
+    ) : (
+      <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', marginBottom: '20px', position: 'relative' }}>
+        
+        {/* Sezione Destinatario */}
+        <div style={{ marginBottom: '20px' }}>
+          <label>
+            <input
+              type="radio"
+              name="recipientType"
+              value="user"
+              checked={recipientType === 'user'}
+              onChange={handleRecipientChange}
+            />
+            Utente Singolo
+          </label>
+          <label style={{ marginLeft: '10px' }}>
+            <input
+              type="radio"
+              name="recipientType"
+              value="channel"
+              checked={recipientType === 'channel'}
+              onChange={handleRecipientChange}
+            />
+            Canale
+          </label>
+          {recipientType === 'channel' && (
+            <div style={{ marginTop: '10px' }}>
+              <input
+                type="text"
+                placeholder="Cerca canale..."
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
               />
-              <Button variant="success" onClick={handleConfirmImage}>
-                Conferma Foto
-              </Button>
-            </>
+              <ul style={{ maxHeight: '150px', overflowY: 'auto', listStyleType: 'none', padding: 0, margin: 0 }}>
+                {filteredChannels.map(channel => (
+                  <li 
+                    key={channel.name} 
+                    style={{ 
+                      padding: '10px', 
+                      cursor: 'pointer',
+                      backgroundColor: selectedChannel && selectedChannel.name === channel.name ? '#d0f0c0' : '#f8f8f8',
+                      borderBottom: '1px solid #eee',
+                      transition: 'background-color 0.3s',
+                      ':hover': {
+                        backgroundColor: '#e8e8e8'
+                      }
+                    }}
+                    onClick={() => handleChannelSelect(channel)}
+                  >
+                    {channel.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
-        </>
-      )}
-      {imagePreview && (
-        <img
-          src={imagePreview}
-          alt="Anteprima"
-          style={{ maxWidth: '100%', maxHeight: '100px' }}
-        />
-      )}
+        </div>
+          <div style={{ marginBottom: '10px' }}>
+            <input
+              type="text"
+              value={message}
+              onChange={handleInputChange}
+              placeholder="Inserisci il tuo messaggio..."
+              style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
+            />
+            <small style={{ display: 'block', marginBottom: '10px' }}>Caratteri rimanenti: {charCount}</small>
+          </div>
+  
+          <div style={{ marginBottom: '10px' }}>
+            <Button variant="primary" onClick={handleAttachImage} style={{ marginRight: '10px' }}>
+              {showImageInput ? "Annulla Foto" : "Allega Foto"}
+            </Button>
+            {showImageInput && (
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageInputChange}
+                style={{ display: 'block', marginBottom: '10px' }}
+              />
+            )}
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Anteprima"
+                style={{ maxWidth: '100%', maxHeight: '100px', marginBottom: '10px' }}
+              />
+            )}
+          </div>
+  
+          <Button variant="warning" onClick={handleGetLocation} style={{ marginRight: '10px' }}>
+            Condividi la tua Posizione
+          </Button>
+  
+          {showMap && (
+            <div style={{ marginTop: '10px' }}>
+              <small style={{ display: 'block', marginBottom: '10px' }}>Posizione aggiunta</small>
+              <Button variant="danger" onClick={handleCloseMap}>
+                Annulla
+              </Button>
+            </div>
+          )}
+  
+          <div style={{ marginTop: '20px' }}>
+            
+            <Button variant="info" onClick={handleToggleTemp}>
+              {isTemp ? "Cancel Update" : "Set Update"}
+            </Button>
+          </div>
+  
+          {isTemp && (
+            <div style={{ marginTop: '10px' }}>
+              <input
+                type="number"
+                value={updateInterval}
+                onChange={handleIntervalChange}
+                placeholder="Intervallo Update (minuti)"
+                style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
+              />
+              <input
+                type="number"
+                value={maxSendCount}
+                onChange={handleMaxSendCountChange}
+                placeholder="Max Send Count"
+                style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
+              />
+            </div>
+          )}
 
-      <Button variant="warning" onClick={handleGetLocation}>
-        Condividi la tua Posizione
-      </Button>
-      
-      {showMap && (
-        <div>
-          <small>posizione aggiunta</small>
-          <Button variant="danger" onClick={handleCloseMap}>
+          <Button variant="danger" onClick={() => setShowOptions(false)} style={{ marginTop: '20px' }}>
             Annulla
           </Button>
+          <div style={{ position: 'absolute', right: '20px', bottom: '20px' }}>
+          <Button variant="success" onClick={handlePublish}>
+            Pubblica
+          </Button>
         </div>
-      )}
+      </div>
+    )}
+  </div>
+);
 
-
-      <Button variant="success" onClick={handlePublish}>
-        Pubblica
-      </Button>
-      <Button variant="info" onClick={handleToggleTemp}>
-        {isTemp ? "Cancel Update" : "Set Update"}
-      </Button>
-      {isTemp && (
-        <div>
-          <input
-            type="number"
-            value={updateInterval}
-            onChange={handleIntervalChange}
-            placeholder="Intervallo Update(minutes)"
-          />
-          <input
-            type="number"
-            value={maxSendCount}
-            onChange={handleMaxSendCountChange}
-            placeholder="Max Send Count"
-          />
-        </div>
-      )}
-    </div>
-  );
 }
   export default InputSqueel;

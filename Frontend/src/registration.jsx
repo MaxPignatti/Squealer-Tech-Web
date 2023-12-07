@@ -46,7 +46,7 @@ const RegistrationPage = () => {
           <Card>
             <Card.Body>
               <div className="text-center mb-4">
-                <img src="pic/logo.png" alt="Logo" />
+                <img src="pic/logo.png" alt="Logo" style={{ maxWidth: '100%', height: 'auto' }}/>
               </div>
               <h2 className="text-center">Registration</h2>
               <Form onSubmit={handleRegister}>

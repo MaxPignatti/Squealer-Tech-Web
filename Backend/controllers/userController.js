@@ -2,6 +2,18 @@ const User = require('../models/user');
 const Message = require('../models/message');
 const bcrypt = require('bcrypt');
 
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}); // Trova tutti gli utenti
+    res.json(users); // Restituisci l'elenco degli utenti
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
 // Controller function to get user data by ID
 exports.getUserById = async (req, res) => {
   try {

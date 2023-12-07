@@ -44,6 +44,11 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  privateMessagesReceived: {
+    type: [mongoose.Schema.Types.ObjectId], // Array di ObjectID che fanno riferimento ai messaggi
+    ref: 'Message', 
+    default: []
+  },
   positiveReactionsGiven: {
     type: [mongoose.Schema.Types.ObjectId], // Array di ObjectID dei messaggi
     default: [],

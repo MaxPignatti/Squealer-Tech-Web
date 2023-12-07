@@ -26,6 +26,11 @@ const InputSqueel = () => {
   const [channels, setChannels] = useState([]); // Stato per i canali sottoscritti
   const [selectedChannel, setSelectedChannel] = useState(null);
 
+  const [filteredUsers, setFilteredUsers] = useState([]); // Stato per gli utenti filtrati
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+
   useEffect(() => {
     const userDataCookie = Cookies.get('user_data');
     if (userDataCookie) {
@@ -36,6 +41,11 @@ const InputSqueel = () => {
         .then((response) => response.json())
         .then((data) => setChannels(data)) // Imposta i canali sottoscritti nel tuo stato
         .catch((error) => console.error("Errore durante il recupero dei canali:", error));
+
+      fetch(`http://localhost:3500/usr`)
+        .then((response) => response.json())
+        .then((data) => setUsers(data)) 
+        .catch((error) => console.error("Errore durante il recupero degli utenti:", error));
     }
   }, []);
 
@@ -66,13 +76,27 @@ const InputSqueel = () => {
   }, []);
 
   useEffect(() => {
-    const filtered = channels.filter(channel => channel.name.toLowerCase().includes(searchTerm.toLowerCase()));
-    setFilteredChannels(filtered);
-  }, [searchTerm, channels]);
+    if (recipientType === 'channel') {
+      const filtered = channels.filter(channel => 
+        channel.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ).slice(0, 5); // Limita a 5 canali
+      setFilteredChannels(filtered);
+    } else if (recipientType === 'user') {
+      const filtered = users.filter(user => 
+        user.username.toLowerCase().includes(searchTerm.toLowerCase())
+      ).slice(0, 5); // Limita a 5 utenti
+      setFilteredUsers(filtered);
+    }
+  }, [searchTerm, channels, users, recipientType]);
 
   const handleNewSqueelClick = () => {
     setShowOptions(true);
   };  
+
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
+    console.log(user)
+  };
 
   const handleRecipientChange = (event) => {
     setRecipientType(event.target.value);
@@ -198,113 +222,131 @@ const InputSqueel = () => {
     setMessage('');
     setImage(null);
     setImagePreview(null);
-    if(savedMessage){
-    const userDataCookie = Cookies.get('user_data');
-    if (userDataCookie) {
-      try {
-        console.log('Current Location:', currentLocation);
-        const userData = JSON.parse(userDataCookie);
-        const data = {
-          userName: userData.username,
-          image: image !== null ? image : null,
-          text: savedMessage,
-          charCount: charCount,
-          isTemp: isTemp,
-          channel: selectedChannel,
-          updateInterval: isTemp ? updateInterval : 0,
-          maxSendCount: maxSendCount,
-          location: currentLocation ? { latitude: currentLocation[0], longitude: currentLocation[1] } : null,
-        };
-        
+  
+    if (savedMessage) {
+      const userDataCookie = Cookies.get('user_data');
+      if (userDataCookie) {
+        try {
+          const userData = JSON.parse(userDataCookie);
+          const requestData = {
+            userName: userData.username,
+            image: image !== null ? image : null,
+            text: savedMessage,
+            charCount: charCount,
+            isTemp: isTemp,
+            updateInterval: isTemp ? updateInterval : 0,
+            maxSendCount: maxSendCount,
+            location: currentLocation ? { latitude: currentLocation[0], longitude: currentLocation[1] } : null,
+          };
+  
+          // Controlla se il messaggio è per un utente singolo e aggiungi il nickname del destinatario
+          if (recipientType === 'user' && selectedUser) {
+            requestData.recipientNickname = selectedUser.username;
+          }
 
-        const requestOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        };
-
-        const response = await fetch('http://localhost:3500/create', requestOptions);
-
-        if (response.status === 201) {
-          const data = await response.json();
-          window.location.reload();
-        } else {
-          const data = await response.json();
-          console.error('Errore 1 nella creazione del messaggio:', data.error);
+          if (recipientType ==='channel' && selectedChannel) {
+            requestData.channel = selectedChannel;
+          }
+  
+          // Determina l'URL in base al tipo di destinatario
+          const url = recipientType === 'user' ? 'http://localhost:3500/create/private' : 'http://localhost:3500/create';
+  
+          const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestData),
+          };
+  
+          const response = await fetch(url, requestOptions);
+  
+          if (response.status === 201) {
+            const data = await response.json();
+            window.location.reload();
+          } else {
+            const data = await response.json();
+            console.error('Errore nella creazione del messaggio:', data.error);
+          }
+        } catch (error) {
+          console.error('Errore nella creazione del messaggio:', error);
         }
-      } catch (error) {
-        console.error('Errore 2 nella creazione del messaggio:', error);
       }
+    } else {
+      alert('You have to write something');
     }
-  }else{
-    alert('You have to write something')
-  }
   };
+  
   
   return (
     <div className="input-squeel" style={{ padding: '20px', maxWidth: '500px', margin: 'auto' }}>
-    {!showOptions ? (
-      <div style={{ textAlign: 'center', padding: '20px' }}>
-        <Button variant="primary" onClick={() => setShowOptions(true)} style={{ width: 'auto' }}>
-          Nuovo Squeel
-        </Button>
-      </div>
-    ) : (
-      <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', marginBottom: '20px', position: 'relative' }}>
-        
-        {/* Sezione Destinatario */}
-        <div style={{ marginBottom: '20px' }}>
-          <label>
-            <input
-              type="radio"
-              name="recipientType"
-              value="user"
-              checked={recipientType === 'user'}
-              onChange={handleRecipientChange}
-            />
-            Utente Singolo
-          </label>
-          <label style={{ marginLeft: '10px' }}>
-            <input
-              type="radio"
-              name="recipientType"
-              value="channel"
-              checked={recipientType === 'channel'}
-              onChange={handleRecipientChange}
-            />
-            Canale
-          </label>
-          {recipientType === 'channel' && (
-            <div style={{ marginTop: '10px' }}>
-              <input
-                type="text"
-                placeholder="Cerca canale..."
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
-              />
-              <ul style={{ maxHeight: '150px', overflowY: 'auto', listStyleType: 'none', padding: 0, margin: 0 }}>
-                {filteredChannels.map(channel => (
-                  <li 
-                    key={channel.name} 
-                    style={{ 
-                      padding: '10px', 
-                      cursor: 'pointer',
-                      backgroundColor: selectedChannel && selectedChannel.name === channel.name ? '#d0f0c0' : '#f8f8f8',
-                      borderBottom: '1px solid #eee',
-                      transition: 'background-color 0.3s',
-                      ':hover': {
-                        backgroundColor: '#e8e8e8'
-                      }
-                    }}
-                    onClick={() => handleChannelSelect(channel)}
-                  >
-                    {channel.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+      {!showOptions ? (
+        <div style={{ textAlign: 'center', padding: '20px' }}>
+          <Button variant="primary" onClick={() => setShowOptions(true)} style={{ width: 'auto' }}>
+            Nuovo Squeel
+          </Button>
         </div>
+      ) : (
+        <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', marginBottom: '20px', position: 'relative' }}>
+          <div style={{ marginBottom: '20px' }}>
+            <label>
+              <input
+                type="radio"
+                name="recipientType"
+                value="user"
+                checked={recipientType === 'user'}
+                onChange={handleRecipientChange}
+              />
+              Utente Singolo
+            </label>
+            <label style={{ marginLeft: '10px' }}>
+              <input
+                type="radio"
+                name="recipientType"
+                value="channel"
+                checked={recipientType === 'channel'}
+                onChange={handleRecipientChange}
+              />
+              Canale
+            </label>
+  
+            {recipientType === 'channel' && (
+              <div style={{ marginTop: '10px' }}>
+                <input
+                  type="text"
+                  placeholder="Cerca canale..."
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ width: '100%', padding: '10px' }}
+                />
+                <p>Stai inviando al canale: {selectedChannel ? selectedChannel.name : "Nessun canale selezionato"}</p>
+                <ul style={{ maxHeight: '150px', overflowY: 'auto', listStyleType: 'none', padding: 0 }}>
+                  {filteredChannels.map(channel => (
+                    <li key={channel.id} style={{ padding: '10px', cursor: 'pointer' }} onClick={() => handleChannelSelect(channel)}>
+                      {channel.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+  
+            {recipientType === 'user' && (
+              <div style={{ marginTop: '10px' }}>
+                <input
+                  type="text"
+                  placeholder="Cerca utente..."
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ width: '100%', padding: '10px' }}
+                />
+                <p>Stai inviando a: {selectedUser ? selectedUser.username : "Nessun utente selezionato"}</p>
+                <ul style={{ maxHeight: '150px', overflowY: 'auto', listStyleType: 'none', padding: 0 }}>
+                  {filteredUsers.map(user => (
+                    <li key={user.id} style={{ padding: '10px', cursor: 'pointer' }} onClick={() => handleUserSelect(user)}>
+                      {user.username}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+  
           <div style={{ marginBottom: '10px' }}>
             <input
               type="text"
@@ -351,7 +393,6 @@ const InputSqueel = () => {
           )}
   
           <div style={{ marginTop: '20px' }}>
-            
             <Button variant="info" onClick={handleToggleTemp}>
               {isTemp ? "Cancel Update" : "Set Update"}
             </Button>
@@ -375,19 +416,20 @@ const InputSqueel = () => {
               />
             </div>
           )}
-
+  
           <Button variant="danger" onClick={() => setShowOptions(false)} style={{ marginTop: '20px' }}>
             Annulla
           </Button>
           <div style={{ position: 'absolute', right: '20px', bottom: '20px' }}>
-          <Button variant="success" onClick={handlePublish}>
-            Pubblica
-          </Button>
+            <Button variant="success" onClick={handlePublish}>
+              Pubblica
+            </Button>
+          </div>
         </div>
-      </div>
-    )}
-  </div>
-);
+      )}
+    </div>
+  );
+  
 
 }
   export default InputSqueel;

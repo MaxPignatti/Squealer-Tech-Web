@@ -27,8 +27,6 @@ const messageSchema = new mongoose.Schema({
   },
   channel: {
     type: String,
-    default: "public",
-    required: true,
   },
   createdAt: {
     type: Date,

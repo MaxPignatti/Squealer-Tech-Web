@@ -40,6 +40,50 @@ exports.createMessage = async (req, res) => {
 };
 
 
+exports.privateMessage = async (req, res) => {
+  try {
+    const { userName, image, text, charCount, isTemp, recipientNickname, updateInterval, maxSendCount, location} = req.body;
+
+    const user = await User.findOne({ username: userName });
+    if (user == null) {
+      return res.status(400).json({ error: 'User not found' });
+    }
+    // Trova l'utente destinatario utilizzando il nickname
+    const recipient = await User.findOne({ username: recipientNickname });
+    if (!recipient) {
+      return res.status(404).json({ error: 'Recipient not found' });
+    }
+
+    // Crea un nuovo messaggio
+    const newMessage = new Message({
+      user: userName,
+      profileImage: user.profileImage,
+      image: (image !== null) ? image.toString('base64') : null,
+      text: text,
+      isTemp: isTemp,
+      updateInterval: isTemp ? updateInterval : 0,
+      maxSendCount: maxSendCount,
+
+      location: location ? [location.latitude, location.longitude] : null,
+    });
+
+    // Salva il messaggio nel database
+    const savedMessage = await newMessage.save();
+
+    // Aggiungi l'ID del messaggio ai messaggi privati ricevuti del destinatario
+    recipient.privateMessagesReceived.push(savedMessage._id);
+    await recipient.save();
+    
+    user.remChar = charCount;
+    await user.save();
+
+    res.status(201).json({ message: 'Private message sent successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 exports.getAllSqueels = async (req, res) => {
   try {
     //const userId = req.user.id;

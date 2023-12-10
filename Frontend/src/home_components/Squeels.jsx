@@ -115,16 +115,27 @@ const Squeels = () => {
     <Container>
       <Row className="justify-content-center">
         <Col xs={12} md={8}>
-          {sortedMessages.map((message) => (
-            <Message
-              key={message._id}
-              message={message}
-              handleReaction={handleReaction}
-              editMessage = {message.isEditing}
-              seteditMessage={() => handleEditButtonClick(message._id)}
-              handleSaveChanges={handleSaveChanges}
-            />
-          ))}
+          {sortedMessages.length > 0 ? (
+            sortedMessages.map((message) => (
+              <Message
+                key={message._id}
+                message={message}
+                handleReaction={handleReaction}
+                editMessage={message.isEditing}
+                seteditMessage={() => handleEditButtonClick(message._id)}
+                handleSaveChanges={handleSaveChanges}
+              />
+            ))
+          ) : (
+            <div className="text-center mt-4">
+              <p className="lead">
+                Al momento non ci sono Squeels da mostrare. 😊
+              </p>
+              <p>
+                Iscriviti a dei canali per iniziare a esplorare i messaggi e interagire con la community!
+              </p>
+            </div>
+          )}
         </Col>
       </Row>
     </Container>

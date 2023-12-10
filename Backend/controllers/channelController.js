@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const Channel = require('../models/channel');
 const Message = require('../models/message');
+const user = require('../models/user');
 
 exports.createChannel = async (req, res) => {
   try {
@@ -84,7 +85,6 @@ exports.deleteChannel = async (req, res) => {
 exports.getSubscribedChannels = async (req, res) => {
   try {
     const username = req.params.username;
-    console.log(username);
     const subscribedChannels = await Channel.find({ members: username });
     res.json(subscribedChannels);
   } catch (error) {
@@ -116,10 +116,21 @@ exports.subscribe = async (req, res) => {
     const { channelId } = req.params;
     const { username } = req.body;
 
+    console.log(channelId)
+    console.log(username)
+    
     const channel = await Channel.findById(channelId);
+
+    console.log(channel)
 
     if (!channel) {
       return res.status(404).json({ message: 'Canale non trovato' });
+    }
+
+    const user = await User.findOne({username})
+
+    if (!user) {
+      return res.status(404).json({ message: 'User non trovato' });
     }
 
     // Verifica se l'utente è già iscritto al canale
@@ -131,6 +142,8 @@ exports.subscribe = async (req, res) => {
     channel.members.push(username);
     await channel.save();
 
+    user.channels.push(channel.name);
+    await user.save();
     res.json({ message: 'Iscrizione avvenuta con successo' });
   } catch (error) {
     console.error("Errore durante la sottoscrizione del canale:", error);

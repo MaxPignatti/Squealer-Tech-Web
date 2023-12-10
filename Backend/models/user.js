@@ -31,7 +31,6 @@ const userSchema = new mongoose.Schema({
   },
   channels: {
     type: [String],
-    default: ['public'],
   },
   socialMediaManagerEmail: {
     type: String,

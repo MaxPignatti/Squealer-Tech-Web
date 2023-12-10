@@ -26,7 +26,9 @@ exports.createChannel = async (req, res) => {
     // Aggiunge il canale agli array dello user
     await User.updateOne(
       { username: creator },
-      { $push: { createdChannels: name} }
+      { 
+        $push: { createdChannels: name, channels: name }
+      }
     );
 
     res.status(201).json({ message: "Canale creato con successo.", channel: newChannel });
@@ -102,8 +104,17 @@ exports.unsubscribe = async (req, res) => {
       return res.status(404).json({ message: 'Canale non trovato' });
     }
 
+    const user = await User.findOne({username})
+
+    if (!user) {
+      return res.status(404).json({ message: 'User non trovato' });
+    }
+
     channel.members = channel.members.filter(member => member !== username);
     await channel.save();
+    const channelName = channel.name;
+    user.channels = user.channels.filter(channel => channelName !== channel);
+    await user.save();
     
     res.json({ message: 'Disiscrizione avvenuta con successo' });
   } catch (error) {

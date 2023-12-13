@@ -106,6 +106,28 @@ exports.getAllSqueels = async (req, res) => {
   } 
 };
 
+exports.getPrivateMessages = async (req, res) => {
+  try {
+    const username = req.params.username;
+
+    // Trova l'utente tramite username
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: 'Utente non trovato' });
+    }
+
+    // Trova tutti i messaggi privati ricevuti dall'utente
+    const privateMessages = await Message.find({
+      '_id': { $in: user.privateMessagesReceived }
+    });
+
+    res.json(privateMessages);
+  } catch (error) {
+    console.error("Errore durante il recupero dei messaggi privati:", error);
+    res.status(500).json({ error: "Errore interno del server." });
+  }
+};
+
 exports.addReaction = async (req, res) => {
   try {
     const { messageId } = req.params;

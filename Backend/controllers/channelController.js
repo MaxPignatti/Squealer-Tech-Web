@@ -56,23 +56,28 @@ exports.deleteChannel = async (req, res) => {
   try {
     const channelId = req.params.channelId;
     const { username } = req.body;
+    const channel = await Channel.findById(channelId);
 
+    if (!channel) {
+      return res.status(404).json({ message: 'Canale non trovato' });
+    }
+    channelName = channel.name;
     // Step 1: Elimina il canale dal database
     await Channel.findByIdAndDelete(channelId);
 
     // Step 2: Elimina tutti i messaggi associati a quel canale
-    await Message.deleteMany({ channel: channelId });
+    await Message.deleteMany({ channel: channelName });
 
     // Step 3: Rimuovi il canale dal campo `channels` di tutti gli utenti iscritti
     await User.updateMany(
-      { channels: channelId },
-      { $pull: { channels: channelId } }
+      { channels: channelName },
+      { $pull: { channels: channelName } }
     );
 
     // Step 4: Rimuovi il canale dal campo `createdChannels` del creatore
     await User.updateOne(
       { username },
-      { $pull: { createdChannels: channelId } }
+      { $pull: { createdChannels: channelName } }
     );
 
     // Restituisci una risposta di successo

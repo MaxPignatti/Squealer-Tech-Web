@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Col, Container, Row } from 'react-bootstrap';
+import { Card, Col, Container, Row, Button, ButtonGroup } from 'react-bootstrap';
 import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
@@ -7,16 +7,20 @@ import Message from './Message';
 
 const Squeels = () => {
   const [messages, setMessages] = useState([]);
-  const [editMessage, seteditMessage] = useState(false);
+  const [viewMode, setViewMode] = useState('public'); // 'public' o 'private'
 
   useEffect(() => {
-    const fetchSqueels = async () => {
+    const fetchMessages = async () => {
       const userDataCookie = Cookies.get('user_data');
       if (userDataCookie) {
         const userData = JSON.parse(userDataCookie);
         const username = userData.username;
+        const url = viewMode === 'public' 
+                    ? `http://localhost:3500/Squeels/${username}`
+                    : `http://localhost:3500/privateMessages/${username}`;
+
         try {
-          const response = await fetch(`http://localhost:3500/Squeels/${username}`);
+          const response = await fetch(url);
           const data = await response.json();
           setMessages(data);
         } catch (error) {
@@ -25,8 +29,8 @@ const Squeels = () => {
       }
     };
 
-    fetchSqueels();
-  }, []);
+    fetchMessages();
+  }, [viewMode]);
 
   const handleReaction = async (messageId, isPositiveReaction) => {
     const userDataCookie = Cookies.get('user_data');
@@ -113,6 +117,16 @@ const Squeels = () => {
 
   return (
     <Container>
+      <Row className="justify-content-center my-3">
+        <ButtonGroup>
+          <Button variant={viewMode === 'public' ? 'primary' : 'secondary'} onClick={() => setViewMode('public')}>
+            Squeels Pubblici
+          </Button>
+          <Button variant={viewMode === 'private' ? 'primary' : 'secondary'} onClick={() => setViewMode('private')}>
+            Messaggi Privati
+          </Button>
+        </ButtonGroup>
+      </Row>
       <Row className="justify-content-center">
         <Col xs={12} md={8}>
           {sortedMessages.length > 0 ? (
@@ -129,11 +143,12 @@ const Squeels = () => {
           ) : (
             <div className="text-center mt-4">
               <p className="lead">
-                Al momento non ci sono Squeels da mostrare. 😊
+                {viewMode === 'public' ? 
+                  "Al momento non ci sono Squeels pubblici da mostrare." :
+                  "Non hai messaggi privati."}
               </p>
-              <p>
-                Iscriviti a dei canali per iniziare a esplorare i messaggi e interagire con la community!
-              </p>
+              {viewMode === 'public' && 
+                <p>Iscriviti a dei canali per iniziare a esplorare i messaggi e interagire con la community!</p>}
             </div>
           )}
         </Col>

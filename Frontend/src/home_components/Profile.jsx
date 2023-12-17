@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Form, Button, CardBody} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import {faEye, faEyeSlash  } from "@fortawesome/free-solid-svg-icons";
 import Cookies from 'js-cookie';
 import { useAuth } from '../AuthContext';
 import { Navigate } from 'react-router-dom';
@@ -15,6 +15,9 @@ const Profile = () => {
   const [editChange, seteditChange] = useState(false);
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
 
   if (!isAuthenticated) {
@@ -124,6 +127,7 @@ const Profile = () => {
   const handleAnnulla = () => {
     seteditChange(false);
   };
+
 
 
   return (
@@ -236,25 +240,45 @@ const Profile = () => {
                       <Form.Group controlId="formBasicOldPassword">
                         <Form.Label>Vecchia Password</Form.Label>
                         <Form.Control
-                          type="password"
+                          type={showOldPassword ? "text" : "password"}  
                           name="oldPassword"
                           placeholder="Vecchia Password"
                           onChange={(e) =>
                             setUserData({ ...userData, oldPassword: e.target.value })
                           }
-                          />
+                        />
+                        <span
+                          className="password-toggle"
+                          onClick={() => setShowOldPassword(!showOldPassword)} 
+                        >
+                          {showOldPassword ? (
+                            <FontAwesomeIcon icon={faEyeSlash} />
+                          ) : (
+                            <FontAwesomeIcon icon={faEye} />
+                          )}
+                        </span>
                       </Form.Group>
 
                       <Form.Group controlId="formBasicPassword">
                         <Form.Label>Nuova Password</Form.Label>
                         <Form.Control
-                          type="password"
+                          type={showNewPassword ? "text" : "password"}  
                           name="newPassword"
                           placeholder="Nuova Password"
                           onChange={(e) =>
                             setUserData({ ...userData, newPassword: e.target.value })
                           }
-                          />
+                        />
+                        <span
+                          className="password-toggle"
+                          onClick={() => setShowNewPassword(!showNewPassword)} 
+                        >
+                          {showNewPassword ? (
+                            <FontAwesomeIcon icon={faEyeSlash} />
+                          ) : (
+                            <FontAwesomeIcon icon={faEye} />
+                          )}
+                        </span>
                       </Form.Group>
             
                           <Button variant="primary" onClick={handleUserPsw}>

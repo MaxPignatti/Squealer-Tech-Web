@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import Maps from './Maps';
 
-const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSaveChanges}) => {
+const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSaveChanges, currentUser }) => {
 
   const [editedText, setEditedText] = useState(message.text);
 
@@ -16,6 +16,7 @@ const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSa
     handleSaveChanges(message._id, editedText);
     
   };
+
 
   return (
     <Card key={message._id} className="mb-3">
@@ -54,8 +55,14 @@ const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSa
             </em>
           </small>
         </div>
-        <div className= "d-flex justify-content-between" >
-            <Button onClick={() => seteditMessage(true)}><FontAwesomeIcon icon={faPenToSquare}/></Button>
+        <div className="d-flex justify-content-between">
+          {currentUser === message.user && (
+            <div>
+              <Button onClick={() => seteditMessage(true)}>
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </Button>
+            </div>
+          )}
         </div>
         <div className="d-flex justify-content-between">
           <div>
@@ -77,7 +84,7 @@ const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSa
             <span>{message.negativeReactions}</span>
           </div>
         </div>
-        {editMessage && (
+        {editMessage && currentUser === message.user && (
 
           <div>
             <Form>

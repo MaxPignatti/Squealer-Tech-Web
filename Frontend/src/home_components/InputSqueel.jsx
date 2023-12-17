@@ -210,12 +210,7 @@ const InputSqueel = () => {
   };
   
   
-  //da finire
-  const handleConfirmMap = () => {
 
-    setCharCount(charCount - 50);
-
-  };
 
   const handlePublish = async () => {
     const savedMessage = message;

@@ -8,6 +8,7 @@ import Message from './Message';
 const Squeels = () => {
   const [messages, setMessages] = useState([]);
   const [viewMode, setViewMode] = useState('public'); // 'public' o 'private'
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -15,6 +16,7 @@ const Squeels = () => {
       if (userDataCookie) {
         const userData = JSON.parse(userDataCookie);
         const username = userData.username;
+        setCurrentUser(username);
         const url = viewMode === 'public' 
                     ? `http://localhost:3500/Squeels/${username}`
                     : `http://localhost:3500/privateMessages/${username}`;
@@ -112,7 +114,6 @@ const Squeels = () => {
   };
 
 
-
   const sortedMessages = [...messages].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
@@ -138,6 +139,7 @@ const Squeels = () => {
                 editMessage={message.isEditing}
                 seteditMessage={() => handleEditButtonClick(message._id)}
                 handleSaveChanges={handleSaveChanges}
+                currentUser={currentUser}
               />
             ))
           ) : (

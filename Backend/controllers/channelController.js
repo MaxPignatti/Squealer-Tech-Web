@@ -66,7 +66,8 @@ exports.deleteChannel = async (req, res) => {
     await Channel.findByIdAndDelete(channelId);
 
     // Step 2: Elimina tutti i messaggi associati a quel canale
-    await Message.deleteMany({ channel: channelName });
+    await Message.deleteMany({ channel: { $in: [channelName] } });
+
 
     // Step 3: Rimuovi il canale dal campo `channels` di tutti gli utenti iscritti
     await User.updateMany(

@@ -4,85 +4,48 @@ const User = require('../models/user');
 // Create a new message
 exports.createMessage = async (req, res) => {
   try {
-    const { userName, image, text, charCount, isTemp, channel, updateInterval, maxSendCount, location} = req.body;
+    const { userName, image, text, charCount, isTemp, recipients, updateInterval, maxSendCount, location } = req.body;
 
     const user = await User.findOne({ username: userName });
-    if (user == null) {
+    if (!user) {
       return res.status(400).json({ error: 'User not found' });
     }
 
-    // Create the message
-    const message = new Message({
+    // Creare un nuovo messaggio
+    const newMessage = new Message({
       user: userName,
       profileImage: user.profileImage,
-      image: (image !== null) ? image.toString('base64') : null,
+      image: image ? image.toString('base64') : null,
       text: text,
       isTemp: isTemp,
-      channel: channel.name,
+      channel: recipients.channels,
       updateInterval: isTemp ? updateInterval : 0,
       maxSendCount: maxSendCount,
-
       location: location ? [location.latitude, location.longitude] : null,
     });
 
-    // Save the message
-    await message.save();
+    // Salvare il messaggio
+    const savedMessage = await newMessage.save();
 
-    // Update the user's remaining characters
+    // Aggiornare i messaggi privati ricevuti per ciascun utente destinatario
+    if (recipients.users && recipients.users.length > 0) {
+      await User.updateMany(
+        { username: { $in: recipients.users } },
+        { $push: { privateMessagesReceived: savedMessage._id } }
+      );
+    }
+
+    // Aggiornare i caratteri rimanenti dell'utente
     user.remChar = charCount;
     await user.save();
 
-    return res.status(201).json(message);
+    return res.status(201).json({ message: 'Message created successfully' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Server error' });
   }
 };
 
-
-exports.privateMessage = async (req, res) => {
-  try {
-    const { userName, image, text, charCount, isTemp, recipientNickname, updateInterval, maxSendCount, location} = req.body;
-
-    const user = await User.findOne({ username: userName });
-    if (user == null) {
-      return res.status(400).json({ error: 'User not found' });
-    }
-    // Trova l'utente destinatario utilizzando il nickname
-    const recipient = await User.findOne({ username: recipientNickname });
-    if (!recipient) {
-      return res.status(404).json({ error: 'Recipient not found' });
-    }
-
-    // Crea un nuovo messaggio
-    const newMessage = new Message({
-      user: userName,
-      profileImage: user.profileImage,
-      image: (image !== null) ? image.toString('base64') : null,
-      text: text,
-      isTemp: isTemp,
-      updateInterval: isTemp ? updateInterval : 0,
-      maxSendCount: maxSendCount,
-
-      location: location ? [location.latitude, location.longitude] : null,
-    });
-
-    // Salva il messaggio nel database
-    const savedMessage = await newMessage.save();
-
-    // Aggiungi l'ID del messaggio ai messaggi privati ricevuti del destinatario
-    recipient.privateMessagesReceived.push(savedMessage._id);
-    await recipient.save();
-    
-    user.remChar = charCount;
-    await user.save();
-
-    res.status(201).json({ message: 'Private message sent successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
 
 exports.getAllSqueels = async (req, res) => {
   try {

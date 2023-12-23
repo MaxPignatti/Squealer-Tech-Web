@@ -13,8 +13,8 @@ const InputSqueel = () => {
   const [photoUploaded, setPhotoUploaded] = useState(false);
 
   const [isTemp, setIsTemp] = useState(false);
-  const [updateInterval, setUpdateInterval] = useState('');
-  const [maxSendCount, setMaxSendCount] = useState('');
+  const [updateInterval, setUpdateInterval] = useState(0);
+  const [maxSendCount, setMaxSendCount] = useState(0);
 
   const [currentLocation, setCurrentLocation] = useState(null);
   const [showMap, setShowMap] = useState(false);
@@ -89,10 +89,6 @@ const InputSqueel = () => {
     }
   }, [searchTerm, channels, users, recipientType]);
 
-  const handleNewSqueelClick = () => {
-    setShowOptions(true);
-  };  
-
   const handleUserSelect = (user) => {
     setSelectedUser(user);
     console.log(user)
@@ -103,7 +99,7 @@ const InputSqueel = () => {
   };
 
   const handleChannelSelect = (channel) => {
-    setSelectedChannel(channel); // Imposta il canale selezionato
+    setSelectedChannel(channel);
   };
 
   const handleInputChange = (e) => {
@@ -134,17 +130,14 @@ const InputSqueel = () => {
       alert('You have already inserted a photo.');
     }
   };
-
-  const handleConfirmImage = () => {
-    setPhotoUploaded(true);
-    setCharCount(charCount - 50);
-    setShowImageInput(false);
-    setImagePreview(`${image}`);
-  };
   
   const handleToggleTemp = () => {
     setIsTemp(!isTemp);
-  };  
+    if (!isTemp) {
+      setUpdateInterval('');
+      setMaxSendCount('');
+    }
+  }; 
   const handleIntervalChange = (e) => {
     const value = e.target.value;
     if (/^\d+$/.test(value)) {
@@ -167,7 +160,7 @@ const InputSqueel = () => {
     const reader = new FileReader();
   
     reader.onload = (e) => {
-      const base64String = e.target.result; // Rimuove il prefisso "data:image/jpeg;base64,"
+      const base64String = e.target.result; 
       setImage(base64String);
     };
   
@@ -209,8 +202,6 @@ const InputSqueel = () => {
     );
   };
   
-  
-
 
   const handlePublish = async () => {
     const savedMessage = message;
@@ -223,23 +214,30 @@ const InputSqueel = () => {
       if (userDataCookie) {
         try {
           const userData = JSON.parse(userDataCookie);
+          const currentTime = new Date();
+          const isTempMessage = updateInterval && maxSendCount;
+          if (isTempMessage && (!updateInterval || !maxSendCount)) {
+            alert("Please enter valid update interval and max send count for temporary messages.");
+            return;
+          }
+          console.log(isTempMessage)
           const requestData = {
             userName: userData.username,
             image: image !== null ? image : null,
             text: savedMessage,
             charCount: charCount,
-            isTemp: isTemp,
-            updateInterval: isTemp ? updateInterval : 0,
-            maxSendCount: maxSendCount,
+            updateInterval: isTempMessage ? updateInterval : undefined,
+            maxSendCount: isTempMessage ? maxSendCount : undefined,
+            nextSendTime: isTempMessage ? new Date(currentTime.getTime() + updateInterval * 60000) : undefined,
             location: currentLocation ? { latitude: currentLocation[0], longitude: currentLocation[1] } : null,
           };
-  
+          console.log(requestData)
           // Controlla se il messaggio è per un utente singolo e aggiungi il nickname del destinatario
           if (recipientType === 'user' && selectedUser) {
             requestData.recipientNickname = selectedUser.username;
           }
-
-          if (recipientType ==='channel' && selectedChannel) {
+  
+          if (recipientType === 'channel' && selectedChannel) {
             requestData.channel = selectedChannel;
           }
   

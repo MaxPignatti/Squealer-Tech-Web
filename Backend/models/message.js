@@ -43,16 +43,15 @@ const messageSchema = new mongoose.Schema({
     default: 0,
     required: true,
   },
-  isTemp: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
   updateInterval: {
     type: Number,
     required: false,
     default: null,
   },
+  nextSendTime: {
+    type: Date,
+    required: false,
+  },  
   maxSendCount: {
     type: Number,
     required: false,

@@ -82,7 +82,6 @@ const ShopPage = () => {
                   <Col key={option.quantity} md={12} className="mb-2">
                     <Button
                       variant="primary"
-                      block
                       style={{ width: "100%" }}
                       onClick={() => handleQuantitySelection(option.quantity)}
                       disabled={selectedQuantity === option.quantity}

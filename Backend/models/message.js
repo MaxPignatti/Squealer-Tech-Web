@@ -26,7 +26,7 @@ const messageSchema = new mongoose.Schema({
     required: false,
   },
   channel: {
-    type: String,
+    type: [String],
   },
   createdAt: {
     type: Date,

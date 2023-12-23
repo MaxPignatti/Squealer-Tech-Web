@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Card, Button, Form } from 'react-bootstrap';
+import { Card, Button, Form, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import Maps from './Maps';
 
-const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSaveChanges, currentUser }) => {
-
+const Message = ({ message, handleReaction, seteditMessage, editMessage, handleSaveChanges, currentUser }) => {
   const [editedText, setEditedText] = useState(message.text);
 
   const handleTextChange = (e) => {
@@ -14,9 +13,7 @@ const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSa
 
   const handleSaveClick = () => {
     handleSaveChanges(message._id, editedText);
-    
   };
-
 
   return (
     <Card key={message._id} className="mb-3">
@@ -34,6 +31,18 @@ const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSa
             "{message.text}"
           </div>
         </div>
+
+        {/* Visualizzazione dei canali */}
+        {message.channel && message.channel.length > 0 && (
+          <div className="mb-2">
+            {message.channel.map((channel, index) => (
+              <Badge key={index} pill bg="secondary" className="mr-1">
+                {channel}
+              </Badge>
+            ))}
+          </div>
+        )}
+
         {message.image && (
           <div className="text-center my-3">
             <img
@@ -51,7 +60,7 @@ const Message = ({ message, handleReaction,seteditMessage, editMessage, handleSa
         <div className="d-flex justify-content-end">
           <small className="text-muted">
             <em>
-              Posted at: {new Date(message.createdAt).toLocaleString([], { hour: '2-digit', minute: '2-digit' })}
+            Pubblicato il {new Date(message.createdAt).toLocaleString('it-IT', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
             </em>
           </small>
         </div>

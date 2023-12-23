@@ -24,11 +24,11 @@ const InputSqueel = () => {
   const [filteredChannels, setFilteredChannels] = useState([]); // Canali filtrati
   const [searchTerm, setSearchTerm] = useState('');
   const [channels, setChannels] = useState([]); // Stato per i canali sottoscritti
-  const [selectedChannel, setSelectedChannel] = useState(null);
+  const [selectedChannels, setSelectedChannels] = useState([]);
 
   const [filteredUsers, setFilteredUsers] = useState([]); // Stato per gli utenti filtrati
   const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUsers, setSelectedUsers] = useState([]);
 
 
   useEffect(() => {
@@ -89,18 +89,28 @@ const InputSqueel = () => {
     }
   }, [searchTerm, channels, users, recipientType]);
 
-  const handleUserSelect = (user) => {
-    setSelectedUser(user);
-    console.log(user)
-  };
-
   const handleRecipientChange = (event) => {
     setRecipientType(event.target.value);
   };
 
-  const handleChannelSelect = (channel) => {
-    setSelectedChannel(channel);
-  };
+// Funzione per gestire la selezione multipla di canali
+const handleChannelSelect = (channel) => {
+  if (!selectedChannels.some(selectedChannel => selectedChannel._id === channel._id)) {
+    setSelectedChannels(prev => [...prev, channel]);
+  } else {
+    console.log("Canale già selezionato:", channel.name);
+  }
+};
+
+// Funzione per gestire la selezione multipla di utenti
+const handleUserSelect = (user) => {
+  if (!selectedUsers.some(selectedUser => selectedUser._id === user._id)) {
+    setSelectedUsers(prev => [...prev, user]);
+  } else {
+    console.log("Utente già selezionato:", user.username);
+  }
+};
+
 
   const handleInputChange = (e) => {
     const inputMessage = e.target.value;
@@ -209,7 +219,7 @@ const InputSqueel = () => {
     setImage(null);
     setImagePreview(null);
   
-    if (savedMessage) {
+    if (savedMessage && (selectedChannels.length > 0 || selectedUsers.length > 0)) {
       const userDataCookie = Cookies.get('user_data');
       if (userDataCookie) {
         try {
@@ -230,19 +240,13 @@ const InputSqueel = () => {
             maxSendCount: isTempMessage ? maxSendCount : undefined,
             nextSendTime: isTempMessage ? new Date(currentTime.getTime() + updateInterval * 60000) : undefined,
             location: currentLocation ? { latitude: currentLocation[0], longitude: currentLocation[1] } : null,
+            recipients: {
+              channels: selectedChannels.map(channel => channel.name), // Presumo che ogni canale abbia un id
+              users: selectedUsers.map(user => user.username), // Presumo che ogni utente abbia un id
+            },
           };
-          console.log(requestData)
-          // Controlla se il messaggio è per un utente singolo e aggiungi il nickname del destinatario
-          if (recipientType === 'user' && selectedUser) {
-            requestData.recipientNickname = selectedUser.username;
-          }
   
-          if (recipientType === 'channel' && selectedChannel) {
-            requestData.channel = selectedChannel;
-          }
-  
-          // Determina l'URL in base al tipo di destinatario
-          const url = recipientType === 'user' ? 'http://localhost:3500/create/private' : 'http://localhost:3500/create';
+          const url = 'http://localhost:3500/create'; // Esempio di URL per la nuova endpoint
   
           const requestOptions = {
             method: 'POST',
@@ -264,9 +268,10 @@ const InputSqueel = () => {
         }
       }
     } else {
-      alert('You have to write something');
+      alert('Devi scrivere qualcosa e selezionare almeno un destinatario');
     }
   };
+  
   
   
   return (
@@ -309,10 +314,9 @@ const InputSqueel = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   style={{ width: '100%', padding: '10px' }}
                 />
-                <p>Stai inviando al canale: {selectedChannel ? selectedChannel.name : "Nessun canale selezionato"}</p>
                 <ul style={{ maxHeight: '150px', overflowY: 'auto', listStyleType: 'none', padding: 0 }}>
                   {filteredChannels.map(channel => (
-                    <li key={channel.id} style={{ padding: '10px', cursor: 'pointer' }} onClick={() => handleChannelSelect(channel)}>
+                    <li key={channel._id} style={{ padding: '10px', cursor: 'pointer' }} onClick={() => handleChannelSelect(channel)}>
                       {channel.name}
                     </li>
                   ))}
@@ -328,10 +332,9 @@ const InputSqueel = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   style={{ width: '100%', padding: '10px' }}
                 />
-                <p>Stai inviando a: {selectedUser ? selectedUser.username : "Nessun utente selezionato"}</p>
                 <ul style={{ maxHeight: '150px', overflowY: 'auto', listStyleType: 'none', padding: 0 }}>
                   {filteredUsers.map(user => (
-                    <li key={user.id} style={{ padding: '10px', cursor: 'pointer' }} onClick={() => handleUserSelect(user)}>
+                    <li key={user._id} style={{ padding: '10px', cursor: 'pointer' }} onClick={() => handleUserSelect(user)}>
                       {user.username}
                     </li>
                   ))}
@@ -339,6 +342,33 @@ const InputSqueel = () => {
               </div>
             )}
           </div>
+  
+          {selectedChannels.map(channel => (
+            <div key={channel._id} style={{ padding: '5px', margin: '5px', display: 'inline-flex', alignItems: 'center', border: '1px solid grey', borderRadius: '10px' }}>
+              {channel.name}
+              <button
+                onClick={() => setSelectedChannels(selectedChannels.filter(c => c._id !== channel._id))}
+                className="btn btn-danger btn-sm"
+                style={{ marginLeft: '5px', borderRadius: '50%' }}
+              >
+                &times;
+              </button>
+            </div>
+          ))}
+  
+          {/* Visualizzazione degli utenti selezionati */}
+          {selectedUsers.map(user => (
+            <div key={user._id} style={{ padding: '5px', margin: '5px', display: 'inline-flex', alignItems: 'center', border: '1px solid grey', borderRadius: '10px' }}>
+              {user.username}
+              <button
+                onClick={() => setSelectedUsers(selectedUsers.filter(u => u._id !== user._id))}
+                className="btn btn-danger btn-sm"
+                style={{ marginLeft: '5px', borderRadius: '50%' }}
+              >
+                &times;
+              </button>
+            </div>
+          ))}
   
           <div style={{ marginBottom: '10px' }}>
             <input
@@ -422,7 +452,6 @@ const InputSqueel = () => {
       )}
     </div>
   );
-  
 
 }
   export default InputSqueel;

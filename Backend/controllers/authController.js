@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const Channel = require('../models/channel');
 const authenticateWithToken = require('../middlewares/authenticationMiddlewares');
 
 // Register a new user
@@ -23,11 +24,29 @@ exports.register = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new User instance with the hashed password
-    const newUser = new User({ firstName, lastName,username, email, password: hashedPassword, remChar:150, debChar:0, accountType:0, smm:false});
-
-    // Save the user to the database
+    // Crea un nuovo utente
+    const newUser = new User({
+      firstName,
+      lastName,
+      username,
+      email,
+      password: hashedPassword,
+      remChar: 150,
+      debChar: 0,
+      accountType: 0,
+      smm: false,
+      channels: ['public'] // Aggiungi il canale "public" all'array dei canali
+    });
     await newUser.save();
+
+    // Trova il canale "public" e aggiungi l'utente
+    const publicChannel = await Channel.findOne({ name: 'public' });
+    if (publicChannel) {
+      publicChannel.members.push(username);
+      await publicChannel.save();
+    } else {
+      console.error('Canale "public" non trovato');
+    }
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {

@@ -1,16 +1,26 @@
+import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
-const ImageUploader = ({ showImageInput, toggleImageInput, imagePreview }) => (
-    <>
-      <Button variant="primary" onClick={toggleImageInput} className="mb-2 mr-2">
-        {showImageInput ? "Annulla Foto" : "Allega Foto"}
-      </Button>
-      {showImageInput && (
-        <input type="file" accept="image/*" className="d-block mb-2" />
+
+const ImageUploader = (image, imagePreview, handleImageChange, handleRemoveImage) => {
+  return (
+    <div>
+      {image ? (
+        <>
+          <img src={imagePreview} alt="Anteprima" className="img-fluid mb-2" />
+          <Button variant="danger" onClick={handleRemoveImage} className="mb-2">
+            Annulla Foto
+          </Button>
+        </>
+      ) : (
+        <>
+          <input type="file" accept="image/*" onChange={handleImageChange} className="mb-2" />
+          <Button variant="primary" onClick={() => document.querySelector('input[type="file"]').click()}>
+            Allega Foto
+          </Button>
+        </>
       )}
-      {imagePreview && (
-        <img src={imagePreview} alt="Anteprima" className="img-fluid mb-2" />
-      )}
-    </>
+    </div>
   );
+};
 
 export default ImageUploader;

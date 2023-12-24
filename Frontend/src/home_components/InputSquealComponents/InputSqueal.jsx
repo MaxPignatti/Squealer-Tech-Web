@@ -14,9 +14,6 @@ const InputSqueel = () => {
   const [charLimit, setCharLimit]=useState(null);
   const [message, setMessage] = useState('');
   const [selection, setSelection] = useState({ start: 0, end: 0 });
-  const [showImageInput, setShowImageInput] = useState(false);
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
   const [charCount, setCharCount] = useState(0);
   const [photoUploaded, setPhotoUploaded] = useState(false);
 
@@ -37,7 +34,26 @@ const InputSqueel = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [image, setImage] = useState(null); // Stato per l'immagine in base64
+  const [imagePreview, setImagePreview] = useState(null); // Stato per l'anteprima dell'immagine
 
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImage(event.target.result); // Salva l'immagine in base64
+        setImagePreview(event.target.result); // Imposta l'anteprima dell'immagine
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImage(null); // Rimuove l'immagine
+    setImagePreview(null); // Rimuove l'anteprima dell'immagine
+  };
 
   useEffect(() => {
     const userDataCookie = Cookies.get('user_data');
@@ -182,22 +198,7 @@ const InputSqueel = () => {
     }
   };
 
-  const handleAttachImage = () => {
-      if (charCount >= 50) {
-        const handleAttachImage = () => {
-          setShowImageInput(!showImageInput);
-          if (!showImageInput) {
-            setPhotoUploaded(true);
-            setCharCount(charCount - 50); // Rimuovi 50 caratteri per la foto
-          } else {
-            setPhotoUploaded(false);
-            setCharCount(charCount + 50); // Aggiungi 50 caratteri se la foto viene rimossa
-          }
-        };
-      } else {
-        alert('Not enough characters for an image upload.');
-      }
-  };
+
   
   const handleToggleTemp = () => {
     setIsTemp(!isTemp);
@@ -234,21 +235,7 @@ const InputSqueel = () => {
     setIsTemp(false); 
   };
   
-  const toggleImageInput = () => {
-    setShowImageInput(!showImageInput);
-  };
 
-  const handleImageInputChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-  
-    reader.onload = (e) => {
-      const base64String = e.target.result; 
-      setImage(base64String);
-    };
-  
-    reader.readAsDataURL(file);
-  };
 
   const handleMaxSendCountChange = (e) => {
     const value = e.target.value;
@@ -374,9 +361,10 @@ const InputSqueel = () => {
       />
       <CharCounter charCount={charCount} />
       <ImageUploader
-        showImageInput={showImageInput}
-        toggleImageInput={toggleImageInput}
+        image={image}
         imagePreview={imagePreview}
+        handleImageChange={handleImageChange}
+        handleRemoveImage={handleRemoveImage}
       />
       <LocationSharer
         showMap={showMap}

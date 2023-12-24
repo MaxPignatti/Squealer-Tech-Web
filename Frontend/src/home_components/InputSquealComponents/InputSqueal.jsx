@@ -2,6 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Button } from 'react-bootstrap';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import Cookies from 'js-cookie';
+import CharCounter from './CharCounter';
+import ImageUploader from './ImageUploader';
+import LocationSharer from './LocationSharer';
+import MessageInput from './MessageInput';
+import PublishButton from './PublishButton';
+import RecipientSelector from './RecipientSelector';
+import TemporaryMessageOptions from './TemporaryMessageOptions';
 
 const InputSqueel = () => {
   const [charLimit, setCharLimit]=useState(null);
@@ -103,15 +110,19 @@ const handleChannelSelect = (channel) => {
   }
 };
 
-// Funzione per gestire la selezione multipla di utenti
-const handleUserSelect = (user) => {
-  if (!selectedUsers.some(selectedUser => selectedUser._id === user._id)) {
-    setSelectedUsers(prev => [...prev, user]);
-  } else {
-    console.log("Utente già selezionato:", user.username);
+const handleRecipientSelect = (recipient) => {
+  if (recipient.type === 'user') {
+    // Aggiungi l'utente selezionato se non è già presente nell'elenco
+    if (!selectedUsers.some(user => user.id === recipient.id)) {
+      setSelectedUsers([...selectedUsers, recipient]);
+    }
+  } else if (recipient.type === 'channel') {
+    // Aggiungi il canale selezionato se non è già presente nell'elenco
+    if (!selectedChannels.some(channel => channel.id === recipient.id)) {
+      setSelectedChannels([...selectedChannels, recipient]);
+    }
   }
 };
-
 
   const handleInputChange = (e) => {
     const inputMessage = e.target.value;
@@ -124,6 +135,11 @@ const handleUserSelect = (user) => {
       setCharCount(remainingChars);
     }
   };
+
+  const handleMessageChange = (event) => {
+    setMessage(event.target.value);
+  };
+
 
   const handleTextSelect = (e) => {
     setSelection({ start: e.target.selectionStart, end: e.target.selectionEnd });
@@ -141,6 +157,33 @@ const handleUserSelect = (user) => {
     }
   };
   
+  const toggleTemp = () => {
+    setIsTemp(!isTemp);
+  };
+
+  const toggleMap = () => {
+    setShowMap(!showMap);
+  };
+
+  const handleSearchChange = (event) => {
+    const newSearchTerm = event.target.value;
+    setSearchTerm(newSearchTerm);
+
+    if (recipientType === 'user') {
+      // Filtra gli utenti in base al termine di ricerca
+      const filtered = users.filter(user => 
+        user.name.toLowerCase().includes(newSearchTerm.toLowerCase())
+      );
+      setFilteredUsers(filtered);
+    } else if (recipientType === 'channel') {
+      // Filtra i canali in base al termine di ricerca
+      const filtered = channels.filter(channel => 
+        channel.name.toLowerCase().includes(newSearchTerm.toLowerCase())
+      );
+      setFilteredChannels(filtered);
+    }
+  };
+
   const handleAttachImage = () => {
       if (charCount >= 50) {
         const handleAttachImage = () => {
@@ -177,10 +220,25 @@ const handleUserSelect = (user) => {
     } 
   };
   
+  const handleUpdateIntervalChange = (event) => {
+    const newInterval = event.target.value;
+
+    // Valida l'input per assicurarti che sia un numero e che soddisfi i tuoi criteri
+    if (!isNaN(newInterval) && newInterval >= 1 && newInterval <= 60) {
+      setUpdateInterval(newInterval);
+    } else {
+      // Gestisci il caso in cui l'input non sia valido
+      console.log("Intervallo non valido. Deve essere un numero tra 1 e 60.");
+    }
+  };
+
   const handleConfirmInterval = () => {
     setIsTemp(false); 
   };
   
+  const toggleImageInput = () => {
+    setShowImageInput(!showImageInput);
+  };
 
   const handleImageInputChange = (e) => {
     const file = e.target.files[0];
@@ -296,187 +354,43 @@ const handleUserSelect = (user) => {
     }
   };
   
-  const CharCounter = () => (
-    <div style={{ textAlign: 'right', marginTop: '10px' }}>
-      Caratteri rimanenti: {charCount}
-    </div>
-  );
-  
   return (
-    <div className="input-squeel" style={{ padding: '20px', maxWidth: '500px', margin: 'auto' }}>
-      {!showOptions ? (
-        <div style={{ textAlign: 'center', padding: '20px' }}>
-          <Button variant="primary" onClick={() => setShowOptions(true)} style={{ width: 'auto' }}>
-            Nuovo Squeel
-          </Button>
-        </div>
-      ) : (
-        <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', marginBottom: '20px', position: 'relative' }}>
-          <div style={{ marginBottom: '20px' }}>
-            <label>
-              <input
-                type="radio"
-                name="recipientType"
-                value="user"
-                checked={recipientType === 'user'}
-                onChange={handleRecipientChange}
-              />
-              Utente Singolo
-            </label>
-            <label style={{ marginLeft: '10px' }}>
-              <input
-                type="radio"
-                name="recipientType"
-                value="channel"
-                checked={recipientType === 'channel'}
-                onChange={handleRecipientChange}
-              />
-              Canale
-            </label>
-  
-            {recipientType === 'channel' && (
-              <div style={{ marginTop: '10px' }}>
-                <input
-                  type="text"
-                  placeholder="Cerca canale..."
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ width: '100%', padding: '10px' }}
-                />
-                <ul style={{ maxHeight: '150px', overflowY: 'auto', listStyleType: 'none', padding: 0 }}>
-                  {filteredChannels.map(channel => (
-                    <li key={channel._id} style={{ padding: '10px', cursor: 'pointer' }} onClick={() => handleChannelSelect(channel)}>
-                      {channel.name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-  
-            {recipientType === 'user' && (
-              <div style={{ marginTop: '10px' }}>
-                <input
-                  type="text"
-                  placeholder="Cerca utente..."
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ width: '100%', padding: '10px' }}
-                />
-                <ul style={{ maxHeight: '150px', overflowY: 'auto', listStyleType: 'none', padding: 0 }}>
-                  {filteredUsers.map(user => (
-                    <li key={user._id} style={{ padding: '10px', cursor: 'pointer' }} onClick={() => handleUserSelect(user)}>
-                      {user.username}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-  
-          {selectedChannels.map(channel => (
-            <div key={channel._id} style={{ padding: '5px', margin: '5px', display: 'inline-flex', alignItems: 'center', border: '1px solid grey', borderRadius: '10px' }}>
-              {channel.name}
-              <button
-                onClick={() => setSelectedChannels(selectedChannels.filter(c => c._id !== channel._id))}
-                className="btn btn-danger btn-sm"
-                style={{ marginLeft: '5px', borderRadius: '50%' }}
-              >
-                &times;
-              </button>
-            </div>
-          ))}
-  
-          {selectedUsers.map(user => (
-            <div key={user._id} style={{ padding: '5px', margin: '5px', display: 'inline-flex', alignItems: 'center', border: '1px solid grey', borderRadius: '10px' }}>
-              {user.username}
-              <button
-                onClick={() => setSelectedUsers(selectedUsers.filter(u => u._id !== user._id))}
-                className="btn btn-danger btn-sm"
-                style={{ marginLeft: '5px', borderRadius: '50%' }}
-              >
-                &times;
-              </button>
-            </div>
-          ))}
-  
-          <textarea
-            value={message}
-            onChange={handleInputChange}
-            onSelect={handleTextSelect}
-            placeholder="Inserisci il tuo messaggio..."
-            style={{ width: '100%', padding: '10px', marginBottom: '10px', height: '100px' }}
-          />
-          <CharCounter />
-          <Button variant="secondary" onClick={handleInsertLink} style={{ marginBottom: '10px' }}>
-            Linka il Testo Selezionato
-          </Button>
-          <Button variant="primary" onClick={handleAttachImage} style={{ marginBottom: '10px', marginRight: '10px' }}>
-            {showImageInput ? "Annulla Foto" : "Allega Foto"}
-          </Button>
-          {showImageInput && (
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageInputChange}
-              style={{ display: 'block', marginBottom: '10px' }}
-            />
-          )}
-          {imagePreview && (
-            <img
-              src={imagePreview}
-              alt="Anteprima"
-              style={{ maxWidth: '100%', maxHeight: '100px', marginBottom: '10px' }}
-            />
-          )}
-          <Button variant="warning" onClick={handleGetLocation} style={{ marginBottom: '10px', marginRight: '10px' }}>
-            Condividi la tua Posizione
-          </Button>
-  
-          {showMap && (
-            <div style={{ marginTop: '10px' }}>
-              <small style={{ display: 'block', marginBottom: '10px' }}>Posizione aggiunta</small>
-              <Button variant="danger" onClick={handleCloseMap}>
-                Annulla
-              </Button>
-            </div>
-          )}
-  
-          <div style={{ marginTop: '20px' }}>
-            <Button variant="info" onClick={handleToggleTemp}>
-              {isTemp ? "Cancel Update" : "Set Update"}
-            </Button>
-          </div>
-  
-          {isTemp && (
-            <div style={{ marginTop: '10px' }}>
-              <input
-                type="number"
-                value={updateInterval}
-                onChange={handleIntervalChange}
-                placeholder="Intervallo Update (minuti)"
-                style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
-              />
-              <input
-                type="number"
-                value={maxSendCount}
-                onChange={handleMaxSendCountChange}
-                placeholder="Max Send Count"
-                style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
-              />
-            </div>
-          )}
-  
-          <Button variant="danger" onClick={() => setShowOptions(false)} style={{ marginTop: '20px' }}>
-            Annulla
-          </Button>
-          <div style={{ position: 'absolute', right: '20px', bottom: '20px' }}>
-            <Button variant="success" onClick={handlePublish}>
-              Pubblica
-            </Button>
-          </div>
-        </div>
-      )}
+    <div className="input-squeals-container">
+      <RecipientSelector
+        recipientType={recipientType}
+        handleRecipientChange={handleRecipientChange}
+        searchTerm={searchTerm}
+        handleSearchChange={handleSearchChange}
+        filteredChannels={filteredChannels}
+        filteredUsers={filteredUsers}
+        handleRecipientSelect={handleRecipientSelect}
+      />
+      <MessageInput
+        message={message}
+        handleMessageChange={handleMessageChange}
+      />
+      <CharCounter charCount={charCount} />
+      <ImageUploader
+        showImageInput={showImageInput}
+        toggleImageInput={toggleImageInput}
+        imagePreview={imagePreview}
+      />
+      <LocationSharer
+        showMap={showMap}
+        toggleMap={toggleMap}
+        currentLocation={currentLocation}
+      />
+      <TemporaryMessageOptions
+        isTemp={isTemp}
+        toggleTemp={toggleTemp}
+        updateInterval={updateInterval}
+        handleUpdateIntervalChange={handleUpdateIntervalChange}
+        maxSendCount={maxSendCount}
+        handleMaxSendCountChange={handleMaxSendCountChange}
+      />
+      <PublishButton handlePublish={handlePublish} />
     </div>
   );
-  
+};
 
-}
-  export default InputSqueel;
+export default InputSqueel;

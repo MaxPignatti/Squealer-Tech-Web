@@ -289,7 +289,11 @@ const handleUserSelect = (user) => {
     }
   };
   
-  
+  const CharCounter = () => (
+    <div style={{ textAlign: 'right', marginTop: '10px' }}>
+      Caratteri rimanenti: {charCount}
+    </div>
+  );
   
   return (
     <div className="input-squeel" style={{ padding: '20px', maxWidth: '500px', margin: 'auto' }}>
@@ -393,6 +397,7 @@ const handleUserSelect = (user) => {
             placeholder="Inserisci il tuo messaggio..."
             style={{ width: '100%', padding: '10px', marginBottom: '10px', height: '100px' }}
           />
+          <CharCounter />
           <Button variant="secondary" onClick={handleInsertLink} style={{ marginBottom: '10px' }}>
             Linka il Testo Selezionato
           </Button>

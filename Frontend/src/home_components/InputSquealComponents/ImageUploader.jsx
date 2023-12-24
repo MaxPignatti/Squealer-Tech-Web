@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 
 const ImageUploader = (image, imagePreview, handleImageChange, handleRemoveImage) => {
-  return (
+    console.log('Stato attuale di image:', image);
+    return (
     <div>
-      {image ? (
+      {image != null ? (
         <>
           <img src={imagePreview} alt="Anteprima" className="img-fluid mb-2" />
           <Button variant="danger" onClick={handleRemoveImage} className="mb-2">

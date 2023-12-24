@@ -10,7 +10,7 @@ const MainPage = () => {
   return (
     <div className="container">
       <div className="d-flex justify-content-center align-items-center">
-        <Button variant="primary" onClick={() => setShowInputSqueal(true)}>
+        <Button variant="primary" onClick={() => setShowInputSqueal(!showInputSqueal)}>
           Nuovo Squeal
         </Button>
       </div>

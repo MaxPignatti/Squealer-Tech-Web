@@ -97,32 +97,31 @@ const InputSqueel = () => {
     }
   }, [searchTerm, channels, users, recipientType]);
 
-  const handleRecipientChange = (event) => {
-    setRecipientType(event.target.value);
+  const handleRecipientChange = (newValue) => {
+    setRecipientType(newValue);
   };
 
-// Funzione per gestire la selezione multipla di canali
-const handleChannelSelect = (channel) => {
-  if (!selectedChannels.some(selectedChannel => selectedChannel._id === channel._id)) {
-    setSelectedChannels(prev => [...prev, channel]);
-  } else {
-    console.log("Canale già selezionato:", channel.name);
-  }
-};
+  const handleUserSelect = (newUser) => {
+      if (!selectedUsers.some(user => user._id === newUser._id)) {
+        setSelectedUsers([...selectedUsers, newUser]);
+      }
+      console.log(selectedUsers)
+    };
+  
+    const handleChannelSelect = (newChannel) => {
+      if (!selectedChannels.some(channel => channel._id === newChannel._id)) {
+        setSelectedChannels([...selectedChannels, newChannel]);
+      }
+      console.log(selectedChannels)
+    };
+  
+  const handleRemoveUser = (userId) => {
+    setSelectedUsers(selectedUsers.filter(user => user._id !== userId));
+  };
 
-const handleRecipientSelect = (recipient) => {
-  if (recipient.type === 'user') {
-    // Aggiungi l'utente selezionato se non è già presente nell'elenco
-    if (!selectedUsers.some(user => user.id === recipient.id)) {
-      setSelectedUsers([...selectedUsers, recipient]);
-    }
-  } else if (recipient.type === 'channel') {
-    // Aggiungi il canale selezionato se non è già presente nell'elenco
-    if (!selectedChannels.some(channel => channel.id === recipient.id)) {
-      setSelectedChannels([...selectedChannels, recipient]);
-    }
-  }
-};
+  const handleRemoveChannel = (channelId) => {
+    setSelectedChannels(selectedChannels.filter(channel => channel._id !== channelId));
+  };
 
   const handleInputChange = (e) => {
     const inputMessage = e.target.value;
@@ -172,7 +171,7 @@ const handleRecipientSelect = (recipient) => {
     if (recipientType === 'user') {
       // Filtra gli utenti in base al termine di ricerca
       const filtered = users.filter(user => 
-        user.name.toLowerCase().includes(newSearchTerm.toLowerCase())
+        user.username.toLowerCase().includes(newSearchTerm.toLowerCase())
       );
       setFilteredUsers(filtered);
     } else if (recipientType === 'channel') {
@@ -363,7 +362,12 @@ const handleRecipientSelect = (recipient) => {
         handleSearchChange={handleSearchChange}
         filteredChannels={filteredChannels}
         filteredUsers={filteredUsers}
-        handleRecipientSelect={handleRecipientSelect}
+        handleUserSelect={handleUserSelect}
+        handleChannelSelect={handleChannelSelect}
+        selectedUsers={selectedUsers}
+        selectedChannels={selectedChannels}
+        handleRemoveUser={handleRemoveUser}
+        handleRemoveChannel={handleRemoveChannel}
       />
       <MessageInput
         message={message}

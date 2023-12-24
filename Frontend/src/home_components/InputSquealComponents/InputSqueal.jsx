@@ -105,14 +105,13 @@ const InputSqueel = () => {
       if (!selectedUsers.some(user => user._id === newUser._id)) {
         setSelectedUsers([...selectedUsers, newUser]);
       }
-      console.log(selectedUsers)
     };
   
     const handleChannelSelect = (newChannel) => {
+      console.log(newChannel)
       if (!selectedChannels.some(channel => channel._id === newChannel._id)) {
         setSelectedChannels([...selectedChannels, newChannel]);
       }
-      console.log(selectedChannels)
     };
   
   const handleRemoveUser = (userId) => {

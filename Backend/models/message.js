@@ -60,7 +60,6 @@ const messageSchema = new mongoose.Schema({
   location: {
     type: [Number], 
     index: '2dsphere', 
-    default: [0, 0],
   },
 });
 

@@ -1,6 +1,6 @@
 import { Button } from 'react-bootstrap';
 
-const LocationSharer = ({ showMap, toggleMap, currentLocation }) => (
+const LocationSharer = ({ showMap, toggleMap}) => (
   <>
     <Button variant="warning" onClick={toggleMap} className="mb-2 mr-2">
       Condividi la tua Posizione

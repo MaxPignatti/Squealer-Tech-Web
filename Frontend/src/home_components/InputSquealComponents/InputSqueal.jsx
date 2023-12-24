@@ -11,11 +11,12 @@ import RecipientSelector from './RecipientSelector';
 import TemporaryMessageOptions from './TemporaryMessageOptions';
 
 const InputSqueel = () => {
+
+  //USE STATE DA ORDINARE
   const [charLimit, setCharLimit]=useState(null);
   const [message, setMessage] = useState('');
   const [selection, setSelection] = useState({ start: 0, end: 0 });
   const [charCount, setCharCount] = useState(0);
-  const [photoUploaded, setPhotoUploaded] = useState(false);
 
   const [isTemp, setIsTemp] = useState(false);
   const [updateInterval, setUpdateInterval] = useState(0);
@@ -23,7 +24,6 @@ const InputSqueel = () => {
 
   const [currentLocation, setCurrentLocation] = useState(null);
   const [showMap, setShowMap] = useState(false);
-  const [showOptions, setShowOptions] = useState(false);
 
   const [recipientType, setRecipientType] = useState('user');
   const [filteredChannels, setFilteredChannels] = useState([]);
@@ -37,24 +37,8 @@ const InputSqueel = () => {
   const [image, setImage] = useState(null); // Stato per l'immagine in base64
   const [imagePreview, setImagePreview] = useState(null); // Stato per l'anteprima dell'immagine
 
-  const handleImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setImage(event.target.result); // Salva l'immagine in base64
-        setImagePreview(event.target.result); // Imposta l'anteprima dell'immagine
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleRemoveImage = () => {
-    setImage(null); // Rimuove l'immagine
-    setImagePreview(null); // Rimuove l'anteprima dell'immagine
-  };
-
+  //USE EFFECT
   useEffect(() => {
     const userDataCookie = Cookies.get('user_data');
     if (userDataCookie) {
@@ -113,70 +97,9 @@ const InputSqueel = () => {
     }
   }, [searchTerm, channels, users, recipientType]);
 
+  //FUNZIONI PER DESTINATARI
   const handleRecipientChange = (newValue) => {
     setRecipientType(newValue);
-  };
-
-  const handleUserSelect = (newUser) => {
-      if (!selectedUsers.some(user => user._id === newUser._id)) {
-        setSelectedUsers([...selectedUsers, newUser]);
-      }
-    };
-  
-    const handleChannelSelect = (newChannel) => {
-      console.log(newChannel)
-      if (!selectedChannels.some(channel => channel._id === newChannel._id)) {
-        setSelectedChannels([...selectedChannels, newChannel]);
-      }
-    };
-  
-  const handleRemoveUser = (userId) => {
-    setSelectedUsers(selectedUsers.filter(user => user._id !== userId));
-  };
-
-  const handleRemoveChannel = (channelId) => {
-    setSelectedChannels(selectedChannels.filter(channel => channel._id !== channelId));
-  };
-
-  const handleInputChange = (e) => {
-    const inputMessage = e.target.value;
-    if (inputMessage.length <= charLimit - photoUploaded*50) {
-      setMessage(inputMessage);
-      let remainingChars = charLimit - inputMessage.length;
-      if (photoUploaded) {
-        remainingChars -= 50;
-      }
-      setCharCount(remainingChars);
-    }
-  };
-
-  const handleMessageChange = (event) => {
-    setMessage(event.target.value);
-  };
-
-
-  const handleTextSelect = (e) => {
-    setSelection({ start: e.target.selectionStart, end: e.target.selectionEnd });
-  };
-
-  const handleInsertLink = () => {
-    const url = prompt("Inserisci l'URL del link:");
-    if (url && selection.start !== selection.end) {
-      const beforeText = message.substring(0, selection.start);
-      const linkText = message.substring(selection.start, selection.end);
-      const afterText = message.substring(selection.end);
-      setMessage(`${beforeText}[${linkText}](${url})${afterText}`);
-    } else {
-      alert("Per favore, seleziona del testo nel messaggio per linkarlo.");
-    }
-  };
-  
-  const toggleTemp = () => {
-    setIsTemp(!isTemp);
-  };
-
-  const toggleMap = () => {
-    setShowMap(!showMap);
   };
 
   const handleSearchChange = (event) => {
@@ -198,71 +121,86 @@ const InputSqueel = () => {
     }
   };
 
-
-  
-  const handleToggleTemp = () => {
-    setIsTemp(!isTemp);
-    if (!isTemp) {
-      setUpdateInterval('');
-      setMaxSendCount('');
-    }
-  }; 
-  const handleIntervalChange = (e) => {
-    const value = e.target.value;
-    if (/^\d+$/.test(value)) {
-      const numericValue = parseInt(value);
-      if (numericValue >= 1 && numericValue <= 15) {
-        setUpdateInterval(numericValue);
-      } else {
-        setUpdateInterval(numericValue < 1 ? 1 : 60);
+  const handleUserSelect = (newUser) => {
+      if (!selectedUsers.some(user => user._id === newUser._id)) {
+        setSelectedUsers([...selectedUsers, newUser]);
       }
-    } 
+    };
+  
+  const handleChannelSelect = (newChannel) => {
+    console.log(newChannel)
+    if (!selectedChannels.some(channel => channel._id === newChannel._id)) {
+      setSelectedChannels([...selectedChannels, newChannel]);
+    }
   };
   
-  const handleUpdateIntervalChange = (event) => {
-    const newInterval = event.target.value;
+  const handleRemoveUser = (userId) => {
+    setSelectedUsers(selectedUsers.filter(user => user._id !== userId));
+  };
 
-    // Valida l'input per assicurarti che sia un numero e che soddisfi i tuoi criteri
-    if (!isNaN(newInterval) && newInterval >= 1 && newInterval <= 60) {
-      setUpdateInterval(newInterval);
+  const handleRemoveChannel = (channelId) => {
+    setSelectedChannels(selectedChannels.filter(channel => channel._id !== channelId));
+  };
+
+  //FUNZIONE PER TEXT
+  const handleMessageChange = (event) => {
+    const inputMessage = event.target.value;
+    if (inputMessage.length <= charLimit) {
+      setMessage(inputMessage);
+      let remainingChars = charLimit - inputMessage.length;
+      setCharCount(remainingChars);
+    }
+  };
+
+  //FUNZIONI PER IMMAGINI
+  const handleImageChange = (e) => {
+    if(charCount >= 50)
+      setCharCount(charCount - 50);
+    else {
+      alert('Not enough characters for an image upload.');
+      return;
+    }
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImage(event.target.result); // Salva l'immagine in base64
+        setImagePreview(event.target.result); // Imposta l'anteprima dell'immagine
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImage(null); // Rimuove l'immagine
+    setImagePreview(null); // Rimuove l'anteprima dell'immagine
+    setCharCount(charCount + 50);
+  };
+
+  //FUNZIONI PER POSIZIONE
+  const toggleMap = () => {
+    if (showMap) {
+      handleCloseMap();
     } else {
-      // Gestisci il caso in cui l'input non sia valido
-      console.log("Intervallo non valido. Deve essere un numero tra 1 e 60.");
+      handleGetLocation();
     }
   };
 
-  const handleConfirmInterval = () => {
-    setIsTemp(false); 
-  };
-  
-
-
-  const handleMaxSendCountChange = (e) => {
-    const value = e.target.value;
-    if (/^\d+$/.test(value)) {
-      const numericValue = parseInt(value);
-      if (numericValue >= 1 && numericValue <= 20) {
-        setMaxSendCount(numericValue);
-      } else {
-        setMaxSendCount(numericValue < 1 ? 1 : 20);
-      }
-    } 
-  };
-  
   const handleCloseMap = () => {
     setShowMap(false);
     setCurrentLocation(null);
-    setCharCount(charCount + 50); // Aggiungi 30 caratteri se la posizione viene rimossa
+    setCharCount(charCount + 50);
   };
 
   const handleGetLocation = () => {
-    setShowMap(true);
     if(charCount >= 50)
       setCharCount(charCount - 50);
     else {
       alert('Not enough characters for a position upload.');
       return;
     }
+    setShowMap(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -279,7 +217,57 @@ const InputSqueel = () => {
     );
   };
   
+  //FUNZIONI PER LINK
+  const handleTextSelect = (e) => {
+    setSelection({ start: e.target.selectionStart, end: e.target.selectionEnd });
+  };
 
+  const handleInsertLink = () => {
+    const url = prompt("Inserisci l'URL del link:");
+    if (url && selection.start !== selection.end) {
+      const beforeText = message.substring(0, selection.start);
+      const linkText = message.substring(selection.start, selection.end);
+      const afterText = message.substring(selection.end);
+      setMessage(`${beforeText}[${linkText}](${url})${afterText}`);
+    } else {
+      alert("Per favore, seleziona del testo nel messaggio per linkarlo.");
+    }
+  };
+  
+  //FUNZIONI PER MESSAGGI TEMPORANEI
+  const toggleTemp = () => {
+    setIsTemp(!isTemp);
+    if (!isTemp) {
+      setUpdateInterval('');
+      setMaxSendCount('');
+    }
+  };
+
+  const handleUpdateIntervalChange = (e) => {
+    const value = e.target.value;
+    if (/^\d+$/.test(value)) {
+      const numericValue = parseInt(value);
+      if (numericValue >= 1 && numericValue <= 15) {
+        setUpdateInterval(numericValue);
+      } else {
+        setUpdateInterval(numericValue < 1 ? 1 : 60);
+      }
+    } 
+  };
+
+  const handleMaxSendCountChange = (e) => {
+    const value = e.target.value;
+    if (/^\d+$/.test(value)) {
+      const numericValue = parseInt(value);
+      if (numericValue >= 1 && numericValue <= 20) {
+        setMaxSendCount(numericValue);
+      } else {
+        setMaxSendCount(numericValue < 1 ? 1 : 20);
+      }
+    } 
+  };
+
+  //PUBLISH
   const handlePublish = async () => {
     const savedMessage = message;
     setMessage('');
@@ -369,7 +357,6 @@ const InputSqueel = () => {
       <LocationSharer
         showMap={showMap}
         toggleMap={toggleMap}
-        currentLocation={currentLocation}
       />
       <TemporaryMessageOptions
         isTemp={isTemp}

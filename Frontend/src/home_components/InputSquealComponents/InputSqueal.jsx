@@ -142,20 +142,20 @@ const handleUserSelect = (user) => {
   };
   
   const handleAttachImage = () => {
-    if (!photoUploaded) {
       if (charCount >= 50) {
-        setShowImageInput(!showImageInput);
-        if (!showImageInput) {
-          setImage(null);
-          setImagePreview(null);
-          //setShowDeleteButton(false);
-        }
+        const handleAttachImage = () => {
+          setShowImageInput(!showImageInput);
+          if (!showImageInput) {
+            setPhotoUploaded(true);
+            setCharCount(charCount - 50); // Rimuovi 50 caratteri per la foto
+          } else {
+            setPhotoUploaded(false);
+            setCharCount(charCount + 50); // Aggiungi 50 caratteri se la foto viene rimossa
+          }
+        };
       } else {
         alert('Not enough characters for an image upload.');
       }
-    } else {
-      alert('You have already inserted a photo.');
-    }
   };
   
   const handleToggleTemp = () => {
@@ -209,10 +209,17 @@ const handleUserSelect = (user) => {
   const handleCloseMap = () => {
     setShowMap(false);
     setCurrentLocation(null);
+    setCharCount(charCount + 50); // Aggiungi 30 caratteri se la posizione viene rimossa
   };
 
   const handleGetLocation = () => {
     setShowMap(true);
+    if(charCount >= 50)
+      setCharCount(charCount - 50);
+    else {
+      alert('Not enough characters for a position upload.');
+      return;
+    }
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;

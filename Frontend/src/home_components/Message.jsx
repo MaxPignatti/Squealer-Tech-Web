@@ -3,6 +3,7 @@ import { Card, Button, Form, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import Maps from './Maps';
+import { marked } from 'marked';
 
 const Message = ({ message, handleReaction, seteditMessage, editMessage, handleSaveChanges, currentUser }) => {
   const [editedText, setEditedText] = useState(message.text);
@@ -13,6 +14,13 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
 
   const handleSaveClick = () => {
     handleSaveChanges(message._id, editedText);
+  };
+
+  const renderText = (text) => {
+    const textWithLinks = text.replace(/\[([^\]]+)\]\(((?!http:\/\/|https:\/\/).+)\)/g, '[$1](http://$2)');
+    const rawMarkup = marked.parse(textWithLinks);
+    
+    return { __html: rawMarkup };
   };
 
   return (
@@ -28,11 +36,10 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
           </div>
           <div>
             <strong>{message.user}:</strong> <br />
-            "{message.text}"
+            <div dangerouslySetInnerHTML={renderText(message.text)} /> {/* Visualizza il testo interpretato come Markdown */}
           </div>
         </div>
-
-        {/* Visualizzazione dei canali */}
+  
         {message.channel && message.channel.length > 0 && (
           <div className="mb-2">
             {message.channel.map((channel, index) => (
@@ -42,7 +49,7 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
             ))}
           </div>
         )}
-
+  
         {message.image && (
           <div className="text-center my-3">
             <img
@@ -52,11 +59,11 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
             />
           </div>
         )}
-
+  
         {message.location && message.location[0] != null && message.location[1] != null && (
-          <Maps position= {message.location}/>
+          <Maps position={message.location} />
         )}
-
+  
         <div className="d-flex justify-content-end">
           <small className="text-muted">
             <em>
@@ -64,16 +71,14 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
             </em>
           </small>
         </div>
+  
         <div className="d-flex justify-content-between">
           {currentUser === message.user && (
-            <div>
-              <Button onClick={() => seteditMessage(true)}>
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </Button>
-            </div>
+            <Button onClick={() => seteditMessage(true)}>
+              <FontAwesomeIcon icon={faPenToSquare} />
+            </Button>
           )}
-        </div>
-        <div className="d-flex justify-content-between">
+  
           <div>
             <button
               className="btn btn-link"
@@ -83,6 +88,7 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
             </button>
             <span>{message.positiveReactions}</span>
           </div>
+  
           <div>
             <button
               className="btn btn-link"
@@ -93,8 +99,8 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
             <span>{message.negativeReactions}</span>
           </div>
         </div>
+  
         {editMessage && currentUser === message.user && (
-
           <div>
             <Form>
               <Form.Group controlId="formBasicEditText">
@@ -102,25 +108,23 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
                 <Form.Control
                   type="text"
                   name="editedText"
-                  value = {editedText}
+                  value={editedText}
                   onChange={handleTextChange}
-                  />
+                />
               </Form.Group>
             </Form>
-
-          <Button variant="primary" onClick={handleSaveClick}>
-            Salva Modifiche
-          </Button>
-          <Button variant="secondary" onClick={() => seteditMessage(false)}>
-            Annulla
-          </Button>
-        </div>
-
+  
+            <Button variant="primary" onClick={handleSaveClick}>
+              Salva Modifiche
+            </Button>
+            <Button variant="secondary" onClick={() => seteditMessage(false)}>
+              Annulla
+            </Button>
+          </div>
         )}
-
       </Card.Body>
     </Card>
-  );
+  );  
 };
 
 export default Message;

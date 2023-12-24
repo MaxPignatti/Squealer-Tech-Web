@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 const InputSqueel = () => {
   const [charLimit, setCharLimit]=useState(null);
   const [message, setMessage] = useState('');
+  const [selection, setSelection] = useState({ start: 0, end: 0 });
   const [showImageInput, setShowImageInput] = useState(false);
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -20,13 +21,13 @@ const InputSqueel = () => {
   const [showMap, setShowMap] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
 
-  const [recipientType, setRecipientType] = useState('user'); // 'user' o 'channel'
-  const [filteredChannels, setFilteredChannels] = useState([]); // Canali filtrati
+  const [recipientType, setRecipientType] = useState('user');
+  const [filteredChannels, setFilteredChannels] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [channels, setChannels] = useState([]); // Stato per i canali sottoscritti
+  const [channels, setChannels] = useState([]);
   const [selectedChannels, setSelectedChannels] = useState([]);
 
-  const [filteredUsers, setFilteredUsers] = useState([]); // Stato per gli utenti filtrati
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
 
@@ -39,7 +40,7 @@ const InputSqueel = () => {
 
       fetch(`http://localhost:3500/channels/subscribed/${username}`)
         .then((response) => response.json())
-        .then((data) => setChannels(data)) // Imposta i canali sottoscritti nel tuo stato
+        .then((data) => setChannels(data))
         .catch((error) => console.error("Errore durante il recupero dei canali:", error));
 
       fetch(`http://localhost:3500/usr`)
@@ -121,6 +122,22 @@ const handleUserSelect = (user) => {
         remainingChars -= 50;
       }
       setCharCount(remainingChars);
+    }
+  };
+
+  const handleTextSelect = (e) => {
+    setSelection({ start: e.target.selectionStart, end: e.target.selectionEnd });
+  };
+
+  const handleInsertLink = () => {
+    const url = prompt("Inserisci l'URL del link:");
+    if (url && selection.start !== selection.end) {
+      const beforeText = message.substring(0, selection.start);
+      const linkText = message.substring(selection.start, selection.end);
+      const afterText = message.substring(selection.end);
+      setMessage(`${beforeText}[${linkText}](${url})${afterText}`);
+    } else {
+      alert("Per favore, seleziona del testo nel messaggio per linkarlo.");
     }
   };
   
@@ -356,7 +373,6 @@ const handleUserSelect = (user) => {
             </div>
           ))}
   
-          {/* Visualizzazione degli utenti selezionati */}
           {selectedUsers.map(user => (
             <div key={user._id} style={{ padding: '5px', margin: '5px', display: 'inline-flex', alignItems: 'center', border: '1px solid grey', borderRadius: '10px' }}>
               {user.username}
@@ -370,39 +386,35 @@ const handleUserSelect = (user) => {
             </div>
           ))}
   
-          <div style={{ marginBottom: '10px' }}>
+          <textarea
+            value={message}
+            onChange={handleInputChange}
+            onSelect={handleTextSelect}
+            placeholder="Inserisci il tuo messaggio..."
+            style={{ width: '100%', padding: '10px', marginBottom: '10px', height: '100px' }}
+          />
+          <Button variant="secondary" onClick={handleInsertLink} style={{ marginBottom: '10px' }}>
+            Linka il Testo Selezionato
+          </Button>
+          <Button variant="primary" onClick={handleAttachImage} style={{ marginBottom: '10px', marginRight: '10px' }}>
+            {showImageInput ? "Annulla Foto" : "Allega Foto"}
+          </Button>
+          {showImageInput && (
             <input
-              type="text"
-              value={message}
-              onChange={handleInputChange}
-              placeholder="Inserisci il tuo messaggio..."
-              style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
+              type="file"
+              accept="image/*"
+              onChange={handleImageInputChange}
+              style={{ display: 'block', marginBottom: '10px' }}
             />
-            <small style={{ display: 'block', marginBottom: '10px' }}>Caratteri rimanenti: {charCount}</small>
-          </div>
-  
-          <div style={{ marginBottom: '10px' }}>
-            <Button variant="primary" onClick={handleAttachImage} style={{ marginRight: '10px' }}>
-              {showImageInput ? "Annulla Foto" : "Allega Foto"}
-            </Button>
-            {showImageInput && (
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageInputChange}
-                style={{ display: 'block', marginBottom: '10px' }}
-              />
-            )}
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Anteprima"
-                style={{ maxWidth: '100%', maxHeight: '100px', marginBottom: '10px' }}
-              />
-            )}
-          </div>
-  
-          <Button variant="warning" onClick={handleGetLocation} style={{ marginRight: '10px' }}>
+          )}
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Anteprima"
+              style={{ maxWidth: '100%', maxHeight: '100px', marginBottom: '10px' }}
+            />
+          )}
+          <Button variant="warning" onClick={handleGetLocation} style={{ marginBottom: '10px', marginRight: '10px' }}>
             Condividi la tua Posizione
           </Button>
   
@@ -452,6 +464,7 @@ const handleUserSelect = (user) => {
       )}
     </div>
   );
+  
 
 }
   export default InputSqueel;

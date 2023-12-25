@@ -23,7 +23,8 @@ const checkAndSendTempMessages = () => {
           negativeReactions: message.negativeReactions,
           updateInterval: message.updateInterval,
           maxSendCount: message.maxSendCount - 1,
-          nextSendTime: new Date(currentTime.getTime() + message.updateInterval * 60000)
+          nextSendTime: new Date(currentTime.getTime() + message.updateInterval * 60000),
+          location: message.location
         };
         
         const newMessage = new Message(newMessageData);

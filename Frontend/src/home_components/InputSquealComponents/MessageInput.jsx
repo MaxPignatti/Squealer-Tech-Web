@@ -1,11 +1,14 @@
-const MessageInput = ({ message, handleMessageChange }) => (
+const MessageInput = ({ message, handleMessageChange, handleTextSelect }) => {
+  return (
     <textarea
-      className="form-control mb-2"
       value={message}
       onChange={handleMessageChange}
+      onSelect={handleTextSelect} // Cattura la selezione del testo qui
       placeholder="Inserisci il tuo messaggio..."
-      rows="4"
+      style={{ width: '100%', padding: '10px', marginBottom: '10px', height: '100px' }}
     />
   );
+};
+
 
 export default MessageInput;

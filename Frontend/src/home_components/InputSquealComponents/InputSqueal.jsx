@@ -9,7 +9,7 @@ import MessageInput from './MessageInput';
 import PublishButton from './PublishButton';
 import RecipientSelector from './RecipientSelector';
 import TemporaryMessageOptions from './TemporaryMessageOptions';
-
+import LinkInserter from './LinkInserter';
 const InputSqueel = () => {
 
   //USE STATE DA ORDINARE
@@ -206,7 +206,7 @@ const InputSqueel = () => {
         const { latitude, longitude } = position.coords;
         if (latitude != null && longitude != null) {
           setCurrentLocation([latitude, longitude]);
-          //console.log([latitude, longitude]);
+          console.log([latitude, longitude]);
         } else {
           console.error('Invalid coordinates received');
         }
@@ -217,13 +217,13 @@ const InputSqueel = () => {
     );
   };
   
-  //FUNZIONI PER LINK
-  const handleTextSelect = (e) => {
+   // Gestione della selezione del testo
+   const handleTextSelect = (e) => {
     setSelection({ start: e.target.selectionStart, end: e.target.selectionEnd });
   };
 
-  const handleInsertLink = () => {
-    const url = prompt("Inserisci l'URL del link:");
+  // Funzione per inserire il link nel messaggio
+  const handleInsertLink = (url) => {
     if (url && selection.start !== selection.end) {
       const beforeText = message.substring(0, selection.start);
       const linkText = message.substring(selection.start, selection.end);
@@ -346,6 +346,11 @@ const InputSqueel = () => {
       <MessageInput
         message={message}
         handleMessageChange={handleMessageChange}
+        handleTextSelect={handleTextSelect}
+      />
+      <LinkInserter
+        handleInsertLink={handleInsertLink}
+        selection={selection}
       />
       <CharCounter charCount={charCount} />
       <ImageUploader

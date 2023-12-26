@@ -269,6 +269,34 @@ exports.updateMessage = async (req, res) => {
     }
   };
 
+  exports.updatePosition = async (req, res) => {
+    try{
+      const { messageId } = req.params;
+      const {position} = req.body;
+  
+      const message = await Message.findById(messageId);
+  
+      if (!message) {
+        return res.status(404).json({ error: 'Message not found' });
+      }
+
+      if(position && position != message.location){
+
+        message.location = position;
+
+      }
+
+      await message.save();
+      res.json({ 
+        message: 'position added successfully',
+      });
+    } catch{
+      console.error(error);
+      return res.status(500).json({ error: 'Server error' });
+    }
+
+  };
+
   const charforReaction = (user, newChar) => {
     
     let char = 0;

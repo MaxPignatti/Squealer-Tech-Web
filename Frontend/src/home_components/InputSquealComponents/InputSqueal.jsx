@@ -183,9 +183,22 @@ const InputSqueel = () => {
     if (showMap) {
       handleCloseMap();
     } else {
-      handleGetLocation();
+      handleOpenMap();
     }
   };
+
+  const handleOpenMap = () => {
+
+    if(charCount >= 50)
+      setCharCount(charCount - 50);
+    else {
+      alert('Not enough characters for a position upload.');
+      return;
+    }
+    setShowMap(true);
+    handleGetLocation();
+
+  }
 
   const handleCloseMap = () => {
     setShowMap(false);
@@ -194,13 +207,7 @@ const InputSqueel = () => {
   };
 
   const handleGetLocation = () => {
-    if(charCount >= 50)
-      setCharCount(charCount - 50);
-    else {
-      alert('Not enough characters for a position upload.');
-      return;
-    }
-    setShowMap(true);
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -215,6 +222,44 @@ const InputSqueel = () => {
         console.error('Error getting location:', error);
       }
     );
+  };
+
+  const sendLocationPeriodically = () => {
+    let intervalId; 
+  
+    intervalId = setInterval(async () => {
+      try {
+        handleGetLocation();
+        sendLocationToBackend(currentLocation);
+      } catch (error) {
+        console.error('Error getting current location:', error);
+      }
+    }, 30000); 
+  
+    // Interrompi l'intervallo 
+    setTimeout(() => {
+      clearInterval(intervalId);
+      console.log('Interval stopped after 4 minutes');
+    }, 240000);
+  };
+
+ 
+  const sendLocationToBackend = async (messageId, position) => {
+    try {
+      const response = await fetch(`http://localhost:3500/position/${messageId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ position }),
+      });
+  
+      if (!response.ok) {
+        console.error('Failed to update location on the backend');
+      }
+    } catch (error) {
+      console.error('Error sending location to backend:', error);
+    }
   };
   
    // Gestione della selezione del testo

@@ -10,7 +10,9 @@ exports.purchaseRemChar = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    user.remChar += quantity;
+    user.dailyChars += quantity;
+    user.weeklyChars += quantity;
+    user.monthlyChars += quantity;
     await user.save();
 
     return res.status(200).json({ message: `Successfully purchased ${quantity} rem_char` });

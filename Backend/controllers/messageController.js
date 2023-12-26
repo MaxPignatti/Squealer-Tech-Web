@@ -148,7 +148,9 @@ exports.addReaction = async (req, res) => {
       if(!user.positiveMessages.includes(messageId))
       {
         user.positiveMessages.push(messageId);
-        user.remChar += charforReaction(user, newChar);//modifico caratteri
+        user.dailyChars += charforReaction(user, newChar);//modifico caratteri
+        user.weeklyChars += charforReaction(user, newChar);
+        user.monthlyChars += charforReaction(user, newChar);
         //console.log("fatto");
       }
       

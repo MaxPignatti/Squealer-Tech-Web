@@ -72,8 +72,8 @@ const InputSqueel = () => {
           }
         })
         .then((data) => {
-          setCharLimit(data.remChar);
-          setCharCount(data.remChar);
+          setCharLimit(data.dailyChars);
+          setCharCount(data.dailyChars);
         })
         .catch((error) => {
           console.error('API call error:', error);

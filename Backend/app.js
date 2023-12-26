@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const Channel = require('./models/channel');
+const cron = require('node-cron');
+const User = require('./models/user'); // Assicurati che il percorso sia corretto
 
 const app = express();
 const port = 3500;
@@ -68,6 +70,24 @@ checkAndSendTempMessages();
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
+// Reset giornaliero
+cron.schedule('0 0 * * *', async () => {
+  await User.updateMany({}, { $set: { dailyChars: 150 } });
+  console.log('Reset giornaliero eseguito');
+});
+
+// Reset settimanale (alla mezzanotte di lunedì)
+cron.schedule('0 0 * * 1', async () => {
+  await User.updateMany({}, { $set: { weeklyChars: 750 } });
+  console.log('Reset settimanale eseguito');
+});
+
+// Reset mensile (il primo di ogni mese)
+cron.schedule('0 0 1 * *', async () => {
+  await User.updateMany({}, { $set: { monthlyChars: 2250 } });
+  console.log('Reset mensile eseguito');
 });
 
 app.use('/messages', messageRoutes);

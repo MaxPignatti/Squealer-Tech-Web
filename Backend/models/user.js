@@ -35,7 +35,15 @@ const userSchema = new mongoose.Schema({
   socialMediaManagerEmail: {
     type: String,
   },
-  remChar: {
+  dailyChars: {
+    type: Number,
+    default: 0
+  },
+  weeklyChars: {
+    type: Number,
+    default: 0
+  },
+  monthlyChars: {
     type: Number,
     default: 0
   },

@@ -24,6 +24,7 @@ const InputSqueel = () => {
 
   const [currentLocation, setCurrentLocation] = useState(null);
   const [showMap, setShowMap] = useState(false);
+  const [_id, set_id] = useState(null);
 
   const [recipientType, setRecipientType] = useState('user');
   const [filteredChannels, setFilteredChannels] = useState([]);
@@ -96,6 +97,15 @@ const InputSqueel = () => {
       setFilteredUsers(filtered);
     }
   }, [searchTerm, channels, users, recipientType]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      
+      sendLocationPeriodically(_id);
+    }, 10000); // Aggiorna ogni 10 secondi
+
+    return () => clearInterval(interval);
+  }, []);
 
   //FUNZIONI PER DESTINATARI
   const handleRecipientChange = (newValue) => {
@@ -213,7 +223,7 @@ const InputSqueel = () => {
         const { latitude, longitude } = position.coords;
         if (latitude != null && longitude != null) {
           setCurrentLocation([latitude, longitude]);
-          console.log([latitude, longitude]);
+          console.log([latitude, longitude], 'dio merda');
         } else {
           console.error('Invalid coordinates received');
         }
@@ -224,13 +234,16 @@ const InputSqueel = () => {
     );
   };
 
-  const sendLocationPeriodically = () => {
+
+  const sendLocationPeriodically = (messageId) => {
     let intervalId; 
   
     intervalId = setInterval(async () => {
       try {
+        console.log('periodically  ok');
         handleGetLocation();
-        sendLocationToBackend(currentLocation);
+        console.log(currentLocation);
+        sendLocationToBackend(messageId, currentLocation);
       } catch (error) {
         console.error('Error getting current location:', error);
       }
@@ -246,6 +259,7 @@ const InputSqueel = () => {
  
   const sendLocationToBackend = async (messageId, position) => {
     try {
+      console.log('sendbackend ok');
       const response = await fetch(`http://localhost:3500/position/${messageId}`, {
         method: 'POST',
         headers: {
@@ -358,7 +372,10 @@ const InputSqueel = () => {
   
           if (response.status === 201) {
             const data = await response.json();
+            set_id(data._id);
             window.location.reload();
+            //sendLocationPeriodically(data._id);
+            console.log('response ok');
           } else {
             const data = await response.json();
             console.error('Errore nella creazione del messaggio:', data.error);

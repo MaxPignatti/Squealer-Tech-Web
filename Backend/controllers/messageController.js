@@ -40,7 +40,10 @@ exports.createMessage = async (req, res) => {
     user.remChar = charCount;
     await user.save();
 
-    return res.status(201).json({ message: 'Message created successfully' });
+    return res.status(201).json({ 
+      message: 'Message created successfully',
+      _id : savedMessage._id
+   });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Server error' });
@@ -275,20 +278,22 @@ exports.updateMessage = async (req, res) => {
     try{
       const { messageId } = req.params;
       const {position} = req.body;
-  
+      console.log('backend 1 ok');
       const message = await Message.findById(messageId);
   
       if (!message) {
         return res.status(404).json({ error: 'Message not found' });
       }
-
+      console.log('backend 2 ok');
       if(position && position != message.location){
-
+        console.log('backend 3 ok');
         message.location = position;
+        console.log(message.location);
 
       }
 
       await message.save();
+      console.log('backend 4 ok');
       res.json({ 
         message: 'position added successfully',
       });

@@ -298,7 +298,7 @@ exports.updateMessage = async (req, res) => {
         message: 'position added successfully',
       });
     } catch{
-      console.error(error);
+      //console.error(error); non esiste "error"
       return res.status(500).json({ error: 'Server error' });
     }
 

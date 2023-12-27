@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
 
-const YourChannels = ({ channelUpdated, onChannelUnsubscribed }) => {
-  const [userChannels, setUserChannels] = useState([]);
-  const [channelDeleted, setChannelDeleted] = useState(null);
+const YourChannels = ({ yourChannels, setYourChannels, setSubscribedChannels, setAllChannels }) => {
   const [membersList, setMembersList] = useState([]);
   const [selectedChannelId, setSelectedChannelId] = useState(null);
 
@@ -15,19 +13,19 @@ const YourChannels = ({ channelUpdated, onChannelUnsubscribed }) => {
 
       fetch(`http://localhost:3500/channels/created?creator=${username}`)
         .then((response) => response.json())
-        .then((data) => setUserChannels(data))
+        .then((data) => setYourChannels(data))
         .catch((error) => console.error("Errore durante il recupero dei canali:", error));
     }
-  }, [channelUpdated, channelDeleted]);
+  });
 
-  const handleDeleteChannel = async (channelId) => {
+  const handleDeleteChannel = async (channel) => {
     try {
       const userDataCookie = Cookies.get('user_data');
       if (userDataCookie) {
         const userData = JSON.parse(userDataCookie);
         const username = userData.username;
 
-        const response = await fetch(`http://localhost:3500/channels/delete/${channelId}`, {
+        const response = await fetch(`http://localhost:3500/channels/delete/${channel._id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -37,11 +35,9 @@ const YourChannels = ({ channelUpdated, onChannelUnsubscribed }) => {
 
         if (response.status === 200) {
           console.log("Canale eliminato con successo.");
-
-          // Aggiorna lo stato per riflettere le modifiche
-          setChannelDeleted(channelId);
-          // Richiedi nuovamente l'elenco aggiornato dei canali a cui sei iscritto
-          onChannelUnsubscribed();
+          setSubscribedChannels(prevChannels => prevChannels.filter(chan => chan._id !== channel._id));
+          setYourChannels(prevChannels => prevChannels.filter(chan => chan._id !== channel._id));
+          setAllChannels(prevChannels => prevChannels.filter(chan => chan._id !== channel._id));
         } else {
           console.error("Errore durante l'eliminazione del canale:", response.status);
         }
@@ -82,7 +78,7 @@ const YourChannels = ({ channelUpdated, onChannelUnsubscribed }) => {
       <h1 className="display-4">I TUOI CANALI</h1>
       <div className="card">
         <ul className="list-group list-group-flush">
-          {userChannels.map((channel) => (
+          {yourChannels.map((channel) => (
             <li className="list-group-item" key={channel._id}>
               {channel.name}
               <span
@@ -100,7 +96,7 @@ const YourChannels = ({ channelUpdated, onChannelUnsubscribed }) => {
               </span>
               <button
                 className="btn btn-danger btn-sm float-end"
-                onClick={() => handleDeleteChannel(channel._id)}
+                onClick={() => handleDeleteChannel(channel)}
               >
                 Elimina
               </button>

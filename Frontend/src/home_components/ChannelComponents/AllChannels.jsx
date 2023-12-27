@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
 
-const AllChannels = ({ handleSubscribeNewChannel }) => {
-  const [allChannels, setAllChannels] = useState([]);
+const AllChannels = ({setSubscribedChannels, allChannels, setAllChannels }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredChannels, setFilteredChannels] = useState([]);
 
@@ -25,14 +24,14 @@ const AllChannels = ({ handleSubscribeNewChannel }) => {
     setFilteredChannels(filtered);
   }, [searchTerm, allChannels]);
 
-  const handleSubscribe = async (channelId) => {
+  const handleSubscribe = async (channel) => {
     try {
       const userDataCookie = Cookies.get('user_data');
       if (userDataCookie) {
         const userData = JSON.parse(userDataCookie);
         const username = userData.username;
 
-        const response = await fetch(`http://localhost:3500/channels/subscribe/${channelId}`, {
+        const response = await fetch(`http://localhost:3500/channels/subscribe/${channel._id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -43,9 +42,8 @@ const AllChannels = ({ handleSubscribeNewChannel }) => {
         if (response.status === 200) {
           console.log("Iscrizione avvenuta con successo.");
           // Rimuovi il canale dalla lista di AllChannels
-          setAllChannels(prevChannels => prevChannels.filter(channel => channel._id !== channelId));
-          // Chiamiamo la funzione per aggiungere il nuovo canale agli iscritti
-          handleSubscribeNewChannel(channelId);
+          setAllChannels(prevChannels => prevChannels.filter(chan => chan._id !== channel._id));
+          setSubscribedChannels(prevChannels => [...prevChannels, channel]);
         } else {
           console.error("Errore durante l'iscrizione:", response.status);
         }
@@ -76,7 +74,7 @@ const AllChannels = ({ handleSubscribeNewChannel }) => {
               <span className="badge bg-primary ms-2">{channel.members.length} Iscritti</span>
               <button
                 className="btn btn-success btn-sm float-end"
-                onClick={() => handleSubscribe(channel._id)}
+                onClick={() => handleSubscribe(channel)}
               >
                 Iscriviti
               </button>

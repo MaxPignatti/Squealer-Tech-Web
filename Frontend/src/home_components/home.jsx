@@ -7,7 +7,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { useAuth } from '../AuthContext';
 import { Navigate } from 'react-router-dom';
 import MainPage from './MainPage';
-import ChannelsPage from './ChannelsPage';
+import ChannelsPage from './ChannelComponents/ChannelsPage';
 import ShopPage from './ShopPage';
 
 const HomePage = () => {

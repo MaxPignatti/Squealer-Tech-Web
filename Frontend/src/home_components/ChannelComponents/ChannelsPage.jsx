@@ -5,47 +5,34 @@ import SubscribedChannels from "./SubscribedChannels";
 import AllChannels from "./AllChannels";
 
 const ChannelsPage = () => {
-  const [channelUpdated, setChannelUpdated] = useState(false);
-  const [subscribedChannelsUpdated, setSubscribedChannelsUpdated] = useState(false);
-  const [allChannelsUpdated, setAllChannelsUpdated] = useState(false);
-
-  const handleChannelSubscribed = () => {
-    setSubscribedChannelsUpdated((prev) => !prev);
-  };
-
-  const handleYourChannelsUpdated = () => {
-    setChannelUpdated((prev) => !prev);
-  };
-
-  const handleAllChannelsUpdated = () => {
-    setAllChannelsUpdated((prev) => !prev);
-  };
-
-  const handleSubscribeNewChannel = (channelId) => {
-    // Aggiorna SubscribedChannels con il nuovo canale
-    setSubscribedChannelsUpdated((prev) => !prev);
-    // Rimuovi il canale da AllChannels
-    setAllChannelsUpdated((prev) => !prev);
-  };
-
-  const handleUnsubscribeChannel = (channelId) => {
-    // Aggiorna AllChannels con il canale disiscritto
-    setAllChannelsUpdated((prev) => !prev);
-  };
+  const [subscribedChannels, setSubscribedChannels] = useState([]);
+  const [yourChannels, setYourChannels] = useState([]);
+  const [allChannels, setAllChannels] = useState([]);
 
   return (
     <div>
       <CreateChannel
-        onChannelSubscribed={handleChannelSubscribed}
-        onYourChannelsUpdated={handleYourChannelsUpdated}
-        onAllChannelsUpdated={handleAllChannelsUpdated}
+        subscribedChannels={subscribedChannels}
+        setSubscribedChannels={setSubscribedChannels}
+        yourChannels={yourChannels}
+        setYourChannels={setYourChannels}
       />
-      <YourChannels channelUpdated={channelUpdated} onChannelUnsubscribed={handleChannelSubscribed} />
+      <YourChannels 
+        yourChannels={yourChannels} 
+        setYourChannels={setYourChannels}
+        setSubscribedChannels={setSubscribedChannels}
+        setAllChannels={setAllChannels}
+        />
       <SubscribedChannels
-        subscribedChannelsUpdated={subscribedChannelsUpdated}
-        onUnsubscribeChannel={handleUnsubscribeChannel}
+        subscribedChannels = {subscribedChannels}
+        setSubscribedChannels = {setSubscribedChannels}
+        setAllChannels={setAllChannels}
       />
-      <AllChannels handleSubscribeNewChannel={handleSubscribeNewChannel} allChannelsUpdated={allChannelsUpdated} />
+      <AllChannels 
+        subscribedChannels={subscribedChannels}
+        setSubscribedChannels={setSubscribedChannels}
+        allChannels={allChannels}
+        setAllChannels={setAllChannels} />
     </div>
   );
 };

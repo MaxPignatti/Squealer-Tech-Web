@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Cookies from 'js-cookie';
 
-const CreateChannel = ({ onChannelSubscribed, onYourChannelsUpdated, onAllChannelsUpdated }) => {
+const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
   const [showForm, setShowForm] = useState(false);
   const [channelName, setChannelName] = useState("");
   const [channelDescription, setChannelDescription] = useState("");
@@ -25,25 +25,22 @@ const CreateChannel = ({ onChannelSubscribed, onYourChannelsUpdated, onAllChanne
         });
 
         if (response.status === 201) {
-          console.log("Canale creato con successo.");
+          const responseData = await response.json();
           setShowForm(false);
-
-          // Aggiorna ChannelsPage quando viene creato un nuovo canale
-          onYourChannelsUpdated();
-          // Aggiorna SubscribedChannels quando viene creato un nuovo canale
-          onChannelSubscribed();
-          // Aggiorna AllChannels quando viene creato un nuovo canale
-          onAllChannelsUpdated();
+          setSubscribedChannels(prevChannels => [...prevChannels, responseData.newChannel]);
+          setYourChannels(prevChannels => [...prevChannels, responseData.newChannel]);
         } else {
           console.error("Errore durante la creazione del canale:", response.status);
         }
       } catch (error) {
-        console.error("Errore durante la richiesta POST:", error);
+        console.error("Errore durante la richiesta POST:", error.message);
       }
     } else {
       console.error('User data not found in cookies');
     }
   };
+
+
 
   return (
     <div className="create-channel">

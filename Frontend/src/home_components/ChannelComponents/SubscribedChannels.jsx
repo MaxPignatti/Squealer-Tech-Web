@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
 
-const SubscribedChannels = ({ subscribedChannelsUpdated, onUnsubscribeChannel }) => {
-  const [subscribedChannels, setSubscribedChannels] = useState([]);
+const SubscribedChannels = ({ subscribedChannels, setSubscribedChannels, setAllChannels }) => {
+  
 
   useEffect(() => {
     const userDataCookie = Cookies.get('user_data');
@@ -15,16 +15,16 @@ const SubscribedChannels = ({ subscribedChannelsUpdated, onUnsubscribeChannel })
         .then((data) => setSubscribedChannels(data))
         .catch((error) => console.error("Errore durante il recupero dei canali:", error));
     }
-  }, [subscribedChannelsUpdated]);
+  });
 
-  const handleUnsubscribe = async (channelId) => {
+  const handleUnsubscribe = async (channel) => {
     try {
       const userDataCookie = Cookies.get('user_data');
       if (userDataCookie) {
         const userData = JSON.parse(userDataCookie);
         const username = userData.username;
 
-        const response = await fetch(`http://localhost:3500/channels/unsubscribe/${channelId}`, {
+        const response = await fetch(`http://localhost:3500/channels/unsubscribe/${channel._id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -34,8 +34,9 @@ const SubscribedChannels = ({ subscribedChannelsUpdated, onUnsubscribeChannel })
 
         if (response.status === 200) {
           console.log("Disiscrizione avvenuta con successo.");
-          // Aggiorna SubscribedChannels con i canali aggiornati
-          onUnsubscribeChannel(channelId);
+          setSubscribedChannels(prevChannels => prevChannels.filter(chan => chan._id !== channel._id));
+          setAllChannels(prevChannels => [...prevChannels, channel])
+          
         } else {
           console.error("Errore durante la disiscrizione:", response.status);
         }
@@ -43,11 +44,6 @@ const SubscribedChannels = ({ subscribedChannelsUpdated, onUnsubscribeChannel })
     } catch (error) {
       console.error("Errore durante la richiesta di disiscrizione:", error);
     }
-  };
-
-  // Nuova funzione per gestire l'iscrizione di un nuovo canale
-  const handleSubscribeNewChannel = (newChannel) => {
-    setSubscribedChannels((prevChannels) => [...prevChannels, newChannel]);
   };
 
   return (
@@ -61,7 +57,7 @@ const SubscribedChannels = ({ subscribedChannelsUpdated, onUnsubscribeChannel })
               <span className="badge bg-primary ms-2">{channel.members.length} Iscritti</span>
               <button
                 className="btn btn-danger btn-sm float-end"
-                onClick={() => handleUnsubscribe(channel._id)}
+                onClick={() => handleUnsubscribe(channel)}
               >
                 Disiscriviti
               </button>

@@ -31,7 +31,7 @@ exports.createChannel = async (req, res) => {
       }
     );
 
-    res.status(201).json({ message: "Canale creato con successo.", channel: newChannel });
+    res.status(201).json({ message: "Canale creato con successo.", newChannel: newChannel });
   } catch (error) {
     console.error("Errore durante la creazione del canale:", error);
     res.status(500).json({ error: "Errore interno del server." });

@@ -4,7 +4,7 @@ const User = require('../models/user');
 // Create a new message
 exports.createMessage = async (req, res) => {
   try {
-    const { userName, image, text, charCount, isTemp, recipients, updateInterval, maxSendCount,nextSendTime, location} = req.body;
+    const { userName, image, text, dailyCharacters, weeklyCharacters, monthlyCharacters, isTemp, recipients, updateInterval, maxSendCount,nextSendTime, location} = req.body;
 
     const user = await User.findOne({ username: userName });
     if (!user) {
@@ -37,7 +37,9 @@ exports.createMessage = async (req, res) => {
     }
 
     // Aggiornare i caratteri rimanenti dell'utente
-    user.remChar = charCount;
+    user.dailyChars = dailyCharacters;
+    user.weeklyChars = weeklyCharacters;
+    user.monthlyChars = monthlyCharacters;
     await user.save();
 
     return res.status(201).json({ 
@@ -138,7 +140,7 @@ exports.addReaction = async (req, res) => {
 
     if(message.positiveReactions > cm && message.negativeReactions <= cm)//il messaggio è popolare
     { 
-      //console.log("popolare");
+      //console.log("popolare");charForReaction
       if(user.negativeMessages.includes(messageId)) // il messaggio è controverso
       {
         //user.negativeMessages.pop(messageId);
@@ -151,9 +153,9 @@ exports.addReaction = async (req, res) => {
       if(!user.positiveMessages.includes(messageId))
       {
         user.positiveMessages.push(messageId);
-        user.dailyChars += charforReaction(user, newChar);//modifico caratteri
-        user.weeklyChars += charforReaction(user, newChar);
-        user.monthlyChars += charforReaction(user, newChar);
+        user.dailyChars += charForReaction(user, newChar);//modifico caratteri
+        user.weeklyChars += charForReaction(user, newChar);
+        user.monthlyChars += charForReaction(user, newChar);
         //console.log("fatto");
       }
       
@@ -173,7 +175,7 @@ exports.addReaction = async (req, res) => {
       if (!user.negativeMessages.includes(messageId))
       {
         user.negativeMessages.push(messageId);
-        user.remChar += charforReaction(user, newChar);//modifico i caratteri
+        user.remChar += charForReaction(user, newChar);//modifico i caratteri
       } 
     }
     //console.log("hey  ", user.positiveMessages.length);
@@ -261,12 +263,6 @@ exports.updateMessage = async (req, res) => {
       // Remove the message from the database
       await message.remove();
   
-      // Optionally, update the user's remaining characters
-      const user = await User.findById(message.user);
-      const charCount = calculateCharacterCount(message);
-      user.remainingCharacters += charCount;
-      await user.save();
-  
       return res.status(204).send(); // 204 No text for successful deletion
     } catch (error) {
       console.error(error);
@@ -278,22 +274,22 @@ exports.updateMessage = async (req, res) => {
     try{
       const { messageId } = req.params;
       const {position} = req.body;
-      console.log('backend 1 ok');
+      //console.log('backend 1 ok');
       const message = await Message.findById(messageId);
   
       if (!message) {
         return res.status(404).json({ error: 'Message not found' });
       }
-      console.log('backend 2 ok');
+      //console.log('backend 2 ok');
       if(position && position != message.location){
-        console.log('backend 3 ok');
+        //console.log('backend 3 ok');
         message.location = position;
-        console.log(message.location);
+        //console.log(message.location);
 
       }
 
       await message.save();
-      console.log('backend 4 ok');
+      //console.log('backend 4 ok');
       res.json({ 
         message: 'position added successfully',
       });
@@ -304,7 +300,7 @@ exports.updateMessage = async (req, res) => {
 
   };
 
-  const charforReaction = (user, newChar) => {
+  const charForReaction = (user, newChar) => {
     
     let char = 0;
 
@@ -319,21 +315,3 @@ exports.updateMessage = async (req, res) => {
     }
     return char;
   }
-
-  /*const calculateCharacterCount = (message) => {
-    let charCount = 0;
-  
-    if (message.type === 'text') {
-      charCount = message.text.length;
-    } else if (message.type === 'image') {
-      charCount = 50; // Images count as 50 characters (non ricordo le specifiche)
-    }
-  
-    // Count the number of pictures in the text
-    const pictureCount = message.text.split(' ').filter((word) => word.startsWith('![image]')).length;
-  
-    // Calculate the total character count for the message
-    charCount += pictureCount * 50;
-  
-    return charCount;
-  };*/

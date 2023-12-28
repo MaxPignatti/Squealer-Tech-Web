@@ -13,10 +13,15 @@ import LinkInserter from './LinkInserter';
 const InputSqueel = () => {
 
   //USE STATE DA ORDINARE
-  const [charLimit, setCharLimit]=useState(null);
   const [message, setMessage] = useState('');
   const [selection, setSelection] = useState({ start: 0, end: 0 });
-  const [charCount, setCharCount] = useState(0);
+  const [dailyCharacters, setDailyCharacters] = useState(0);
+  const [weeklyCharacters, setWeeklyCharacters] = useState(0);
+  const [monthlyCharacters, setMonthlyCharacters] = useState(0);
+  const [initialDailyCharacters, setInitialDailyCharacters] = useState(0);
+  const [initialWeeklyCharacters, setInitialWeeklyCharacters] = useState(0);
+  const [initialMonthlyCharacters, setInitialMonthlyCharacters] = useState(0);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [isTemp, setIsTemp] = useState(false);
   const [updateInterval, setUpdateInterval] = useState(0);
@@ -73,8 +78,12 @@ const InputSqueel = () => {
           }
         })
         .then((data) => {
-          setCharLimit(data.dailyChars);
-          setCharCount(data.dailyChars);
+          setDailyCharacters(data.dailyChars);
+          setWeeklyCharacters(data.weeklyChars);
+          setMonthlyCharacters(data.monthlyChars);
+          setInitialDailyCharacters(data.dailyChars);
+          setInitialWeeklyCharacters(data.weeklyChars);
+          setInitialMonthlyCharacters(data.monthlyChars);
         })
         .catch((error) => {
           console.error('API call error:', error);
@@ -98,6 +107,7 @@ const InputSqueel = () => {
     }
   }, [searchTerm, channels, users, recipientType]);
 
+  /*
   useEffect(() => {
     const interval = setInterval(() => {
       
@@ -106,6 +116,7 @@ const InputSqueel = () => {
 
     return () => clearInterval(interval);
   }, []);
+  */
 
   //FUNZIONI PER DESTINATARI
   const handleRecipientChange = (newValue) => {
@@ -155,17 +166,22 @@ const InputSqueel = () => {
   //FUNZIONE PER TEXT
   const handleMessageChange = (event) => {
     const inputMessage = event.target.value;
-    if (inputMessage.length <= charLimit) {
+    const charCounter = (currentLocation != null)*50+(image != null)*50+inputMessage.length;
+    if (charCounter <= initialDailyCharacters && charCounter <= initialWeeklyCharacters && charCounter <= initialMonthlyCharacters) {
       setMessage(inputMessage);
-      let remainingChars = charLimit - inputMessage.length;
-      setCharCount(remainingChars);
+      setDailyCharacters(initialDailyCharacters - charCounter)
+      setWeeklyCharacters(initialWeeklyCharacters - charCounter)
+      setMonthlyCharacters(initialMonthlyCharacters - charCounter)
     }
   };
 
   //FUNZIONI PER IMMAGINI
   const handleImageChange = (e) => {
-    if(charCount >= 50)
-      setCharCount(charCount - 50);
+    if(dailyCharacters >= 50 && weeklyCharacters >= 50 && monthlyCharacters >= 50) {
+      setDailyCharacters(dailyCharacters - 50);
+      setWeeklyCharacters(weeklyCharacters - 50);
+      setMonthlyCharacters(monthlyCharacters - 50);
+    }
     else {
       alert('Not enough characters for an image upload.');
       return;
@@ -185,7 +201,9 @@ const InputSqueel = () => {
   const handleRemoveImage = () => {
     setImage(null); // Rimuove l'immagine
     setImagePreview(null); // Rimuove l'anteprima dell'immagine
-    setCharCount(charCount + 50);
+    setDailyCharacters(dailyCharacters + 50);
+    setWeeklyCharacters(weeklyCharacters + 50);
+    setMonthlyCharacters(monthlyCharacters + 50);
   };
 
   //FUNZIONI PER POSIZIONE
@@ -199,8 +217,11 @@ const InputSqueel = () => {
 
   const handleOpenMap = () => {
 
-    if(charCount >= 50)
-      setCharCount(charCount - 50);
+    if(dailyCharacters >= 50 && weeklyCharacters >= 50 && monthlyCharacters >= 50) {
+      setDailyCharacters(dailyCharacters - 50);
+      setWeeklyCharacters(weeklyCharacters - 50);
+      setMonthlyCharacters(monthlyCharacters - 50);
+    }
     else {
       alert('Not enough characters for a position upload.');
       return;
@@ -213,7 +234,9 @@ const InputSqueel = () => {
   const handleCloseMap = () => {
     setShowMap(false);
     setCurrentLocation(null);
-    setCharCount(charCount + 50);
+    setDailyCharacters(dailyCharacters + 50);
+    setWeeklyCharacters(weeklyCharacters + 50);
+    setMonthlyCharacters(monthlyCharacters + 50);
   };
 
   const handleGetLocation = () => {
@@ -223,7 +246,7 @@ const InputSqueel = () => {
         const { latitude, longitude } = position.coords;
         if (latitude != null && longitude != null) {
           setCurrentLocation([latitude, longitude]);
-          console.log([latitude, longitude], 'dio merda');
+          //console.log([latitude, longitude], 'acciderbolina!');
         } else {
           console.error('Invalid coordinates received');
         }
@@ -240,9 +263,9 @@ const InputSqueel = () => {
   
     intervalId = setInterval(async () => {
       try {
-        console.log('periodically  ok');
+        //console.log('periodically  ok');
         handleGetLocation();
-        console.log(currentLocation);
+        //console.log(currentLocation);
         sendLocationToBackend(messageId, currentLocation);
       } catch (error) {
         console.error('Error getting current location:', error);
@@ -252,14 +275,14 @@ const InputSqueel = () => {
     // Interrompi l'intervallo 
     setTimeout(() => {
       clearInterval(intervalId);
-      console.log('Interval stopped after 4 minutes');
+      //console.log('Interval stopped after 4 minutes');
     }, 240000);
   };
 
  
   const sendLocationToBackend = async (messageId, position) => {
     try {
-      console.log('sendbackend ok');
+      //console.log('sendbackend ok');
       const response = await fetch(`http://localhost:3500/position/${messageId}`, {
         method: 'POST',
         headers: {
@@ -329,12 +352,13 @@ const InputSqueel = () => {
   //PUBLISH
   const handlePublish = async () => {
     const savedMessage = message;
-    setMessage('');
-    setImage(null);
-    setImagePreview(null);
   
     if (savedMessage && (selectedChannels.length > 0 || selectedUsers.length > 0)) {
       const userDataCookie = Cookies.get('user_data');
+      setMessage('');
+      setImage(null);
+      setImagePreview(null);
+      setErrorMessage(''); // Reset del messaggio di errore
       if (userDataCookie) {
         try {
           const userData = JSON.parse(userDataCookie);
@@ -344,12 +368,14 @@ const InputSqueel = () => {
             alert("Please enter valid update interval and max send count for temporary messages.");
             return;
           }
-          console.log(isTempMessage)
+          //console.log(isTempMessage)
           const requestData = {
             userName: userData.username,
             image: image !== null ? image : null,
             text: savedMessage,
-            charCount: charCount,
+            dailyCharacters: dailyCharacters,
+            weeklyCharacters: weeklyCharacters,
+            monthlyCharacters: monthlyCharacters,
             updateInterval: isTempMessage ? updateInterval : undefined,
             maxSendCount: isTempMessage ? maxSendCount : undefined,
             nextSendTime: isTempMessage ? new Date(currentTime.getTime() + updateInterval * 60000) : undefined,
@@ -375,7 +401,7 @@ const InputSqueel = () => {
             set_id(data._id);
             window.location.reload();
             //sendLocationPeriodically(data._id);
-            console.log('response ok');
+            //console.log('response ok');
           } else {
             const data = await response.json();
             console.error('Errore nella creazione del messaggio:', data.error);
@@ -385,7 +411,13 @@ const InputSqueel = () => {
         }
       }
     } else {
-      alert('Devi scrivere qualcosa e selezionare almeno un destinatario');
+      let errorText = '';
+      if (!savedMessage) {
+        errorText = 'Scrivi qualcosa';
+      } else if (selectedChannels.length === 0 && selectedUsers.length === 0) {
+        errorText = 'Seleziona un destinatario';
+      }
+      setErrorMessage(errorText);
     }
   };
   
@@ -414,7 +446,10 @@ const InputSqueel = () => {
         handleInsertLink={handleInsertLink}
         selection={selection}
       />
-      <CharCounter charCount={charCount} />
+      <CharCounter 
+        dailyCharacters={dailyCharacters}
+        weeklyCharacters={weeklyCharacters}
+        monthlyCharacters={monthlyCharacters} />
       <ImageUploader
         image={image}
         imagePreview={imagePreview}
@@ -434,6 +469,7 @@ const InputSqueel = () => {
         handleMaxSendCountChange={handleMaxSendCountChange}
       />
       <PublishButton handlePublish={handlePublish} />
+      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
     </div>
   );
 };

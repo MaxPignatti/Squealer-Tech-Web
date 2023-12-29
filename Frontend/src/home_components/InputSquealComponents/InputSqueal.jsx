@@ -23,6 +23,7 @@ const InputSqueel = () => {
   const [initialMonthlyCharacters, setInitialMonthlyCharacters] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const [publicMessage, setPublicMessage] = useState(false);
   const [isTemp, setIsTemp] = useState(false);
   const [updateInterval, setUpdateInterval] = useState(0);
   const [maxSendCount, setMaxSendCount] = useState(0);
@@ -92,6 +93,32 @@ const InputSqueel = () => {
       console.error('User data not found in cookies');
     }
   }, []);
+
+  useEffect(() => {
+    if(selectedChannels.length === 0) {
+      setPublicMessage(false);
+    } else if (!publicMessage) {
+      setPublicMessage(true);
+    }
+  }, [selectedChannels])
+
+  useEffect(() => {
+    if (publicMessage) {
+      const charCounter = (currentLocation != null)*50 + (image != null)*50 + message.length;
+      if (charCounter <= initialDailyCharacters && charCounter <= initialWeeklyCharacters && charCounter <= initialMonthlyCharacters) {
+        setDailyCharacters(initialDailyCharacters - charCounter);
+        setWeeklyCharacters(initialWeeklyCharacters - charCounter);
+        setMonthlyCharacters(initialMonthlyCharacters - charCounter);
+      } else {
+        setSelectedChannels([]);
+        alert('Not enough characters to send your message (to a channel)');
+      }
+    } else {
+      setDailyCharacters(initialDailyCharacters);
+      setWeeklyCharacters(initialWeeklyCharacters);
+      setMonthlyCharacters(initialMonthlyCharacters);
+    }
+  }, [publicMessage]);
 
   useEffect(() => {
     if (recipientType === 'channel') {
@@ -167,24 +194,28 @@ const InputSqueel = () => {
   const handleMessageChange = (event) => {
     const inputMessage = event.target.value;
     const charCounter = (currentLocation != null)*50+(image != null)*50+inputMessage.length;
-    if (charCounter <= initialDailyCharacters && charCounter <= initialWeeklyCharacters && charCounter <= initialMonthlyCharacters) {
+    if (selectedChannels.length === 0) {
       setMessage(inputMessage);
-      setDailyCharacters(initialDailyCharacters - charCounter)
-      setWeeklyCharacters(initialWeeklyCharacters - charCounter)
-      setMonthlyCharacters(initialMonthlyCharacters - charCounter)
+    }else if (charCounter <= initialDailyCharacters && charCounter <= initialWeeklyCharacters && charCounter <= initialMonthlyCharacters) {
+      setMessage(inputMessage);
+      setDailyCharacters(initialDailyCharacters - charCounter);
+      setWeeklyCharacters(initialWeeklyCharacters - charCounter);
+      setMonthlyCharacters(initialMonthlyCharacters - charCounter);
     }
   };
 
   //FUNZIONI PER IMMAGINI
   const handleImageChange = (e) => {
-    if(dailyCharacters >= 50 && weeklyCharacters >= 50 && monthlyCharacters >= 50) {
-      setDailyCharacters(dailyCharacters - 50);
-      setWeeklyCharacters(weeklyCharacters - 50);
-      setMonthlyCharacters(monthlyCharacters - 50);
-    }
-    else {
-      alert('Not enough characters for an image upload.');
-      return;
+    if(selectedChannels.length !== 0) {
+      if(dailyCharacters >= 50 && weeklyCharacters >= 50 && monthlyCharacters >= 50) {
+        setDailyCharacters(dailyCharacters - 50);
+        setWeeklyCharacters(weeklyCharacters - 50);
+        setMonthlyCharacters(monthlyCharacters - 50);
+      }
+      else {
+        alert('Not enough characters for an image upload.');
+        return;
+      }
     }
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -201,9 +232,11 @@ const InputSqueel = () => {
   const handleRemoveImage = () => {
     setImage(null); // Rimuove l'immagine
     setImagePreview(null); // Rimuove l'anteprima dell'immagine
-    setDailyCharacters(dailyCharacters + 50);
-    setWeeklyCharacters(weeklyCharacters + 50);
-    setMonthlyCharacters(monthlyCharacters + 50);
+    if (selectedChannels.length !== 0) {
+      setDailyCharacters(dailyCharacters + 50);
+      setWeeklyCharacters(weeklyCharacters + 50);
+      setMonthlyCharacters(monthlyCharacters + 50);
+    }
   };
 
   //FUNZIONI PER POSIZIONE
@@ -216,15 +249,16 @@ const InputSqueel = () => {
   };
 
   const handleOpenMap = () => {
-
-    if(dailyCharacters >= 50 && weeklyCharacters >= 50 && monthlyCharacters >= 50) {
-      setDailyCharacters(dailyCharacters - 50);
-      setWeeklyCharacters(weeklyCharacters - 50);
-      setMonthlyCharacters(monthlyCharacters - 50);
-    }
-    else {
-      alert('Not enough characters for a position upload.');
-      return;
+    if(selectedChannels.length !== 0) {
+      if(dailyCharacters >= 50 && weeklyCharacters >= 50 && monthlyCharacters >= 50) {
+        setDailyCharacters(dailyCharacters - 50);
+        setWeeklyCharacters(weeklyCharacters - 50);
+        setMonthlyCharacters(monthlyCharacters - 50);
+      }
+      else {
+        alert('Not enough characters for a position upload.');
+        return;
+      }
     }
     setShowMap(true);
     handleGetLocation();
@@ -234,9 +268,11 @@ const InputSqueel = () => {
   const handleCloseMap = () => {
     setShowMap(false);
     setCurrentLocation(null);
-    setDailyCharacters(dailyCharacters + 50);
-    setWeeklyCharacters(weeklyCharacters + 50);
-    setMonthlyCharacters(monthlyCharacters + 50);
+    if (selectedChannels.length !== 0) {
+      setDailyCharacters(dailyCharacters + 50);
+      setWeeklyCharacters(weeklyCharacters + 50);
+      setMonthlyCharacters(monthlyCharacters + 50);
+    }
   };
 
   const handleGetLocation = () => {

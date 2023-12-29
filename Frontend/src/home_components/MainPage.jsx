@@ -17,7 +17,7 @@ const MainPage = () => {
 
       {showInputSqueal && (
         <div className="row justify-content-center mt-3">
-          <div className="col-md-4">
+          <div className="col-md-6">
             <Card>
               <Card.Body>
                 <InputSqueal />

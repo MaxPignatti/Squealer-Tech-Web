@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Button, Form, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
@@ -7,9 +7,46 @@ import { marked } from 'marked';
 
 const Message = ({ message, handleReaction, seteditMessage, editMessage, handleSaveChanges, currentUser }) => {
   const [editedText, setEditedText] = useState(message.text);
+  const [linkData, setLinkData] = useState([]);
+
+  useEffect(() => {
+    const positions = [];
+    const regex = /\[([^\]]+)\]\(([^\)]+)\)/g;
+    let match;
+    while ((match = regex.exec(message.text)) != null) {
+      positions.push({
+        text: match[1],
+        url: match[2],
+        startText: match.index + 1,
+        endText: match.index + match[0].indexOf(']'),
+        startUrl: match.index + match[0].indexOf('(') + 1,
+        endUrl: regex.lastIndex - 1
+      });
+    }
+    setLinkData(positions);
+  }, [message.text]);
 
   const handleTextChange = (e) => {
-    setEditedText(e.target.value);
+    const newText = e.target.value;
+    let isEditAllowed = true;
+
+    linkData.forEach(({ startText, endText, startUrl, endUrl, url }) => {
+      const originalTextInsideBrackets = message.text.substring(startText, endText);
+      const newTextInsideBrackets = newText.substring(startText, endText);
+      const originalUrl = message.text.substring(startUrl, endUrl);
+      const newUrl = newText.substring(startUrl, endUrl);
+
+      // Allow changes only inside the square brackets and prevent changes to the URL and parentheses
+      if (originalUrl !== newUrl || originalTextInsideBrackets.length !== newTextInsideBrackets.length) {
+        isEditAllowed = false;
+      }
+    });
+
+    if (isEditAllowed) {
+      setEditedText(newText);
+    } else {
+      alert("Non è possibile modificare le parentesi tonde o l'URL dei link!");
+    }
   };
 
   const handleSaveClick = () => {
@@ -19,7 +56,6 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
   const renderText = (text) => {
     const textWithLinks = text.replace(/\[([^\]]+)\]\(((?!http:\/\/|https:\/\/).+)\)/g, '[$1](http://$2)');
     const rawMarkup = marked.parse(textWithLinks);
-    
     return { __html: rawMarkup };
   };
 
@@ -128,4 +164,3 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
 };
 
 export default Message;
-

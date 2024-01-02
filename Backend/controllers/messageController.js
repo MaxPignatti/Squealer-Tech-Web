@@ -29,15 +29,14 @@ exports.reply = async (req, res) => {
 
     // Salva il messaggio di risposta
     const savedReply = await replyMessage.save();
-
-    if(user.privateMessages.includes(originalMessageId)) {
+    if(user.privateMessagesReceived.includes(originalMessageId)) {
       const senderUser = await User.findOne({ username: originalMessage.user });
 
       if (senderUser) {
         // Aggiungi l'ID del messaggio di risposta ai messaggi privati del mittente
         await User.updateOne(
           { _id: senderUser._id },
-          { $push: { privateMessages: savedReply._id } }
+          { $push: { privateMessagesReceived: savedReply._id } }
         );
       }
     }
@@ -106,6 +105,19 @@ exports.createMessage = async (req, res) => {
   }
 };
 
+exports.getMessageById = async (req, res) => {
+  try {
+    const messageId = req.params.id;
+    const message = await Message.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ error: 'Messaggio non trovato' });
+    }
+    return res.status(200).json(message);
+  } catch (error) {
+    console.error('Errore durante il recupero del messaggio:', error);
+    return res.status(500).json({ error: 'Errore interno del server' });
+  }
+};
 
 exports.getAllSqueels = async (req, res) => {
   try {

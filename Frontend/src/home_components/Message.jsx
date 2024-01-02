@@ -4,10 +4,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import Maps from './Maps';
 import { marked } from 'marked';
+import ReplySqueel from './ReplySqueal';
 
 const Message = ({ message, handleReaction, seteditMessage, editMessage, handleSaveChanges, currentUser }) => {
   const [editedText, setEditedText] = useState(message.text);
   const [linkData, setLinkData] = useState([]);
+  const [showReply, setShowReply] = useState(false);
+  const [originalMessageUser, setOriginalMessageUser] = useState('');
+
+  useEffect(() => {
+    if (message.replyTo) {
+      // Esempio di chiamata API per ottenere il messaggio originale
+      fetch(`http://localhost:3500/message/${message.replyTo}`)
+        .then(response => response.json())
+        .then(data => {
+          setOriginalMessageUser(data.user);
+        })
+        .catch(error => console.error('Errore nel recupero del messaggio originale:', error));
+    }
+  });
 
   useEffect(() => {
     const positions = [];
@@ -25,6 +40,10 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
     }
     setLinkData(positions);
   }, [message.text]);
+
+  const handleReplyClick = () => {
+    setShowReply(!showReply);
+  };
 
   const handleTextChange = (e) => {
     const newText = e.target.value;
@@ -62,6 +81,11 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
   return (
     <Card key={message._id} className="mb-3">
       <Card.Body>
+        {message.replyTo && (
+          <div className="reply-header">
+            Risposta a Squeal di {originalMessageUser}
+          </div>
+        )}
         <div className="d-flex align-items-center">
           <div className="mr-3">
             <img
@@ -158,6 +182,10 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
             </Button>
           </div>
         )}
+
+        <button onClick={handleReplyClick}>Rispondi</button>
+
+        {showReply && <ReplySqueel originalMessage={message} />}
       </Card.Body>
     </Card>
   );  

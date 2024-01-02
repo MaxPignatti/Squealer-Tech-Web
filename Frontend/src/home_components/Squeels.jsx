@@ -4,12 +4,14 @@ import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import Message from './Message';
+import { useMessageRefs } from '../MessageRefsContext';
 
 const Squeels = () => {
   const [messages, setMessages] = useState([]);
   const [viewMode, setViewMode] = useState('public'); // 'public' o 'private'
   const [currentUser, setCurrentUser] = useState(null);
-
+  const { messageRefs } = useMessageRefs();
+  
   useEffect(() => {
     const fetchMessages = async () => {
       const userDataCookie = Cookies.get('user_data');
@@ -74,7 +76,10 @@ const Squeels = () => {
     );
   };
 
-
+  const scrollToMessage = (messageId) => {
+    const ref = messageRefs.current[messageId];
+    ref?.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
 
   const handleSaveChanges = async (messageId, editedText) => {
     const userDataCookie = Cookies.get('user_data');
@@ -140,6 +145,7 @@ const Squeels = () => {
                 seteditMessage={() => handleEditButtonClick(message._id)}
                 handleSaveChanges={handleSaveChanges}
                 currentUser={currentUser}
+                scrollToMessage={scrollToMessage}
               />
             ))
           ) : (

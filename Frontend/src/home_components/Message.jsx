@@ -1,24 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef  } from 'react';
 import { Card, Button, Form, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import Maps from './Maps';
 import { marked } from 'marked';
 import ReplySqueel from './ReplySqueal';
+import { useMessageRefs } from '../MessageRefsContext';
 
-const Message = ({ message, handleReaction, seteditMessage, editMessage, handleSaveChanges, currentUser }) => {
+const Message = ({ message, handleReaction, seteditMessage, editMessage, handleSaveChanges, currentUser, scrollToMessage }) => {
   const [editedText, setEditedText] = useState(message.text);
   const [linkData, setLinkData] = useState([]);
   const [showReply, setShowReply] = useState(false);
-  const [originalMessageUser, setOriginalMessageUser] = useState('');
+  const [originalMessageUser, setOriginalMessageUser] = useState(null);
+  const [originalMessageId, setOriginalMessageId] = useState(null);
+  const messageRef = useRef(null);
+  const { setRef } = useMessageRefs();
 
   useEffect(() => {
-    if (message.replyTo) {
+    if (message.replyTo != null) {
       // Esempio di chiamata API per ottenere il messaggio originale
       fetch(`http://localhost:3500/message/${message.replyTo}`)
         .then(response => response.json())
         .then(data => {
           setOriginalMessageUser(data.user);
+          setOriginalMessageId(data._id);
         })
         .catch(error => console.error('Errore nel recupero del messaggio originale:', error));
     }
@@ -41,6 +46,10 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
     setLinkData(positions);
   }, [message.text]);
 
+  useEffect(() => {
+    setRef(message._id, messageRef);
+  }, [message._id, setRef]);
+  
   const handleReplyClick = () => {
     setShowReply(!showReply);
   };
@@ -79,11 +88,11 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
   };
 
   return (
-    <Card key={message._id} className="mb-3">
+    <Card ref={messageRef} key={message._id} className="mb-3">
       <Card.Body>
         {message.replyTo && (
           <div className="reply-header">
-            Risposta a Squeal di {originalMessageUser}
+            Risposta a <a href="#" onClick={() => scrollToMessage(originalMessageId)}>Squeal di {originalMessageUser}</a>
           </div>
         )}
         <div className="d-flex align-items-center">
@@ -185,7 +194,7 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
 
         <button onClick={handleReplyClick}>Rispondi</button>
 
-        {showReply && <ReplySqueel originalMessage={message} />}
+        {showReply && <ReplySqueel originalMessage={message}/>}
       </Card.Body>
     </Card>
   );  

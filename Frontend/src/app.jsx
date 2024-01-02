@@ -7,19 +7,22 @@ import Registration from './registration';
 import Home from './home_components/home';
 import Profile from './home_components/Profile';
 import AutoLogin from './AutoLogin';
+import { MessageRefsProvider } from './MessageRefsContext';
 
 function App() {
   return (
     <AuthProvider>
-      <AutoLogin />
-      <div>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/registration" element={<Registration />} />
-          <Route path="/*" element={<Home />} />
-          <Route path="/Profile" element={<Profile />} />
-        </Routes>
-      </div>
+      <MessageRefsProvider>
+        <AutoLogin />
+        <div>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/registration" element={<Registration />} />
+            <Route path="/*" element={<Home />} />
+            <Route path="/Profile" element={<Profile />} />
+          </Routes>
+        </div>
+      </MessageRefsProvider>
     </AuthProvider>
   );
 }

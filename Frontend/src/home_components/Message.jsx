@@ -55,26 +55,7 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
   };
 
   const handleTextChange = (e) => {
-    const newText = e.target.value;
-    let isEditAllowed = true;
-
-    linkData.forEach(({ startText, endText, startUrl, endUrl, url }) => {
-      const originalTextInsideBrackets = message.text.substring(startText, endText);
-      const newTextInsideBrackets = newText.substring(startText, endText);
-      const originalUrl = message.text.substring(startUrl, endUrl);
-      const newUrl = newText.substring(startUrl, endUrl);
-
-      // Allow changes only inside the square brackets and prevent changes to the URL and parentheses
-      if (originalUrl !== newUrl || originalTextInsideBrackets.length !== newTextInsideBrackets.length) {
-        isEditAllowed = false;
-      }
-    });
-
-    if (isEditAllowed) {
-      setEditedText(newText);
-    } else {
-      alert("Non è possibile modificare le parentesi tonde o l'URL dei link!");
-    }
+    setEditedText(e.target.value);
   };
 
   const handleSaveClick = () => {

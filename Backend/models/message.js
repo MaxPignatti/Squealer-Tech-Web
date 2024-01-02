@@ -61,13 +61,9 @@ const messageSchema = new mongoose.Schema({
     type: [Number], 
     index: '2dsphere', 
   },
-  isReply: {
-    type: Boolean,
-    default: false,
-  },
-  replies: {
-    type: [mongoose.Schema.Types.ObjectId], 
-    default: [],
+  replyTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: null,
   }
 });
 

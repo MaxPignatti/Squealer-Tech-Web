@@ -1,6 +1,60 @@
 const Message = require('../models/message');
 const User = require('../models/user');
 
+exports.reply = async (req, res) => {
+  try {
+    const { originalMessageId, userName, image, text, dailyCharacters, weeklyCharacters, monthlyCharacters, location} = req.body;
+
+    // Verifica se il messaggio originale esiste
+    const originalMessage = await Message.findById(originalMessageId);
+    if (!originalMessage) {
+      return res.status(404).json({ error: "Messaggio originale non trovato." });
+    }
+
+    const user = await User.findOne({ username: userName });
+    if (!user) {
+      return res.status(400).json({ error: 'User not found' });
+    }
+
+    // Crea un nuovo messaggio di risposta
+    const replyMessage = new Message({
+      user: userName,
+      profileImage: user.profileImage,
+      image: image ? image.toString('base64') : null,
+      text: text,
+      channel: originalMessage.channel,
+      replyTo: originalMessageId,
+      location: location ? [location.latitude, location.longitude] : null,
+    });
+
+    // Salva il messaggio di risposta
+    const savedReply = await replyMessage.save();
+
+    if(user.privateMessages.includes(originalMessageId)) {
+      const senderUser = await User.findOne({ username: originalMessage.user });
+
+      if (senderUser) {
+        // Aggiungi l'ID del messaggio di risposta ai messaggi privati del mittente
+        await User.updateOne(
+          { _id: senderUser._id },
+          { $push: { privateMessages: savedReply._id } }
+        );
+      }
+    }
+
+    user.dailyChars = dailyCharacters;
+    user.weeklyChars = weeklyCharacters;
+    user.monthlyChars = monthlyCharacters;
+    await user.save();
+
+    // Invia una risposta di successo
+    res.status(201).json({ message: "Risposta creata con successo", reply: savedReply._id });
+  } catch (error) {
+    console.error("Errore durante la creazione della risposta:", error);
+    res.status(500).json({ error: "Errore interno del server." });
+  }
+};
+
 // Create a new message
 exports.createMessage = async (req, res) => {
   try {

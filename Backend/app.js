@@ -8,6 +8,7 @@ const cron = require('node-cron');
 const User = require('./models/user'); 
 const Message = require('./models/message'); 
 const consts = require('./consts')
+const fetch = require('node-fetch');
 const app = express();
 const port = 3500;
 
@@ -87,6 +88,24 @@ Channel.findOne({ name: 'EMERGENCY' }).then(channel => {
   }
 }).catch(err => console.error('Errore durante la ricerca del canale:', err));
 
+Channel.findOne({ name: 'DAILY-RECIPE' }).then(channel => {
+  if (!channel) {
+    const dailyRecipeChannel = new Channel({ name: 'DAILY-RECIPE', creator: 'Squealer', moderatorChannel: true });
+    dailyRecipeChannel.save()
+      .then(() => console.log('Canale "DAILY-RECIPE" creato con successo.'))
+      .catch(err => console.error('Errore durante il salvataggio del canale:', err));
+  }
+}).catch(err => console.error('Errore durante la ricerca del canale:', err));
+
+Channel.findOne({ name: 'DAILY-NEWS' }).then(channel => {
+  if (!channel) {
+    const dailyNewsChannel = new Channel({ name: 'DAILY-NEWS', creator: 'Squealer', moderatorChannel: true });
+    dailyNewsChannel.save()
+      .then(() => console.log('Canale "DAILY-NEWS" creato con successo.'))
+      .catch(err => console.error('Errore durante il salvataggio del canale:', err));
+  }
+}).catch(err => console.error('Errore durante la ricerca del canale:', err));
+
 const { checkAndSendTempMessages } = require('./background-task/tempMessageTask');
 checkAndSendTempMessages();
 
@@ -141,6 +160,115 @@ cron.schedule('*/30 * * * *', async () => {
     console.error('Errore durante la selezione del messaggio controverso:', error);
   }
 });
+
+// Esempio di funzione per recuperare una ricetta dal TheMealDB API
+const fetchDailyRecipe = async () => {
+  try {
+    const response = await fetch('https://www.themealdb.com/api/json/v1/1/random.php');
+    const data = await response.json();
+    // Estrai la ricetta dai dati ricevuti
+    return data.meals[0];
+  } catch (error) {
+    console.error('Errore durante il recupero della ricetta:', error);
+  }
+};
+
+// Esempio di funzione per recuperare notizie dal NewsAPI
+const fetchLatestNews = async () => {
+  try {
+    const response = await fetch('https://newsapi.org/v2/top-headlines?country=us&apiKey=7e852106213a4de0a77368882cc8c7bc');
+    const data = await response.json();
+    // Estrai le notizie dai dati ricevuti
+    return data.articles;
+  } catch (error) {
+    console.error('Errore durante il recupero delle notizie:', error);
+  }
+};
+
+const translateRecipeToMessage = async (recipe) => {
+  let imageBase64 = '';
+
+  try {
+    const response = await fetch(recipe.strMealThumb);
+    const buffer = await response.buffer();
+    imageBase64 = buffer.toString('base64');
+  } catch (error) {
+    console.error('Errore durante il recupero e la conversione dell\'immagine:', error);
+  }
+
+  return {
+    user: 'Squealer', 
+    profileImage: consts.logoBase64, 
+    image: recipe.strMealThumb,
+    text: `${recipe.strMeal}\n\n${recipe.strInstructions}`,
+    channel: ['DAILY-RECIPE']
+  };
+};
+
+const translateNewsToMessages = async (newsArray) => {
+  // Prendi solo le prime 3 notizie
+  const topNews = newsArray.slice(0, 3);
+
+  const newsMessages = await Promise.all(topNews.map(async (newsItem) => {
+    let imageBase64 = '';
+
+    try {
+      if (newsItem.urlToImage) {
+        const response = await fetch(newsItem.urlToImage);
+        const buffer = await response.buffer();
+        imageBase64 = buffer.toString('base64');
+      }
+    } catch (error) {
+      console.error('Errore durante il recupero e la conversione dell\'immagine:', error);
+    }
+
+    return {
+      user: 'Squealer',
+      profileImage: consts.logoBase64, 
+      image: imageBase64 ? `data:image/jpeg;base64,${imageBase64}` : null,
+      text: `${newsItem.title}\n\n${newsItem.description}`, 
+      channel: ['DAILY-NEWS'], 
+    };
+  }));
+
+  return newsMessages;
+};
+
+// Pubblica una ricetta al giorno
+cron.schedule('0 0 * * *', async () => {
+  const recipe = await fetchDailyRecipe();
+  if (recipe) {
+    const recipeMessageData = await translateRecipeToMessage(recipe);
+    const recipeMessage = new Message(recipeMessageData);
+    try {
+      await recipeMessage.save();
+      console.log('Messaggio della ricetta salvato con successo nel database.');
+    } catch (error) {
+      console.error('Errore durante il salvataggio del messaggio della ricetta:', error);
+    }
+  }
+});
+
+// Pubblica le notizie ogni ora
+cron.schedule('0 0 * * *', async () => {
+  const news = await fetchLatestNews();
+  if (news && news.length) {
+    try {
+      const newsMessages = await translateNewsToMessages(news);
+
+      // Itera su ogni messaggio di notizia e salvalo nel database
+      for (const newsMessageData of newsMessages) {
+        const newsMessage = new Message(newsMessageData);
+        await newsMessage.save();
+      }
+
+      console.log('Notizie salvate con successo nel database.');
+    } catch (error) {
+      console.error('Errore durante il salvataggio delle notizie:', error);
+    }
+  }
+});
+
 
 app.use('/messages', messageRoutes);
 

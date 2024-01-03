@@ -97,9 +97,11 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
   };
 
   const renderText = (text) => {
-    const textWithLinks = text.replace(/\[([^\]]+)\]\(((?!http:\/\/|https:\/\/).+)\)/g, '[$1](http://$2)');
-    const rawMarkup = marked.parse(textWithLinks);
-    return { __html: rawMarkup };
+ const textWithHashtags = text.replace(/#(\w+)/g, '<span style="color: #009688; font-weight: bold;">#$1</span>');
+ const textWithLinks = textWithHashtags.replace(/\[([^\]]+)\]\(((?!http:\/\/|https:\/\/).+)\)/g, '[$1](http://$2)');
+ const rawMarkup = marked.parse(textWithLinks);
+
+ return { __html: rawMarkup };
   };
 
   return (

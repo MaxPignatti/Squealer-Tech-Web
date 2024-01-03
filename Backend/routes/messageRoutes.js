@@ -11,6 +11,7 @@ router.post('/Squeels/edit/:messageId', messageController.updateMessage);
 router.post('/position/:messageId', messageController.updatePosition);
 router.get('/message/:id', messageController.getMessageById);
 router.post('/message/incrementImpressions/:messageId', messageController.incrementImpressions);
+router.post('/squeels/:hashtag', messageController.getMessageByHashtag);
 
 
 module.exports = router;

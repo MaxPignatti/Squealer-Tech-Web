@@ -68,7 +68,11 @@ const messageSchema = new mongoose.Schema({
   impressions: {
     type: [String],
     default: []
-  }
+  },
+  hashtags: {
+    type: [String],
+    default: [],
+  },
 });
 
 module.exports = mongoose.model('Message', messageSchema);

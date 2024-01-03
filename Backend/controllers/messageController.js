@@ -79,6 +79,7 @@ exports.createMessage = async (req, res) => {
       location: location ? [location.latitude, location.longitude] : null,
     });
 
+    newMessage.hashtags = extractHashtags(req.body.text);
     // Salvare il messaggio
     const savedMessage = await newMessage.save();
 
@@ -297,6 +298,7 @@ exports.updateMessage = async (req, res) => {
     const oldTextLength = message.text.length;
     if (text) {
       message.text = text;
+      message.hashtags = extractHashtags(text);
     }
 
     const newTextLength = message.text.length;
@@ -404,4 +406,45 @@ exports.updateMessage = async (req, res) => {
       console.error("Errore durante l'incremento delle impressions:", error);
       res.status(500).json({ error: 'Errore interno del server' });
     }
+  };
+
+  exports.getMessageByHashtag = async (req, res) => {
+    try {
+      const { hashtag } = req.params;
+      const { username } = req.body;
+  
+      // Trova l'utente e i suoi canali
+      const user = await User.findOne({ username });
+      if (!user) {
+        return res.status(404).json({ error: 'Utente non trovato' });
+      }
+  
+      // Filtra i messaggi che contengono l'hashtag e sono privati dell'utente o appartengono a canali pubblici ai quali l'utente è iscritto
+      const messages = await Message.find({
+        $and: [
+          { hashtags: hashtag },
+          { $or: [{ user: username, isPrivate: true }, { channel: { $in: user.channels } }] }
+        ]
+      });
+  
+      if (messages.length === 0) {
+        return res.status(404).json({ error: 'Nessun messaggio trovato con questo hashtag' });
+      }
+  
+      res.status(200).json(messages);
+    } catch (error) {
+      console.error("Errore durante la ricerca dei messaggi:", error);
+      res.status(500).json({ error: 'Errore interno del server' });
+    }
+  };
+  
+
+  const extractHashtags = (text) => {
+    const hashtagRegex = /#(\w+)/g;
+    let match;
+    const hashtags = new Set();
+    while ((match = hashtagRegex.exec(text)) !== null) {
+      hashtags.add(match[1]);
+    }
+    return Array.from(hashtags);
   };

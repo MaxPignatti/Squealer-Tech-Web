@@ -61,7 +61,7 @@ db.on('connected', console.error.bind(console, 'MongoDB connected:'));
 
 Channel.findOne({ name: 'CONTROVERSIAL' }).then(channel => {
   if (!channel) {
-    const controversialChannel = new Channel({ name: 'CONTROVERSIAL', creator: 'Squealer' });
+    const controversialChannel = new Channel({ name: 'CONTROVERSIAL', creator: 'Squealer', moderatorChannel: true });
     controversialChannel.save()
       .then(() => console.log('Canale "CONTROVERSIAL" creato con successo.'))
       .catch(err => console.error('Errore durante il salvataggio del canale:', err));
@@ -70,7 +70,7 @@ Channel.findOne({ name: 'CONTROVERSIAL' }).then(channel => {
 
 Channel.findOne({ name: 'SQUEALER-UPDATES' }).then(channel => {
   if (!channel) {
-    const updatesChannel = new Channel({ name: 'SQUEALER-UPDATES', creator: 'Squealer' });
+    const updatesChannel = new Channel({ name: 'SQUEALER-UPDATES', creator: 'Squealer', moderatorChannel: true });
     updatesChannel.save()
       .then(() => console.log('Canale "SQUEALER-UPDATES" creato con successo.'))
       .catch(err => console.error('Errore durante il salvataggio del canale:', err));
@@ -79,7 +79,7 @@ Channel.findOne({ name: 'SQUEALER-UPDATES' }).then(channel => {
 
 Channel.findOne({ name: 'EMERGENCY' }).then(channel => {
   if (!channel) {
-    const emergencyChannel = new Channel({ name: 'EMERGENCY', creator: 'Squealer' });
+    const emergencyChannel = new Channel({ name: 'EMERGENCY', creator: 'Squealer', moderatorChannel: true });
     emergencyChannel.save()
       .then(() => console.log('Canale "EMERGENCY" creato con successo.'))
       .catch(err => console.error('Errore durante il salvataggio del canale:', err));

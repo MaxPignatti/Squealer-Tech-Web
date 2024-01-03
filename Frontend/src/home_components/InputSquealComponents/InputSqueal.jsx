@@ -54,7 +54,10 @@ const InputSqueel = () => {
 
       fetch(`http://localhost:3500/channels/subscribed/${username}`)
         .then((response) => response.json())
-        .then((data) => setChannels(data))
+        .then((data) => {
+          const nonModeratorChannels = data.filter(channel => !channel.moderatorChannel);
+          setChannels(nonModeratorChannels);
+        }) 
         .catch((error) => console.error("Errore durante il recupero dei canali:", error));
 
       fetch(`http://localhost:3500/usr`)

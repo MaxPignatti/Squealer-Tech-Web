@@ -203,6 +203,7 @@ exports.addReaction = async (req, res) => {
     
     //console.log("reazioni positive: ", message.positiveReactions);
     const cm = consts.CMParameter * (message.positiveReactions + message.negativeReactions); //massa critica
+    console.log(cm);
     const newChar = 10; // caratteri da aggiungere o togliere
 
     if(message.positiveReactions > cm && message.negativeReactions <= cm)//il messaggio è popolare

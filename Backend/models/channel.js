@@ -14,6 +14,10 @@ const channelSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  moderatorChannel: {
+    type: Boolean,
+    default: false,
+  },
   members: [
     {
       type: String,

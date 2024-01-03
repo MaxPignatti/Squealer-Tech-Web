@@ -3,3 +3,10 @@ const weeklyCharacters = 750;
 const monthlyCharacters = 2250;
 
 const CMParameter = 0.25;
+
+module.exports = {
+    dailyCharacters,
+    weeklyCharacters,
+    monthlyCharacters,
+    CMParameter
+  };

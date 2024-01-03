@@ -15,6 +15,40 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
   const [originalMessageId, setOriginalMessageId] = useState(null);
   const messageRef = useRef(null);
   const { setRef } = useMessageRefs();
+  const [hasBeenViewed, setHasBeenViewed] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !hasBeenViewed) {
+          // Il messaggio è entrato nel viewport e non è stato ancora visualizzato
+          setHasBeenViewed(true);
+
+          // Chiamata API per incrementare le impressions
+          fetch(`http://localhost:3500/message/incrementImpressions/${message._id}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: currentUser }),
+          })
+          .then(response => response.json())
+          .then(data => console.log(data.message))
+          .catch(error => console.error("Errore durante l'incremento delle impressions:", error));
+        }
+      });
+    }, { threshold: 0.5 });
+
+    if (messageRef.current) {
+      observer.observe(messageRef.current);
+    }
+
+    return () => {
+      if (messageRef.current) {
+        observer.unobserve(messageRef.current);
+      }
+    };
+  }, [message._id, currentUser, hasBeenViewed]);
 
   useEffect(() => {
     if (message.replyTo != null) {

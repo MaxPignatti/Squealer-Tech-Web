@@ -202,8 +202,7 @@ exports.addReaction = async (req, res) => {
     }
     
     //console.log("reazioni positive: ", message.positiveReactions);
-    const cm = consts.CMParameter * (message.positiveReactions + message.negativeReactions); //massa critica
-    console.log(cm);
+    const cm = consts.CMParameter * (message.impressions.length); //massa critica
     const newChar = 10; // caratteri da aggiungere o togliere
 
     if(message.positiveReactions > cm && message.negativeReactions <= cm)//il messaggio è popolare
@@ -383,3 +382,26 @@ exports.updateMessage = async (req, res) => {
     }
     return char;
   }
+
+  exports.incrementImpressions = async (req, res) => {
+    try {
+      const { messageId } = req.params;
+      const { username } = req.body; // Assumi che il nome utente venga inviato nel corpo della richiesta
+  
+      const message = await Message.findById(messageId);
+      if (!message) {
+        return res.status(404).json({ error: 'Messaggio non trovato' });
+      }
+  
+      // Aggiungi il nome utente alle impressioni se non è già presente
+      if (!message.impressions.includes(username)) {
+        message.impressions.push(username);
+        await message.save();
+      }
+  
+      res.status(200).json({ message: 'Impressions incrementate' });
+    } catch (error) {
+      console.error("Errore durante l'incremento delle impressions:", error);
+      res.status(500).json({ error: 'Errore interno del server' });
+    }
+  };

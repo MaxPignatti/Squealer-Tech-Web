@@ -64,6 +64,10 @@ const messageSchema = new mongoose.Schema({
   replyTo: {
     type: mongoose.Schema.Types.ObjectId,
     default: null,
+  },
+  impressions: {
+    type: [String],
+    default: []
   }
 });
 

@@ -5,7 +5,18 @@ const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
   const [showForm, setShowForm] = useState(false);
   const [channelName, setChannelName] = useState("");
   const [channelDescription, setChannelDescription] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
+  const handleChannelNameChange = (e) => {
+    const name = e.target.value;
+    if (name === name.toLowerCase()) {
+      setChannelName(name);
+      setErrorMessage(""); // Resetta il messaggio di errore se il nome è valido
+    } else {
+      setErrorMessage("Il nome del canale non può contenere caratteri maiuscoli.");
+    }
+  };
+  
   const handleCreateChannel = async () => {
     const userDataCookie = Cookies.get('user_data');
     if (userDataCookie) {
@@ -61,8 +72,9 @@ const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
               className="form-control"
               id="channelName"
               value={channelName}
-              onChange={(e) => setChannelName(e.target.value)}
+              onChange={handleChannelNameChange} // Usa la nuova funzione di gestione
             />
+            {errorMessage && <div className="text-danger">{errorMessage}</div>} {/* Visualizza il messaggio di errore */}
           </div>
           <div className="mb-3">
             <label htmlFor="channelDescription" className="form-label">Descrizione del canale</label>

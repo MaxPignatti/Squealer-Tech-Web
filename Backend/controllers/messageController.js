@@ -1,5 +1,6 @@
 const Message = require('../models/message');
 const User = require('../models/user');
+const consts = require('../consts');
 
 exports.reply = async (req, res) => {
   try {
@@ -201,7 +202,7 @@ exports.addReaction = async (req, res) => {
     }
     
     //console.log("reazioni positive: ", message.positiveReactions);
-    const cm = 0.5 * (message.positiveReactions + message.negativeReactions); //massa critica
+    const cm = consts.CMParameter * (message.positiveReactions + message.negativeReactions); //massa critica
     const newChar = 10; // caratteri da aggiungere o togliere
 
     if(message.positiveReactions > cm && message.negativeReactions <= cm)//il messaggio è popolare

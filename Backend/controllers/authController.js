@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Channel = require('../models/channel');
 const authenticateWithToken = require('../middlewares/authenticationMiddlewares');
+const consts = require('../consts');
 
 // Register a new user
 exports.register = async (req, res) => {
@@ -31,23 +32,23 @@ exports.register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      dailyChars: 150,
-      weeklyChars: 750,
-      monthlyChars: 2250,
+      dailyChars: consts.dailyCharacters,
+      weeklyChars: consts.weeklyCharacters,
+      monthlyChars: consts.monthlyCharacters,
       debChar: 0,
       accountType: 0,
       smm: false,
-      channels: ['public'] // Aggiungi il canale "public" all'array dei canali
+      channels: ['PUBLIC'] // Aggiungi il canale "PUBLIC" all'array dei canali
     });
     await newUser.save();
 
-    // Trova il canale "public" e aggiungi l'utente
-    const publicChannel = await Channel.findOne({ name: 'public' });
+    // Trova il canale "PUBLIC" e aggiungi l'utente
+    const publicChannel = await Channel.findOne({ name: 'PUBLIC' });
     if (publicChannel) {
       publicChannel.members.push(username);
       await publicChannel.save();
     } else {
-      console.error('Canale "public" non trovato');
+      console.error('Canale "PUBLIC" non trovato');
     }
 
     res.status(201).json({ message: 'User registered successfully' });

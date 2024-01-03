@@ -77,7 +77,6 @@ const userSchema = new mongoose.Schema({
   controversialMessages: {
     type: [mongoose.Schema.Types.ObjectId], 
     default: [],
-
   },
   accountType: {
     type: Number

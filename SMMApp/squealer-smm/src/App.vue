@@ -7,9 +7,13 @@
 </template>
 
 <script>
+import useAutoLogin from './composables/useAutoLogin';
+
 export default {
-  name: 'App'
-}
+  setup() {
+    useAutoLogin();
+  }
+};
 </script>
 
 <style>

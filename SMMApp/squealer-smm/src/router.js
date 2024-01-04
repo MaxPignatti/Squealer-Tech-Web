@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Login from './components/LoginComponent.vue';
+import Register from './components/RegisterComponent.vue';
 
 const routes = [
   { path: '/', redirect: '/login' }, // Reindirizzamento dalla homepage al login
   { path: '/login', component: Login },
-  // Aggiungi altre rotte qui
+  { path: '/register', component: Register },
 ];
 
 const router = createRouter({

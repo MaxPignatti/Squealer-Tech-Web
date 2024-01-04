@@ -3,12 +3,12 @@
     <div class="max-w-md w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
       <div class="mb-6">
         <!-- Logo -->
-        <img src="../assets/logo.png" alt="Logo" class="mx-auto h-20 w-auto">
+        <img src="../assets/logo.png" alt="Logo" class="mx-auto h-100 w-auto">
       </div>
       <form @submit.prevent="login" class="space-y-6">
         <div>
-          <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
-          <input type="text" id="username" v-model="username" required class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+          <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+          <input type="text" id="email" v-model="email" required class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
         </div>
         <div>
           <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
@@ -30,7 +30,7 @@
 export default {
   data() {
     return {
-      username: '',
+      email: '',
       password: ''
     };
   },

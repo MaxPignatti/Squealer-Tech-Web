@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Channel = require('../models/channel');
+const Smm = require('../models/smm')
 const authenticateWithToken = require('../middlewares/authenticationMiddlewares');
 const consts = require('../consts');
 
@@ -104,6 +105,38 @@ exports.protectedEndpoint = async (req, res) => {
   try {
     const user = req.user;
     res.json({ message: 'This is a protected endpoint', user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.registerSMM = async (req, res) => {
+  try {
+    const { firstName, lastName, password, confirmPassword, email } = req.body;
+
+    // Check if the user already exists in the database
+    const existingSmm = await Smm.findOne({ email });
+    if (existingSmm) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+    
+    if (password != confirmPassword) {
+      return res.status(400).json({ error: 'Passwords do not match' });
+    }
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Crea un nuovo smm
+    const newSmm = new Smm({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+    });
+    await newSmm.save();
+
+    res.status(201).json({ message: 'Social Media Manager registered successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

@@ -135,7 +135,21 @@ cron.schedule('0 0 1 * *', async () => {
 cron.schedule('*/30 * * * *', async () => {
   try {
     // Trova tutti i messaggi controversi
-    const controversialMessages = await Message.find({ _id: { $in: user.controversialMessages } });
+    const users = await User.find({});
+    let allControversialMessageIds = [];
+
+    users.forEach(user => {
+      allControversialMessageIds = allControversialMessageIds.concat(user.controversialMessages);
+    });
+
+    // Elimina eventuali duplicati
+    allControversialMessageIds = [...new Set(allControversialMessageIds)];
+
+    // Trova tutti i messaggi controversi
+    const controversialMessages = await Message.find({ 
+      '_id': { $in: allControversialMessageIds },
+      'channel': { $ne: 'CONTROVERSIAL' } // Escludi i messaggi già nel canale CONTROVERSIAL
+    });
 
     let mostControversialMessage = null;
     let highestReactionCount = 0;

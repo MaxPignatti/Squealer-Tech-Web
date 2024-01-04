@@ -1,17 +1,16 @@
 import { onMounted } from 'vue';
-import useAuth from './useAuth';
+import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import Cookies from 'js-cookie';
 
 export default function useAutoLogin() {
-  const { login } = useAuth();
+  const store = useStore();
   const router = useRouter();
 
   onMounted(async () => {
-    const userDataCookie = getCookie('user_data');
-    console.log(userDataCookie)
+    const userDataCookie = Cookies.get('user_data');
     if (userDataCookie) {
       const userData = JSON.parse(decodeURIComponent(userDataCookie));
-      console.log(userData);
       const existingToken = userData.access_token;
 
       try {
@@ -24,21 +23,20 @@ export default function useAutoLogin() {
         });
 
         if (response.status === 200) {
-          login();
+          // Rinnova il cookie per altre 24 ore
+          Cookies.set('user_data', userDataCookie, { expires: 1 });
+
+          store.dispatch('login', userData); // Aggiorna lo stato di autenticazione
           router.push('/');
         } else {
           console.error('Authentication failed');
+          // Opzionalmente, rimuovi il cookie se l'autenticazione fallisce
+          Cookies.remove('user_data');
         }
       } catch (error) {
         console.error('Authentication failed:', error);
+        Cookies.remove('user_data');
       }
     }
   });
-
-  // Helper function to get a cookie by name
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  }
 }

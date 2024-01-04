@@ -39,42 +39,55 @@
   </template>
   
   <script>
+  import { useStore } from 'vuex';
+  import { useRouter } from 'vue-router';
+  import { onMounted } from 'vue';
     export default {
-    data() {
-        return {
-        formData: {
-            firstName: "",
-            lastName: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-        },
-        errorMessage: ""
-        };
-    },
-    methods: {
-        async handleRegister() {
-        try {
-            const response = await fetch('http://localhost:3500/registerSMM', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(this.formData),
-            });
+      setup() {
+        const store = useStore();
+        const router = useRouter();
 
-            if (response.status === 201) {
-            this.$router.push('/login'); // Redirect to the login page
-            } else {
-            const data = await response.json();
-            this.errorMessage = data.error; // Set the error message
-            }
-        } catch (error) {
-            console.error(error);
-            this.errorMessage = 'Si è verificato un errore durante la registrazione.';
+        onMounted(() => {
+          if (store.state.isAuthenticated) {
+            router.push('/'); // Reindirizza alla homepage
+          }
+        });
+      },
+      data() {
+          return {
+          formData: {
+              firstName: "",
+              lastName: "",
+              email: "",
+              password: "",
+              confirmPassword: "",
+          },
+          errorMessage: ""
+          };
+      },
+      methods: {
+        async handleRegister() {
+          try {
+              const response = await fetch('http://localhost:3500/registerSMM', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(this.formData),
+              });
+
+              if (response.status === 201) {
+              this.$router.push('/login'); // Redirect to the login page
+              } else {
+              const data = await response.json();
+              this.errorMessage = data.error; // Set the error message
+              }
+          } catch (error) {
+              console.error(error);
+              this.errorMessage = 'Si è verificato un errore durante la registrazione.';
+          }
         }
-        }
-    }
+      }
     };
   </script>
   

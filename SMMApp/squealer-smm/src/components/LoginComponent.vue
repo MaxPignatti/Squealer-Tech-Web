@@ -27,19 +27,25 @@
 </template>
 
 <script>
-import useAuth from '../composables/useAuth';
-import Cookies from 'js-cookie';
 import { ref } from 'vue';
+import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-
-const router = useRouter();
+import Cookies from 'js-cookie';
+import { onMounted } from 'vue';
 
 export default {
   setup() {
-    const { login } = useAuth();
+    const store = useStore();
+    const router = useRouter();
     const email = ref('');
     const password = ref('');
     const errorMessage = ref('');
+
+    onMounted(() => {
+      if (store.state.isAuthenticated) {
+        router.push('/'); // Reindirizza alla homepage
+      }
+    });
 
     const handleLogin = async () => {
       try {
@@ -56,21 +62,10 @@ export default {
 
         if (response.status === 200) {
           const data = await response.json();
-          if (data && data.user_data) {
-            const { email, accessToken } = data.user_data;
-  
-            const userData = {
-              email: email,
-              access_token: accessToken,
-            };
-            Cookies.set('user_data', JSON.stringify(userData), { expires: 1 });
-
-            login(); // Chiama la funzione di login dal contesto di autenticazione
-
-            router.push('/')
-          } else {
-            errorMessage.value = 'Access token not found in the response';
-          }
+          // Supponendo che data.user_data contenga le informazioni necessarie
+          Cookies.set('authToken', data.user_data, { expires: 1 });
+          store.dispatch('login', data.user_data); // Aggiorna lo stato globale
+          router.push('/');
         } else {
           const data = await response.json();
           errorMessage.value = data.error;
@@ -84,5 +79,4 @@ export default {
     return { email, password, errorMessage, handleLogin };
   },
 };
-
 </script>

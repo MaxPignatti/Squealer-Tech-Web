@@ -142,3 +142,40 @@ exports.registerSMM = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+exports.loginSMM = async (req, res) => {
+  console.log("ci sono")
+  const { email, password } = req.body;
+  try {
+    const smm = await Smm.findOne({ email });
+
+    if (!smm) {
+      return res.status(404).json({ error: 'Social Media Manager not found' });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, smm.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid password' });
+    }
+
+    console.log(smm.email);
+
+    const userData = {
+      email: smm.email,
+      accessToken: jwt.sign({ email: smm.email }, process.env.SECRET_KEY, { expiresIn: '1h' }),
+    };
+
+  
+    res.cookie('user_data', JSON.stringify(userData), {
+      path: '/',
+      domain: 'localhost:8080',
+      httpOnly: true,
+    });
+
+    res.json({ message: 'Login successful', user_data: userData });  
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

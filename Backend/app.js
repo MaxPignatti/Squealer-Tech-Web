@@ -16,11 +16,14 @@ const port = 3500;
 require('./config/env');
 
 app.use(bodyParser.json({ limit: '10mb' }));
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true,
-}));
+const corsOptions = {
+  origin: ['http://localhost:3000', 'http://localhost:8080'],
+  credentials: true, // Permette l'invio di cookie e credenziali di autenticazione
+};
+app.use(cors(corsOptions));
 app.use(cookieParser());
+
+
 
 // Routes
 const authRoutes = require('./routes/authRoutes');

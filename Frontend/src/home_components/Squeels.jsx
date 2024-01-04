@@ -6,13 +6,14 @@ import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import Message from './Message';
 import { useMessageRefs } from '../MessageRefsContext';
 
-const Squeels = () => {
+const Squeels = ({ hashtag }) => {
   const [messages, setMessages] = useState([]);
   const [viewMode, setViewMode] = useState('public'); // 'public' o 'private'
   const [currentUser, setCurrentUser] = useState(null);
   const { messageRefs } = useMessageRefs();
   const [isEditing, setIsEditing] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
+
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -21,9 +22,14 @@ const Squeels = () => {
         const userData = JSON.parse(userDataCookie);
         const username = userData.username;
         setCurrentUser(username);
-        const url = viewMode === 'public' 
-                    ? `http://localhost:3500/Squeels/${username}`
-                    : `http://localhost:3500/privateMessages/${username}`;
+        
+        let baseUrl = viewMode === 'public' 
+          ? `http://localhost:3500/Squeels/${username}`
+          : `http://localhost:3500/privateMessages/${username}`;
+
+        const url = hashtag
+          ? `${baseUrl}/${encodeURIComponent(hashtag)}`
+          : baseUrl;
 
         try {
           const response = await fetch(url);
@@ -40,7 +46,7 @@ const Squeels = () => {
       const pollingInterval = setInterval(fetchMessages, 1000);
       return () => clearInterval(pollingInterval);
     }
-  }, [viewMode, isEditing, isReplying]);
+  }, [viewMode, isEditing, isReplying, hashtag]);
 
 
   const handleReaction = async (messageId, isPositiveReaction) => {

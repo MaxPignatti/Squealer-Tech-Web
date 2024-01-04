@@ -410,33 +410,49 @@ exports.updateMessage = async (req, res) => {
 
   exports.getMessageByHashtag = async (req, res) => {
     try {
-      const { hashtag } = req.params;
-      const { username } = req.body;
-  
-      // Trova l'utente e i suoi canali
+      const { username, hashtag } = req.params;
+      
       const user = await User.findOne({ username });
       if (!user) {
         return res.status(404).json({ error: 'Utente non trovato' });
       }
   
-      // Filtra i messaggi che contengono l'hashtag e sono privati dell'utente o appartengono a canali pubblici ai quali l'utente è iscritto
+      // Prendi i canali dell'utente e filtra i messaggi pubblici in base all'hashtag
+      const userChannels = await User.findOne({ username }).select('channels');
       const messages = await Message.find({
-        $and: [
-          { hashtags: hashtag },
-          { $or: [{ user: username, isPrivate: true }, { channel: { $in: user.channels } }] }
-        ]
+        channel: { $in: userChannels.channels },
+        hashtags: hashtag
       });
   
-      if (messages.length === 0) {
-        return res.status(404).json({ error: 'Nessun messaggio trovato con questo hashtag' });
+      res.json(messages);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    } 
+  };
+  
+
+  exports.getPrivateMessByHashtag = async (req, res) => {
+    try {
+      const { username, hashtag } = req.params;
+  
+      const user = await User.findOne({ username });
+      if (!user) {
+        return res.status(404).json({ error: 'Utente non trovato' });
       }
   
-      res.status(200).json(messages);
+      const privateMessages = await Message.find({
+        '_id': { $in: user.privateMessagesReceived },
+        'hashtags': hashtag
+      });
+  
+      res.json(privateMessages);
     } catch (error) {
-      console.error("Errore durante la ricerca dei messaggi:", error);
-      res.status(500).json({ error: 'Errore interno del server' });
+      console.error("Errore durante il recupero dei messaggi privati:", error);
+      res.status(500).json({ error: "Errore interno del server." });
     }
   };
+  
   
 
   const extractHashtags = (text) => {

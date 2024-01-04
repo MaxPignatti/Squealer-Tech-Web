@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef  } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, Button, Form, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import Maps from './Maps';
 import { marked } from 'marked';
-import ReplySqueel from './ReplySqueal';
+import ReplySqueal from './ReplySqueal';
 import { useMessageRefs } from '../MessageRefsContext';
 
-const Message = ({ message, handleReaction, seteditMessage, editMessage, handleSaveChanges, currentUser, scrollToMessage }) => {
+const Message = ({ message, handleReaction, seteditMessage, editMessage, handleSaveChanges, currentUser, scrollToMessage, onStartReplying, onEndReplying }) => {
   const [editedText, setEditedText] = useState(message.text);
   const [linkData, setLinkData] = useState([]);
   const [showReply, setShowReply] = useState(false);
@@ -49,19 +49,38 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
       }
     };
   }, [message._id, currentUser, hasBeenViewed]);
+  const beepSoundRef = useRef(new Audio('./beep-01a.mp3'));
+  const [isReplying, setIsReplying] = useState(false);
 
   useEffect(() => {
-    if (message.replyTo != null) {
-      // Esempio di chiamata API per ottenere il messaggio originale
-      fetch(`http://localhost:3500/message/${message.replyTo}`)
-        .then(response => response.json())
-        .then(data => {
-          setOriginalMessageUser(data.user);
-          setOriginalMessageId(data._id);
-        })
-        .catch(error => console.error('Errore nel recupero del messaggio originale:', error));
+    const checkForTimedMessages = () => {
+      if (message.beepRequested) {
+        beepSoundRef.current.play().catch(error => console.error("Errore durante la riproduzione del suono:", error));
+        handleBeepAcknowledged(message._id); 
+      }
+    };
+
+    checkForTimedMessages();
+    const intervalId = setInterval(() => {
+      checkForTimedMessages();
+    }, 60000);
+
+    return () => clearInterval(intervalId);
+  }, [message]); 
+
+  const handleBeepAcknowledged = async (messageId) => {
+    try {
+      const response = await fetch(`http://localhost:3500/messages/acknowledgeBeep/${messageId}`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+    } catch (error) {
+      console.error("Errore durante l'acknowledge del beep:", error);
     }
-  });
+  };
 
   useEffect(() => {
     const positions = [];
@@ -85,9 +104,15 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
   }, [message._id, setRef]);
   
   const handleReplyClick = () => {
+    setIsReplying(!isReplying);
     setShowReply(!showReply);
+    if (!isReplying) {
+      onStartReplying();
+    } else {
+      onEndReplying();
+    }
   };
-
+  
   const handleTextChange = (e) => {
     setEditedText(e.target.value);
   };
@@ -122,7 +147,7 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
           </div>
           <div>
             <strong>{message.user}:</strong> <br />
-            <div dangerouslySetInnerHTML={renderText(message.text)} /> {/* Visualizza il testo interpretato come Markdown */}
+            <div dangerouslySetInnerHTML={renderText(message.text)} />
           </div>
         </div>
   
@@ -153,11 +178,17 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
         <div className="d-flex justify-content-end">
           <small className="text-muted">
             <em>
-            Pubblicato il {new Date(message.createdAt).toLocaleString('it-IT', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+              Pubblicato il {new Date(message.createdAt).toLocaleString('it-IT', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
             </em>
           </small>
         </div>
-  
+        <div className="d-flex justify-content-end">
+          <small className="text-muted">
+            <em>
+            {message.updateInterval && ' Messaggio Temporizzato'}
+            </em>
+          </small>
+        </div>
         <div className="d-flex justify-content-between">
           {currentUser === message.user && (
             <Button onClick={() => seteditMessage(true)}>
@@ -210,8 +241,11 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
         )}
 
         <button onClick={handleReplyClick}>Rispondi</button>
-
-        {showReply && <ReplySqueel originalMessage={message}/>}
+        {showReply && <ReplySqueal 
+          originalMessage={message}
+          onStartReplying={onStartReplying}
+          onEndReplying={onEndReplying}
+        />}
       </Card.Body>
     </Card>
   );  

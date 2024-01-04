@@ -12,6 +12,6 @@ router.post('/position/:messageId', messageController.updatePosition);
 router.get('/message/:id', messageController.getMessageById);
 router.post('/message/incrementImpressions/:messageId', messageController.incrementImpressions);
 router.post('/squeels/:hashtag', messageController.getMessageByHashtag);
-
+router.post('/messages/acknowledgeBeep/:id', messageController.acknowledgeBeep);
 
 module.exports = router;

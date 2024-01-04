@@ -8,7 +8,7 @@ import LocationSharer from './InputSquealComponents/LocationSharer';
 import MessageInput from './InputSquealComponents/MessageInput';
 import PublishButton from './InputSquealComponents/PublishButton';
 import LinkInserter from './InputSquealComponents/LinkInserter';
-const ReplySqueel = ({originalMessage}) => {
+const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 
   //USE STATE DA ORDINARE
   const [message, setMessage] = useState('');
@@ -35,6 +35,7 @@ const ReplySqueel = ({originalMessage}) => {
   //USE EFFECT
 
   useEffect(() => {
+    onStartReplying();
     const userDataCookie = Cookies.get('user_data');
     if (userDataCookie) {
       const userData = JSON.parse(userDataCookie);
@@ -62,6 +63,9 @@ const ReplySqueel = ({originalMessage}) => {
     } else {
       console.error('User data not found in cookies');
     }
+    return () => {
+      onEndReplying();
+    };
   }, []);
 
   useEffect(() => {
@@ -297,7 +301,7 @@ const ReplySqueel = ({originalMessage}) => {
             location: currentLocation ? { latitude: currentLocation[0], longitude: currentLocation[1] } : null,
           };
   
-          const url = 'http://localhost:3500/reply'; // Esempio di URL per la nuova endpoint
+          const url = 'http://localhost:3500/reply'; 
   
           const requestOptions = {
             method: 'POST',
@@ -306,13 +310,11 @@ const ReplySqueel = ({originalMessage}) => {
           };
   
           const response = await fetch(url, requestOptions);
-  
+          onEndReplying();
           if (response.status === 201) {
             const data = await response.json();
             set_id(data._id);
             window.location.reload();
-            //sendLocationPeriodically(data._id);
-            //console.log('response ok');
           } else {
             const data = await response.json();
             console.error('Errore nella creazione della risposta:', data.error);
@@ -357,4 +359,4 @@ const ReplySqueel = ({originalMessage}) => {
   );
 };
 
-export default ReplySqueel;
+export default ReplySqueal;

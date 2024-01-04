@@ -397,7 +397,7 @@ const InputSqueel = () => {
       setMessage('');
       setImage(null);
       setImagePreview(null);
-      setErrorMessage(''); // Reset del messaggio di errore
+      setErrorMessage(''); 
       if (userDataCookie) {
         try {
           const userData = JSON.parse(userDataCookie);
@@ -420,8 +420,8 @@ const InputSqueel = () => {
             nextSendTime: isTempMessage ? new Date(currentTime.getTime() + updateInterval * 60000) : undefined,
             location: currentLocation ? { latitude: currentLocation[0], longitude: currentLocation[1] } : null,
             recipients: {
-              channels: selectedChannels.map(channel => channel.name), // Presumo che ogni canale abbia un id
-              users: selectedUsers.map(user => user.username), // Presumo che ogni utente abbia un id
+              channels: selectedChannels.map(channel => channel.name),
+              users: selectedUsers.map(user => user.username),
             },
           };
   

@@ -73,6 +73,11 @@ const messageSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
+  beepRequested: {
+    type: Boolean,
+    default: false,
+    required: true,
+  }
 });
 
 module.exports = mongoose.model('Message', messageSchema);

@@ -58,7 +58,7 @@ exports.reply = async (req, res) => {
 // Create a new message
 exports.createMessage = async (req, res) => {
   try {
-    const { userName, image, text, dailyCharacters, weeklyCharacters, monthlyCharacters, isTemp, recipients, updateInterval, maxSendCount,nextSendTime, location} = req.body;
+    const { userName, image, text, dailyCharacters, weeklyCharacters, monthlyCharacters, recipients, updateInterval, maxSendCount,nextSendTime, location} = req.body;
 
     const user = await User.findOne({ username: userName });
     if (!user) {
@@ -71,12 +71,12 @@ exports.createMessage = async (req, res) => {
       profileImage: user.profileImage,
       image: image ? image.toString('base64') : null,
       text: text,
-      isTemp: isTemp,
       channel: recipients.channels,
       updateInterval: updateInterval,
       maxSendCount: maxSendCount,
       nextSendTime:nextSendTime,
       location: location ? [location.latitude, location.longitude] : null,
+      beepRequested: updateInterval !== null,
     });
 
     newMessage.hashtags = extractHashtags(req.body.text);
@@ -448,3 +448,21 @@ exports.updateMessage = async (req, res) => {
     }
     return Array.from(hashtags);
   };
+// Endpoint per impostare beepRequested a false
+exports.acknowledgeBeep = async (req, res) => {
+  try {
+    const messageId = req.params.id;
+
+    // Trova e aggiorna il messaggio impostando beepRequested a false
+    const message = await Message.findByIdAndUpdate(messageId, { beepRequested: false }, { new: true });
+    
+    if (!message) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
+    return res.status(200).json({ message: 'Beep acknowledged', beepRequested: message.beepRequested });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};

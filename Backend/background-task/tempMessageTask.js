@@ -24,7 +24,8 @@ const checkAndSendTempMessages = () => {
           updateInterval: message.updateInterval,
           maxSendCount: message.maxSendCount - 1,
           nextSendTime: new Date(currentTime.getTime() + message.updateInterval * 60000),
-          location: message.location
+          location: message.location,
+          beepRequested:true,
         };
         
         const newMessage = new Message(newMessageData);

@@ -11,7 +11,9 @@ const Squeels = () => {
   const [viewMode, setViewMode] = useState('public'); // 'public' o 'private'
   const [currentUser, setCurrentUser] = useState(null);
   const { messageRefs } = useMessageRefs();
-  
+  const [isEditing, setIsEditing] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
+
   useEffect(() => {
     const fetchMessages = async () => {
       const userDataCookie = Cookies.get('user_data');
@@ -31,10 +33,15 @@ const Squeels = () => {
           console.error(error);
         }
       }
+      
     };
+    if (!isEditing && !isReplying) {
+      fetchMessages();
+      const pollingInterval = setInterval(fetchMessages, 1000);
+      return () => clearInterval(pollingInterval);
+    }
+  }, [viewMode, isEditing, isReplying]);
 
-    fetchMessages();
-  }, [viewMode]);
 
   const handleReaction = async (messageId, isPositiveReaction) => {
     const userDataCookie = Cookies.get('user_data');
@@ -57,7 +64,7 @@ const Squeels = () => {
           updatedMessage.positiveReactions = updatedData.positiveReactions;
           updatedMessage.negativeReactions = updatedData.negativeReactions;
 
-          setMessages([...messages]); // Aggiorna lo stato
+          setMessages([...messages]);
         } else {
           console.error('Failed to update reaction:', response.status);
         }
@@ -68,6 +75,7 @@ const Squeels = () => {
   };
 
   const handleEditButtonClick = (messageId) => {
+    setIsEditing(prev => !prev);
     setMessages((prevMessages) =>
       prevMessages.map((message) => ({
         ...message,
@@ -94,7 +102,7 @@ const Squeels = () => {
           },
           body: JSON.stringify({ text: editedText,  username: username }),
         });
-  
+        
         if (response.status === 200) {
   
           const updatedMessage = messages.find((message) => message._id === messageId);
@@ -105,7 +113,7 @@ const Squeels = () => {
           setMessages([...messages]);
 
           handleEditButtonClick(messageId);
-        
+          setIsEditing(false); 
         } else {
           console.error('Failed to save changes:', response.status);
         }
@@ -113,11 +121,15 @@ const Squeels = () => {
         console.error('API call error:', error);
       }
     }  
-      
-
-
   };
 
+  const onStartReplying = () => {
+    setIsReplying(true);
+  };
+
+  const onEndReplying = () => {
+    setIsReplying(false);
+  };
 
   const sortedMessages = [...messages].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -146,14 +158,16 @@ const Squeels = () => {
                 handleSaveChanges={handleSaveChanges}
                 currentUser={currentUser}
                 scrollToMessage={scrollToMessage}
+                onStartReplying={onStartReplying}
+                onEndReplying={onEndReplying}
               />
             ))
           ) : (
             <div className="text-center mt-4">
               <p className="lead">
-                {viewMode === 'public' ? 
-                  "Al momento non ci sono Squeels pubblici da mostrare." :
-                  "Non hai messaggi privati."}
+                {viewMode === 'public'
+                  ? "Al momento non ci sono Squeels pubblici da mostrare."
+                  : "Non hai messaggi privati."}
               </p>
               {viewMode === 'public' && 
                 <p>Iscriviti a dei canali per iniziare a esplorare i messaggi e interagire con la community!</p>}

@@ -119,7 +119,7 @@ exports.loginSMM = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (smm.isPro !== 1) {
+    if (!smm.isPro) {
       return res.status(403).json({ error: 'Non hai un account Pro, fanne richiesta sull\'app principale.' });
     }
 

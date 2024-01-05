@@ -85,6 +85,7 @@ const userSchema = new mongoose.Schema({
   isPro:{
     type: Boolean,
     default:false
+  },
   vipUserName: {
     type: String, 
     default: null,

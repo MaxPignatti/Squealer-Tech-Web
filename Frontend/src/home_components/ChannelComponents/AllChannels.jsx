@@ -67,20 +67,23 @@ const AllChannels = ({setSubscribedChannels, allChannels, setAllChannels }) => {
         />
       </div>
       <div className="card">
-        <ul className="list-group list-group-flush">
-          {filteredChannels.map((channel) => (
-            <li className="list-group-item" key={channel._id}>
-              {channel.name}
-              <span className="badge bg-primary ms-2">{channel.members.length} Iscritti</span>
-              <button
-                className="btn btn-success btn-sm float-end"
-                onClick={() => handleSubscribe(channel)}
-              >
-                Iscriviti
-              </button>
-            </li>
-          ))}
-        </ul>
+      <ul className="list-group list-group-flush">
+  {filteredChannels.map((channel, index) => (
+    <li className="list-group-item" key={channel._id + index}>
+      {channel.name}
+      <span className="badge bg-primary ms-2">{channel.members.length} Iscritti</span>
+      <button
+        className="btn btn-success btn-sm float-end"
+        onClick={() => handleSubscribe(channel)}
+      >
+        Iscriviti
+      </button>
+    </li>
+  ))}
+</ul>
+
+
+
       </div>
     </div>
   );

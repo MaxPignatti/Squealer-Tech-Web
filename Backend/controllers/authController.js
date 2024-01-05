@@ -144,7 +144,6 @@ exports.registerSMM = async (req, res) => {
 };
 
 exports.loginSMM = async (req, res) => {
-  console.log("ci sono")
   const { email, password } = req.body;
   try {
     const smm = await Smm.findOne({ email });
@@ -158,8 +157,6 @@ exports.loginSMM = async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid password' });
     }
-
-    console.log(smm.email);
 
     const userData = {
       email: smm.email,

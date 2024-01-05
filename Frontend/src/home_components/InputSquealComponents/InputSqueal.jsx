@@ -179,7 +179,6 @@ const InputSqueel = () => {
     };
   
   const handleChannelSelect = (newChannel) => {
-    console.log(newChannel)
     if (!selectedChannels.some(channel => channel._id === newChannel._id)) {
       setSelectedChannels([...selectedChannels, newChannel]);
     }
@@ -285,7 +284,6 @@ const InputSqueel = () => {
         const { latitude, longitude } = position.coords;
         if (latitude != null && longitude != null) {
           setCurrentLocation([latitude, longitude]);
-          //console.log([latitude, longitude], 'acciderbolina!');
         } else {
           console.error('Invalid coordinates received');
         }
@@ -302,9 +300,7 @@ const InputSqueel = () => {
   
     intervalId = setInterval(async () => {
       try {
-        //console.log('periodically  ok');
         handleGetLocation();
-        //console.log(currentLocation);
         sendLocationToBackend(messageId, currentLocation);
       } catch (error) {
         console.error('Error getting current location:', error);
@@ -314,14 +310,12 @@ const InputSqueel = () => {
     // Interrompi l'intervallo 
     setTimeout(() => {
       clearInterval(intervalId);
-      //console.log('Interval stopped after 4 minutes');
     }, 240000);
   };
 
  
   const sendLocationToBackend = async (messageId, position) => {
     try {
-      //console.log('sendbackend ok');
       const response = await fetch(`http://localhost:3500/position/${messageId}`, {
         method: 'POST',
         headers: {
@@ -407,7 +401,6 @@ const InputSqueel = () => {
             alert("Please enter valid update interval and max send count for temporary messages.");
             return;
           }
-          //console.log(isTempMessage)
           const requestData = {
             userName: userData.username,
             image: image !== null ? image : null,
@@ -425,7 +418,7 @@ const InputSqueel = () => {
             },
           };
   
-          const url = 'http://localhost:3500/create'; // Esempio di URL per la nuova endpoint
+          const url = 'http://localhost:3500/create';
   
           const requestOptions = {
             method: 'POST',
@@ -440,7 +433,6 @@ const InputSqueel = () => {
             set_id(data._id);
             window.location.reload();
             //sendLocationPeriodically(data._id);
-            //console.log('response ok');
           } else {
             const data = await response.json();
             console.error('Errore nella creazione del messaggio:', data.error);

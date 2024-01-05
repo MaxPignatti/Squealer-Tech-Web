@@ -174,7 +174,6 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
         const { latitude, longitude } = position.coords;
         if (latitude != null && longitude != null) {
           setCurrentLocation([latitude, longitude]);
-          //console.log([latitude, longitude], 'acciderbolina!');
         } else {
           console.error('Invalid coordinates received');
         }
@@ -191,9 +190,7 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
   
     intervalId = setInterval(async () => {
       try {
-        //console.log('periodically  ok');
         handleGetLocation();
-        //console.log(currentLocation);
         sendLocationToBackend(messageId, currentLocation);
       } catch (error) {
         console.error('Error getting current location:', error);
@@ -203,7 +200,6 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
     // Interrompi l'intervallo 
     setTimeout(() => {
       clearInterval(intervalId);
-      //console.log('Interval stopped after 4 minutes');
     }, 240000);
   };
 

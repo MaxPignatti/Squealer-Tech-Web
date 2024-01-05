@@ -216,3 +216,28 @@ exports.removeMember = async (req, res) => {
     res.status(500).json({ error: 'Si è verificato un errore durante la rimozione del membro dal canale' });
   }
 }
+
+exports.getTopMessages = async (req, res) => {
+  try {
+    const squealerId = "Squealer";
+    const squealerChannels = await Channel.find({ creator: squealerId});    
+    const topMessagesPerChannel = [];
+    
+    for (const channel of squealerChannels) {
+      const topMessages = await Message.find({ channel: channel.name})
+        .sort({ positiveReactions: -1 })
+        .limit(3);
+      console.log(topMessages)
+      topMessagesPerChannel.push({
+        channelName: channel.name,
+        messages: topMessages,
+      });
+    }
+    console.log(topMessagesPerChannel)
+    res.json(topMessagesPerChannel);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore interno del server' });
+  }
+};
+

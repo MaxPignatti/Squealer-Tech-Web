@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "./AuthContext";
 import Cookies from 'js-cookie';
+import Message from "./home_components/Message"; 
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -16,6 +17,8 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+
+  const [trendingMessages, setTrendingMessages] = useState([]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -55,12 +58,28 @@ const LoginPage = () => {
     }
   };
   
-  
-  
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  useEffect(() => {
+    const fetchTrendingMessages = async () => {
+      try {
+        const response = await fetch('http://localhost:3500/api/topMessages');
+        console.log(response)
+        if (response.ok) {
+          const data = await response.json();
+          setTrendingMessages(data);
+        } else {
+          console.error('Failed to fetch trending messages');
+        }
+      } catch (error) {
+        console.error('Error fetching trending messages:', error);
+      }
+    };
+
+    fetchTrendingMessages();
+  }, []);
 
   return (
     <Container>
@@ -72,7 +91,7 @@ const LoginPage = () => {
                 <img 
                   src="pic/logo.png" 
                   alt="Logo" 
-                  style={{ maxWidth: '100%', height: 'auto' }} // Aggiunta di stili CSS
+                  style={{ maxWidth: '100%', height: 'auto' }}
                 />
               </div>
               <h2 className="text-center">Login</h2>
@@ -133,6 +152,22 @@ const LoginPage = () => {
               </p>
             </Card.Footer>
           </Card>
+        </Col>
+      </Row>
+      <Row className="justify-content-center mt-3">
+        <Col md={6}>
+          <h3>Trending Messages</h3>
+          {trendingMessages.map((channelInfo) => (
+            <div key={channelInfo.channelName}>
+              <h4>{channelInfo.channelName}</h4>
+              {channelInfo.messages.map((message) => (
+                <Message
+                  key={message._id}  
+                  message={message} 
+                />
+              ))}
+            </div>
+          ))}
         </Col>
       </Row>
     </Container>

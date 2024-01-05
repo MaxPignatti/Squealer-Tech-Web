@@ -190,62 +190,70 @@ const Message = ({ message, handleReaction, seteditMessage, editMessage, handleS
           </small>
         </div>
         <div className="d-flex justify-content-between">
-          {currentUser === message.user && (
-            <Button onClick={() => seteditMessage(true)}>
-              <FontAwesomeIcon icon={faPenToSquare} />
-            </Button>
-          )}
-  
-          <div>
-            <button
-              className="btn btn-link"
-              onClick={() => handleReaction(message._id, true)}
-            >
-              <FontAwesomeIcon icon={faThumbsUp} />
-            </button>
-            <span>{message.positiveReactions}</span>
-          </div>
-  
-          <div>
-            <button
-              className="btn btn-link"
-              onClick={() => handleReaction(message._id, false)}
-            >
-              <FontAwesomeIcon icon={faThumbsDown} />
-            </button>
-            <span>{message.negativeReactions}</span>
-          </div>
-        </div>
-  
-        {editMessage && currentUser === message.user && (
-          <div>
-            <Form>
-              <Form.Group controlId="formBasicEditText">
-                <Form.Label>Modifica Testo</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="editedText"
-                  value={editedText}
-                  onChange={handleTextChange}
-                />
-              </Form.Group>
-            </Form>
-  
-            <Button variant="primary" onClick={handleSaveClick}>
-              Salva Modifiche
-            </Button>
-            <Button variant="secondary" onClick={() => seteditMessage(false)}>
-              Annulla
-            </Button>
-          </div>
-        )}
+  {currentUser && currentUser === message.user && handleSaveChanges && (
+    <Button onClick={() => seteditMessage(true)}>
+      <FontAwesomeIcon icon={faPenToSquare} />
+    </Button>
+  )}
 
-        <button onClick={handleReplyClick}>Rispondi</button>
-        {showReply && <ReplySqueal 
-          originalMessage={message}
-          onStartReplying={onStartReplying}
-          onEndReplying={onEndReplying}
-        />}
+  {currentUser && handleReaction && (
+    <>
+      <div>
+        <button
+          className="btn btn-link"
+          onClick={() => handleReaction(message._id, true)}
+        >
+          <FontAwesomeIcon icon={faThumbsUp} />
+        </button>
+        <span>{message.positiveReactions}</span>
+      </div>
+
+      <div>
+        <button
+          className="btn btn-link"
+          onClick={() => handleReaction(message._id, false)}
+        >
+          <FontAwesomeIcon icon={faThumbsDown} />
+        </button>
+        <span>{message.negativeReactions}</span>
+      </div>
+    </>
+  )}
+</div>
+
+{currentUser && editMessage && currentUser === message.user && handleSaveChanges && (
+  <div>
+    <Form>
+      <Form.Group controlId="formBasicEditText">
+        <Form.Label>Modifica Testo</Form.Label>
+        <Form.Control
+          type="text"
+          name="editedText"
+          value={editedText}
+          onChange={handleTextChange}
+        />
+      </Form.Group>
+    </Form>
+
+    <Button variant="primary" onClick={handleSaveClick}>
+      Salva Modifiche
+    </Button>
+    <Button variant="secondary" onClick={() => seteditMessage(false)}>
+      Annulla
+    </Button>
+  </div>
+)}
+
+{currentUser && handleReplyClick && (
+  <button onClick={handleReplyClick}>Rispondi</button>
+)}
+{currentUser && showReply && onStartReplying && onEndReplying && (
+  <ReplySqueal 
+    originalMessage={message}
+    onStartReplying={onStartReplying}
+    onEndReplying={onEndReplying}
+  />
+)}
       </Card.Body>
     </Card>
   );  

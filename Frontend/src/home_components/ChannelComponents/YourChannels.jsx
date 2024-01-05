@@ -54,7 +54,6 @@ const YourChannels = ({ yourChannels, setYourChannels, setSubscribedChannels, se
 
   const handleRemoveMember = async (username) => {
     try {
-      console.log(selectedChannelId)
       const response = await fetch(`http://localhost:3500/channels/removeMember/${selectedChannelId}`, {
         method: "POST",
         headers: {

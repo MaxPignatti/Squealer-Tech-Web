@@ -131,15 +131,8 @@ exports.unsubscribe = async (req, res) => {
 exports.subscribe = async (req, res) => {
   try {
     const { channelId } = req.params;
-    const { username } = req.body;
-
-    console.log(channelId)
-    console.log(username)
-    
+    const { username } = req.body;    
     const channel = await Channel.findById(channelId);
-
-    console.log(channel)
-
     if (!channel) {
       return res.status(404).json({ message: 'Canale non trovato' });
     }
@@ -194,7 +187,6 @@ exports.removeMember = async (req, res) => {
       return res.status(404).json({ error: 'Canale non trovato' });
     }
     if (!user) {
-      console.log("zio pera 2")
       return res.status(404).json({ error: 'User non trovato' });
     }
 
@@ -220,24 +212,27 @@ exports.removeMember = async (req, res) => {
 exports.getTopMessages = async (req, res) => {
   try {
     const squealerId = "Squealer";
-    const squealerChannels = await Channel.find({ creator: squealerId});    
+    const squealerChannels = await Channel.find({ creator: squealerId });    
     const topMessagesPerChannel = [];
     
     for (const channel of squealerChannels) {
-      const topMessages = await Message.find({ channel: channel.name})
+      const topMessages = await Message.find({ channel: channel.name })
         .sort({ positiveReactions: -1 })
-        .limit(3);
-      console.log(topMessages)
-      topMessagesPerChannel.push({
-        channelName: channel.name,
-        messages: topMessages,
-      });
+        .limit(5);
+
+      if (topMessages.length > 0) {
+        topMessagesPerChannel.push({
+          channelName: channel.name,
+          messages: topMessages,
+        });
+      }
     }
-    console.log(topMessagesPerChannel)
+
     res.json(topMessagesPerChannel);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Errore interno del server' });
   }
 };
+
 

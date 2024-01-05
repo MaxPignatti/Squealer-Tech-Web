@@ -131,22 +131,6 @@ const RegistrationPage = () => {
                   />
                 </Form.Group>
 
-                <Form.Group controlId="formBasicSocialMediaManager">
-                  <Form.Label>Social Media Manager (optional)</Form.Label>
-                  <Form.Control
-                    type="email"
-                    placeholder="Enter social media manager's email"
-                    value={formData.socialMediaManagerEmail}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        socialMediaManagerEmail: e.target.value,
-                      })
-                    }
-                  />
-                  
-                </Form.Group>
-
                <Button variant="primary" type="submit" block={true.toString()}>
                   Register
               </Button>

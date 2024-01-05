@@ -32,7 +32,6 @@ const LoginPage = () => {
       const response = await fetch('http://localhost:3500/login', requestOptions);
       if (response.status === 200) {
         const data = await response.json();
-        console.log(data);
         if (data && data.user_data) {
           const { username, accessToken } = data.user_data;
   
@@ -66,7 +65,6 @@ const LoginPage = () => {
     const fetchTrendingMessages = async () => {
       try {
         const response = await fetch('http://localhost:3500/api/topMessages');
-        console.log(response)
         if (response.ok) {
           const data = await response.json();
           setTrendingMessages(data);

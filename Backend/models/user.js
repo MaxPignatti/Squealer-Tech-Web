@@ -82,6 +82,9 @@ const userSchema = new mongoose.Schema({
   accountType: {
     type: Number
   },
+  isPro:{
+    type: Boolean,
+    default:false
   vipUserName: {
     type: String, 
     default: null,

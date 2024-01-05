@@ -7,13 +7,7 @@
 </template>
 
 <script>
-import useAutoLogin from './composables/useAutoLogin';
 
-export default {
-  setup() {
-    useAutoLogin();
-  }
-};
 </script>
 
 <style>
@@ -24,5 +18,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
+} 
 </style>

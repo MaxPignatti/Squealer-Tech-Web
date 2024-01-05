@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Channel = require('../models/channel');
-const Smm = require('../models/smm')
 const authenticateWithToken = require('../middlewares/authenticationMiddlewares');
 const consts = require('../consts');
 
@@ -111,46 +110,17 @@ exports.protectedEndpoint = async (req, res) => {
   }
 };
 
-exports.registerSMM = async (req, res) => {
-  try {
-    const { firstName, lastName, password, confirmPassword, email } = req.body;
-
-    // Check if the user already exists in the database
-    const existingSmm = await Smm.findOne({ email });
-    if (existingSmm) {
-      return res.status(400).json({ error: 'Email already exists' });
-    }
-    
-    if (password != confirmPassword) {
-      return res.status(400).json({ error: 'Passwords do not match' });
-    }
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Crea un nuovo smm
-    const newSmm = new Smm({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-    });
-    await newSmm.save();
-
-    res.status(201).json({ message: 'Social Media Manager registered successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
 exports.loginSMM = async (req, res) => {
-  console.log("ci sono")
   const { email, password } = req.body;
   try {
-    const smm = await Smm.findOne({ email });
+    const smm = await User.findOne({ email });
 
     if (!smm) {
-      return res.status(404).json({ error: 'Social Media Manager not found' });
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (smm.accountType !== 1) {
+      return res.status(403).json({ error: 'Non hai un account Pro, fanne richiesta sull\'app principale.' });
     }
 
     const passwordMatch = await bcrypt.compare(password, smm.password);
@@ -159,23 +129,56 @@ exports.loginSMM = async (req, res) => {
       return res.status(401).json({ error: 'Invalid password' });
     }
 
-    console.log(smm.email);
+    if (!smm.vipUserName) {
+      return res.status(404).json({ error: 'Nessun VIP ti ha registrato come suo Social Media Manager' });
+    }
 
+    // Crea il token JWT
+    const accessToken = jwt.sign({ email: smm.email }, process.env.SECRET_KEY, { expiresIn: '1h' });
+
+    // Prepara i dati da inviare
     const userData = {
       email: smm.email,
-      accessToken: jwt.sign({ email: smm.email }, process.env.SECRET_KEY, { expiresIn: '1h' }),
+      accessToken: accessToken,
+      vip: smm.vipUserName
     };
 
-  
-    res.cookie('user_data', JSON.stringify(userData), {
+    // Imposta il token nel cookie
+    res.cookie('authToken', accessToken, {
       path: '/',
       domain: 'localhost:8080',
       httpOnly: true,
     });
 
-    res.json({ message: 'Login successful', user_data: userData });  
+    // Invia i dati dell'utente e del VIP nella risposta
+    res.json({ message: 'Login successful', user_data: userData });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.verifyTokenSMM = async (req, res) => {
+  const token = req.headers.authorization.split(' ')[1]; // Estrai il token dal header 'Authorization'
+
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const email = decoded.email;
+    const smm = await User.findOne({ email });
+
+    if (!smm) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Restituisci i dati dell'utente
+    const userData = {
+      email: smm.email,
+      vip: smm.vipUserName,
+    };
+
+    res.json(userData);
+  } catch (error) {
+    console.error(error);
+    res.status(401).json({ error: 'Invalid or expired token' });
   }
 };

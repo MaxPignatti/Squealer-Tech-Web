@@ -10,6 +10,7 @@
   "dependencies": {
     "core-js": "^3.8.3",
     "js-cookie": "^3.0.5",
+    "next-tick": "^1.1.0",
     "open-cli": "^8.0.0",
     "tailwindcss": "^3.4.0",
     "vue": "^3.2.13",

@@ -3,14 +3,18 @@ import { createStore } from 'vuex';
 export default createStore({
   state: {
     isAuthenticated: false,
-    userData: null,
+    email: null,
+    vip: null,
   },
   mutations: {
     setAuthentication(state, status) {
       state.isAuthenticated = status;
     },
-    setUserData(state, data) {
-      state.userData = data;
+    setUserEmail(state, data) {
+      state.email = data;
+    },
+    setVip(state, vip) {
+      state.vip = vip;
     },
   },
   actions: {
@@ -21,14 +25,14 @@ export default createStore({
         commit('setAuthentication', false);
       }
     },
-    login({ commit }, userData) {
-      commit('setUserData', userData);
+    login({ commit }, email) {
+      commit('setUserEmail', email);
       commit('setAuthentication', true);
     },
     logout({ commit }) {
-      commit('setUserData', null);
+      commit('setUserEmail', null);
       commit('setAuthentication', false);
+      commit('setVip', null); // Resetta lo stato VIP al logout
     },
   },
 });
-

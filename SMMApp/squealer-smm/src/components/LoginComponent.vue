@@ -14,13 +14,16 @@
           <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
           <input type="password" id="password" v-model="password" required class="appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline">
         </div>
+        <div v-if="errorMessage" class="text-red-500 text-center py-2">
+          {{ errorMessage }}
+        </div>
         <div>
           <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Login</button>
         </div>
       </form>
       <p class="mt-8 text-center text-sm text-gray-600">
-        Non sei ancora registrato come Social Media Manager?
-        <a href="/register" class="text-blue-500 hover:text-blue-800">Registrati</a>
+        Non sei ancora registrato?
+        Registrati sull'<a href="/login" class="text-blue-500 hover:text-blue-800">App principale</a>!
       </p>
     </div>
   </div>
@@ -31,7 +34,7 @@ import { ref } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import Cookies from 'js-cookie';
-import { onMounted } from 'vue';
+import { watch } from 'vue';
 
 export default {
   setup() {
@@ -41,9 +44,9 @@ export default {
     const password = ref('');
     const errorMessage = ref('');
 
-    onMounted(() => {
-      if (store.state.isAuthenticated) {
-        router.push('/'); // Reindirizza alla homepage
+    watch(() => store.state.isAuthenticated, (isAuthenticated) => {
+      if (isAuthenticated) {
+        router.push('/');
       }
     });
 
@@ -62,9 +65,11 @@ export default {
 
         if (response.status === 200) {
           const data = await response.json();
-          // Supponendo che data.user_data contenga le informazioni necessarie
-          Cookies.set('authToken', data.user_data, { expires: 1 });
-          store.dispatch('login', data.user_data); // Aggiorna lo stato globale
+          Cookies.set('authToken', data.user_data.accessToken, { expires: 1 });
+          store.dispatch('login', data.user_data.email); // Aggiorna lo stato globale con userData
+          if (data.user_data.vip) {
+            store.commit('setVip', data.user_data.vip); // Aggiorna lo stato globale con l'oggetto VIP
+          }
           router.push('/');
         } else {
           const data = await response.json();
@@ -80,3 +85,4 @@ export default {
   },
 };
 </script>
+

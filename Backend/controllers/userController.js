@@ -15,13 +15,13 @@ exports.getAllUsers = async (req, res) => {
 
 
 // Controller function to get user data by ID
-exports.getUserById = async (req, res) => {
+exports.getUserByEmail = async (req, res) => {
   try {
     
-    const { username} = req.params;
+    const { email} = req.params;
 
-    const user = await User.findOne({ username });
-
+    const user = await User.findOne({ email });
+    console.log(user);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }

@@ -34,6 +34,7 @@ const userSchema = new mongoose.Schema({
   },
   socialMediaManagerEmail: {
     type: String,
+    default: null,
   },
   dailyChars: {
     type: Number,
@@ -81,9 +82,10 @@ const userSchema = new mongoose.Schema({
   accountType: {
     type: Number
   },
-  smm: {
-    type: Boolean
-  },
+  vipUserName: {
+    type: String, 
+    default: null,
+  }
 });
 
 module.exports = mongoose.model('User', userSchema);

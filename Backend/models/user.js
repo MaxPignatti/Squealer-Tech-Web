@@ -84,6 +84,10 @@ const userSchema = new mongoose.Schema({
   smm: {
     type: Boolean
   },
+  isPro:{
+    type: Boolean,
+    default:false
+  }
 });
 
 module.exports = mongoose.model('User', userSchema);

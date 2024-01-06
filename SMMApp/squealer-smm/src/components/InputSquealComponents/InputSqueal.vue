@@ -2,9 +2,9 @@
   <div class="input-squeals-container">
     <RecipientSelector
       :recipientType="recipientType"
-      @recipientChange="handleRecipientChange"
+      @update:recipientType="(val) => (recipientType = val)"
       :searchTerm="searchTerm"
-      @searchChange="handleSearchChange"
+      @update:searchTerm="handleSearchChange"
       :filteredChannels="filteredChannels"
       :filteredUsers="filteredUsers"
       @userSelect="handleUserSelect"
@@ -48,7 +48,6 @@
 <script>
 import { ref, onMounted, watch } from "vue";
 import Cookies from "js-cookie";
-import store from "../..store";
 import CharCounter from "./CharCounter.vue";
 import ImageUploader from "./ImageUploader.vue";
 import LinkInserter from "./LinkInserter.vue";
@@ -81,13 +80,14 @@ export default {
 
     const errorMessage = ref("");
 
+    const selection = ref({ start: 0, end: 0 });
+
     const isTemp = ref(false);
     const updateInterval = ref(0);
     const maxSendCount = ref(0);
 
     const currentLocation = ref(null);
     const showMap = ref(false);
-    const _id = ref(null);
 
     const recipientType = ref("user");
     const filteredChannels = ref([]);
@@ -102,7 +102,7 @@ export default {
     const image = ref(null);
     const imagePreview = ref(null);
 
-    const vipUsername = ref("");
+    const vipUsername = ref(null);
 
     onMounted(() => {
       const authToken = Cookies.get("authToken");
@@ -194,10 +194,6 @@ export default {
     });
 
     //FUNZIONI PER DESTINATARI
-    const handleRecipientChange = (newValue) => {
-      recipientType.value = newValue;
-    };
-
     const handleSearchChange = () => {
       if (recipientType.value === "user") {
         filteredUsers.value = users.value.filter((user) =>
@@ -412,14 +408,12 @@ export default {
         savedMessage &&
         (selectedChannels.value.length > 0 || selectedUsers.value.length > 0)
       ) {
-        const userDataCookie = Cookies.get("user_data");
         message.value = "";
         image.value = null;
         imagePreview.value = null;
         errorMessage.value = "";
-        if (userDataCookie) {
+        if (vipUsername.value) {
           try {
-            const userData = JSON.parse(userDataCookie);
             const currentTime = new Date();
             const isTempMessage = updateInterval.value && maxSendCount.value;
             if (
@@ -506,7 +500,6 @@ export default {
       maxSendCount,
       currentLocation,
       showMap,
-      _id,
       recipientType,
       filteredChannels,
       searchTerm,
@@ -518,9 +511,8 @@ export default {
       image,
       imagePreview,
 
-      handleRecipientChange,
+      handleSearchChange,
       handleChannelSelect,
-      handleRecipientChange,
       handleUserSelect,
       handleRemoveChannel,
       handleRemoveUser,
@@ -537,6 +529,7 @@ export default {
       toggleTemp,
       handleUpdateIntervalChange,
       handleMaxSendCountChange,
+      handlePublish,
     };
   },
 };

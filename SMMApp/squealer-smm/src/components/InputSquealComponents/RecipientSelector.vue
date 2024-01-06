@@ -1,33 +1,29 @@
 <template>
-  <div class="p-4">
-    <div class="flex mb-4">
-      <label class="flex items-center mr-4">
-        <input
-          type="radio"
-          class="form-radio"
-          value="user"
-          v-model="recipientType"
-        />
-        <span class="ml-2">Utente Singolo</span>
-      </label>
-      <label class="flex items-center">
-        <input
-          type="radio"
-          class="form-radio"
-          value="channel"
-          v-model="recipientType"
-        />
-        <span class="ml-2">Canale</span>
-      </label>
-    </div>
+  <div>
+    <input
+      type="radio"
+      name="recipientType"
+      value="user"
+      :checked="recipientType === 'user'"
+      @change="$emit('update:recipientType', 'user')"
+    />
+    <input
+      type="radio"
+      name="recipientType"
+      value="channel"
+      :checked="recipientType === 'channel'"
+      @change="$emit('update:recipientType', 'channel')"
+    />
     <input
       type="text"
-      class="form-input w-full mb-4"
+      class="form-control mb-2"
       :placeholder="
         recipientType === 'user' ? 'Cerca utente...' : 'Cerca canale...'
       "
-      v-model="searchTerm"
+      :value="searchTerm"
+      @input="$emit('update:searchTerm', $event.target.value)"
     />
+    <!-- Aggiungi qui ulteriori elementi dell'interfaccia utente per filteredChannels, filteredUsers, ecc. -->
   </div>
 </template>
 
@@ -36,6 +32,19 @@ export default {
   props: {
     recipientType: String,
     searchTerm: String,
+    filteredChannels: Array,
+    filteredUsers: Array,
+    selectedUsers: Array,
+    selectedChannels: Array,
   },
+  emits: [
+    "update:recipientType",
+    "update:searchTerm",
+    "userSelect",
+    "channelSelect",
+    "removeUser",
+    "removeChannel",
+  ],
+  // Metodi per gestire eventi come userSelect, channelSelect, ecc.
 };
 </script>

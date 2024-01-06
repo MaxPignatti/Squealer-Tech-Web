@@ -20,16 +20,16 @@ const RegistrationPage = () => {
 
     try {
       // Send a POST request to your backend registration endpoint
-      const response = await fetch('http://localhost:3500/register', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3500/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
 
       if (response.status === 201) {
-            window.location.href = '/login'; // Redirect to the login page
+        window.location.href = "/login"; // Redirect to the login page
       } else {
         const data = await response.json();
         setErrorMessage(data.error); // Set the error message
@@ -46,7 +46,11 @@ const RegistrationPage = () => {
           <Card>
             <Card.Body>
               <div className="text-center mb-4">
-                <img src="pic/logo.png" alt="Logo" style={{ maxWidth: '100%', height: 'auto' }}/>
+                <img
+                  src="pic/logo.png"
+                  alt="Logo"
+                  style={{ maxWidth: "100%", height: "auto" }}
+                />
               </div>
               <h2 className="text-center">Registration</h2>
               <Form onSubmit={handleRegister}>
@@ -59,7 +63,7 @@ const RegistrationPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, firstName: e.target.value })
                     }
-                    required 
+                    required
                   />
                 </Form.Group>
 
@@ -72,7 +76,7 @@ const RegistrationPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, lastName: e.target.value })
                     }
-                    required 
+                    required
                   />
                 </Form.Group>
 
@@ -85,7 +89,7 @@ const RegistrationPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, username: e.target.value })
                     }
-                    required 
+                    required
                   />
                 </Form.Group>
 
@@ -98,7 +102,7 @@ const RegistrationPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
                     }
-                    required 
+                    required
                   />
                 </Form.Group>
 
@@ -127,18 +131,16 @@ const RegistrationPage = () => {
                         confirmPassword: e.target.value,
                       })
                     }
-                    required 
+                    required
                   />
                 </Form.Group>
 
-               <Button variant="primary" type="submit" block={true.toString()}>
+                <Button variant="primary" type="submit" block={true.toString()}>
                   Register
-              </Button>
+                </Button>
 
                 {errorMessage && (
-                  <div className="text-danger mt-2">
-                    {errorMessage}
-                  </div>
+                  <div className="text-danger mt-2">{errorMessage}</div>
                 )}
               </Form>
             </Card.Body>

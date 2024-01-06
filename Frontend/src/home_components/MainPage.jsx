@@ -1,8 +1,8 @@
-import InputSqueal from './InputSquealComponents/InputSqueal'; // Importa il componente InputSqueel
-import Squeels from './Squeels'; // Importa il componente per visualizzare i messaggi
-import React, {useState} from "react";
-import {Button, Card} from "react-bootstrap";
-import './Profile_style.css';
+import InputSqueal from "./InputSquealComponents/InputSqueal"; // Importa il componente InputSqueel
+import Squeels from "./Squeels"; // Importa il componente per visualizzare i messaggi
+import React, { useState } from "react";
+import { Button, Card } from "react-bootstrap";
+import "./Profile_style.css";
 
 const MainPage = () => {
   const [showInputSqueal, setShowInputSqueal] = useState(false);
@@ -10,7 +10,10 @@ const MainPage = () => {
   return (
     <div className="container">
       <div className="d-flex justify-content-center align-items-center">
-        <Button variant="primary" onClick={() => setShowInputSqueal(!showInputSqueal)}>
+        <Button
+          variant="primary"
+          onClick={() => setShowInputSqueal(!showInputSqueal)}
+        >
           Nuovo Squeal
         </Button>
       </div>
@@ -26,7 +29,7 @@ const MainPage = () => {
           </div>
         </div>
       )}
-      < Squeels />
+      <Squeels />
     </div>
   );
 };

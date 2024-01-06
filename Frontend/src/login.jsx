@@ -1,12 +1,12 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "./AuthContext";
-import Cookies from 'js-cookie';
-import Message from "./home_components/Message"; 
+import Cookies from "js-cookie";
+import Message from "./home_components/Message";
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -24,29 +24,32 @@ const LoginPage = () => {
     event.preventDefault();
     try {
       const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       };
-  
-      const response = await fetch('http://localhost:3500/login', requestOptions);
+
+      const response = await fetch(
+        "http://localhost:3500/login",
+        requestOptions
+      );
       if (response.status === 200) {
         const data = await response.json();
         if (data && data.user_data) {
           const { username, accessToken } = data.user_data;
-  
+
           const userData = {
             username: username,
             access_token: accessToken,
           };
-  
-          Cookies.set('user_data', JSON.stringify(userData), { expires: 1 });
-  
+
+          Cookies.set("user_data", JSON.stringify(userData), { expires: 1 });
+
           login();
-          console.log('Navigating to /home...');
-          navigate('/');
+          console.log("Navigating to /home...");
+          navigate("/");
         } else {
-          setErrorMessage('Access token not found in the response');
+          setErrorMessage("Access token not found in the response");
         }
       } else {
         const data = await response.json();
@@ -56,7 +59,7 @@ const LoginPage = () => {
       console.error(error);
     }
   };
-  
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -64,15 +67,15 @@ const LoginPage = () => {
   useEffect(() => {
     const fetchTrendingMessages = async () => {
       try {
-        const response = await fetch('http://localhost:3500/api/topMessages');
+        const response = await fetch("http://localhost:3500/api/topMessages");
         if (response.ok) {
           const data = await response.json();
           setTrendingMessages(data);
         } else {
-          console.error('Failed to fetch trending messages');
+          console.error("Failed to fetch trending messages");
         }
       } catch (error) {
-        console.error('Error fetching trending messages:', error);
+        console.error("Error fetching trending messages:", error);
       }
     };
 
@@ -86,10 +89,10 @@ const LoginPage = () => {
           <Card>
             <Card.Body>
               <div className="text-center mb-4">
-                <img 
-                  src="pic/logo.png" 
-                  alt="Logo" 
-                  style={{ maxWidth: '100%', height: 'auto' }}
+                <img
+                  src="pic/logo.png"
+                  alt="Logo"
+                  style={{ maxWidth: "100%", height: "auto" }}
                 />
               </div>
               <h2 className="text-center">Login</h2>
@@ -137,11 +140,8 @@ const LoginPage = () => {
                 </Button>
 
                 {errorMessage && (
-                  <div className="text-danger mt-2">
-                    {errorMessage}
-                  </div>
+                  <div className="text-danger mt-2">{errorMessage}</div>
                 )}
-
               </Form>
             </Card.Body>
             <Card.Footer className="text-center">
@@ -159,10 +159,7 @@ const LoginPage = () => {
             <div key={channelInfo.channelName}>
               <h4>{channelInfo.channelName}</h4>
               {channelInfo.messages.map((message) => (
-                <Message
-                  key={message._id}  
-                  message={message} 
-                />
+                <Message key={message._id} message={message} />
               ))}
             </div>
           ))}

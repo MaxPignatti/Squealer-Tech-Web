@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
   const [showForm, setShowForm] = useState(false);
@@ -13,12 +13,14 @@ const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
       setChannelName(name);
       setErrorMessage(""); // Resetta il messaggio di errore se il nome è valido
     } else {
-      setErrorMessage("Il nome del canale non può contenere caratteri maiuscoli.");
+      setErrorMessage(
+        "Il nome del canale non può contenere caratteri maiuscoli."
+      );
     }
   };
-  
+
   const handleCreateChannel = async () => {
-    const userDataCookie = Cookies.get('user_data');
+    const userDataCookie = Cookies.get("user_data");
     if (userDataCookie) {
       const userData = JSON.parse(userDataCookie);
       const username = userData.username;
@@ -38,20 +40,27 @@ const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
         if (response.status === 201) {
           const responseData = await response.json();
           setShowForm(false);
-          setSubscribedChannels(prevChannels => [...prevChannels, responseData.newChannel]);
-          setYourChannels(prevChannels => [...prevChannels, responseData.newChannel]);
+          setSubscribedChannels((prevChannels) => [
+            ...prevChannels,
+            responseData.newChannel,
+          ]);
+          setYourChannels((prevChannels) => [
+            ...prevChannels,
+            responseData.newChannel,
+          ]);
         } else {
-          console.error("Errore durante la creazione del canale:", response.status);
+          console.error(
+            "Errore durante la creazione del canale:",
+            response.status
+          );
         }
       } catch (error) {
         console.error("Errore durante la richiesta POST:", error.message);
       }
     } else {
-      console.error('User data not found in cookies');
+      console.error("User data not found in cookies");
     }
   };
-
-
 
   return (
     <div className="create-channel">
@@ -66,7 +75,9 @@ const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
         <div className="mt-3">
           <h2>Crea un nuovo canale</h2>
           <div className="mb-3">
-            <label htmlFor="channelName" className="form-label">Nome del canale</label>
+            <label htmlFor="channelName" className="form-label">
+              Nome del canale
+            </label>
             <input
               type="text"
               className="form-control"
@@ -74,10 +85,13 @@ const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
               value={channelName}
               onChange={handleChannelNameChange} // Usa la nuova funzione di gestione
             />
-            {errorMessage && <div className="text-danger">{errorMessage}</div>} {/* Visualizza il messaggio di errore */}
+            {errorMessage && <div className="text-danger">{errorMessage}</div>}{" "}
+            {/* Visualizza il messaggio di errore */}
           </div>
           <div className="mb-3">
-            <label htmlFor="channelDescription" className="form-label">Descrizione del canale</label>
+            <label htmlFor="channelDescription" className="form-label">
+              Descrizione del canale
+            </label>
             <input
               type="text"
               className="form-control"
@@ -86,10 +100,7 @@ const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
               onChange={(e) => setChannelDescription(e.target.value)}
             />
           </div>
-          <button
-            className="btn btn-success"
-            onClick={handleCreateChannel}
-          >
+          <button className="btn btn-success" onClick={handleCreateChannel}>
             Crea canale
           </button>
         </div>

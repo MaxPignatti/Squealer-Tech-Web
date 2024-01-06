@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button, Badge } from "react-bootstrap";
-import { useAuth } from '../AuthContext';
-import { Navigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import { useAuth } from "../AuthContext";
+import { Navigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const ShopPage = () => {
   const { isAuthenticated } = useAuth();
@@ -12,10 +12,10 @@ const ShopPage = () => {
   }
 
   const [selectedQuantity, setSelectedQuantity] = useState(null);
-  const [username, setUsername] = useState(null); 
+  const [username, setUsername] = useState(null);
 
   useEffect(() => {
-    const userDataCookie = Cookies.get('user_data');
+    const userDataCookie = Cookies.get("user_data");
     if (userDataCookie) {
       const userData = JSON.parse(userDataCookie);
       const userUsername = userData.username;
@@ -44,27 +44,30 @@ const ShopPage = () => {
         // Include username in the API request
         const data = { username, quantity: selectedQuantity };
         const requestOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         };
 
-        const response = await fetch('http://localhost:3500/purchase', requestOptions);
+        const response = await fetch(
+          "http://localhost:3500/purchase",
+          requestOptions
+        );
 
         if (response.status === 200) {
           const result = await response.json();
-          console.log('Purchase successful:', result);
+          console.log("Purchase successful:", result);
           // Reset selectedQuantity after the purchase is confirmed
           setSelectedQuantity(null);
         } else {
           const data = await response.json();
-          console.error('Error in purchase:', data.error);
+          console.error("Error in purchase:", data.error);
         }
       } else {
-        console.error('Username or selected quantity is missing.');
+        console.error("Username or selected quantity is missing.");
       }
     } catch (error) {
-      console.error('Error in purchase:', error);
+      console.error("Error in purchase:", error);
     }
   };
 
@@ -93,7 +96,13 @@ const ShopPage = () => {
                         </Badge>
                       </div>
                       <div className="mt-1">
-                        <strong>${calculateDiscountedPrice(option.price, option.discount)}</strong>
+                        <strong>
+                          $
+                          {calculateDiscountedPrice(
+                            option.price,
+                            option.discount
+                          )}
+                        </strong>
                       </div>
                     </Button>
                   </Col>

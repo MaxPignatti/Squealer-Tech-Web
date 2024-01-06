@@ -6,9 +6,7 @@
   </div>
 </template>
 
-<script>
-
-</script>
+<script></script>
 
 <style>
 /* Qui puoi aggiungere gli stili globali per la tua app */
@@ -18,5 +16,5 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-} 
+}
 </style>

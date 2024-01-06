@@ -1,7 +1,7 @@
-const User = require('../models/user');
-const Channel = require('../models/channel');
-const Message = require('../models/message');
-const user = require('../models/user');
+const User = require("../models/user");
+const Channel = require("../models/channel");
+const Message = require("../models/message");
+const user = require("../models/user");
 
 exports.createChannel = async (req, res) => {
   try {
@@ -10,7 +10,9 @@ exports.createChannel = async (req, res) => {
     // Verifica se esiste già un canale con lo stesso nome
     const existingChannel = await Channel.findOne({ name });
     if (existingChannel) {
-      return res.status(400).json({ error: "Un canale con lo stesso nome esiste già." });
+      return res
+        .status(400)
+        .json({ error: "Un canale con lo stesso nome esiste già." });
     }
 
     // Crea un nuovo canale
@@ -26,17 +28,19 @@ exports.createChannel = async (req, res) => {
     // Aggiunge il canale agli array dello user
     await User.updateOne(
       { username: creator },
-      { 
-        $push: { createdChannels: name, channels: name }
+      {
+        $push: { createdChannels: name, channels: name },
       }
     );
 
-    res.status(201).json({ message: "Canale creato con successo.", newChannel: newChannel });
+    res
+      .status(201)
+      .json({ message: "Canale creato con successo.", newChannel: newChannel });
   } catch (error) {
     console.error("Errore durante la creazione del canale:", error);
     res.status(500).json({ error: "Errore interno del server." });
   }
-}
+};
 
 exports.yourChannels = async (req, res) => {
   try {
@@ -59,7 +63,7 @@ exports.deleteChannel = async (req, res) => {
     const channel = await Channel.findById(channelId);
 
     if (!channel) {
-      return res.status(404).json({ message: 'Canale non trovato' });
+      return res.status(404).json({ message: "Canale non trovato" });
     }
     channelName = channel.name;
     // Step 1: Elimina il canale dal database
@@ -67,7 +71,6 @@ exports.deleteChannel = async (req, res) => {
 
     // Step 2: Elimina tutti i messaggi associati a quel canale
     await Message.deleteMany({ channel: { $in: [channelName] } });
-
 
     // Step 3: Rimuovi il canale dal campo `channels` di tutti gli utenti iscritti
     await User.updateMany(
@@ -87,8 +90,7 @@ exports.deleteChannel = async (req, res) => {
     console.error("Errore durante l'eliminazione del canale:", error);
     res.status(500).json({ error: "Errore interno del server." });
   }
-}
-
+};
 
 exports.getSubscribedChannels = async (req, res) => {
   try {
@@ -98,7 +100,7 @@ exports.getSubscribedChannels = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
 
 exports.unsubscribe = async (req, res) => {
   try {
@@ -107,45 +109,47 @@ exports.unsubscribe = async (req, res) => {
     const channel = await Channel.findById(channelId);
 
     if (!channel) {
-      return res.status(404).json({ message: 'Canale non trovato' });
+      return res.status(404).json({ message: "Canale non trovato" });
     }
 
-    const user = await User.findOne({username})
+    const user = await User.findOne({ username });
 
     if (!user) {
-      return res.status(404).json({ message: 'User non trovato' });
+      return res.status(404).json({ message: "User non trovato" });
     }
 
-    channel.members = channel.members.filter(member => member !== username);
+    channel.members = channel.members.filter((member) => member !== username);
     await channel.save();
     const channelName = channel.name;
-    user.channels = user.channels.filter(channel => channelName !== channel);
+    user.channels = user.channels.filter((channel) => channelName !== channel);
     await user.save();
-    
-    res.json({ message: 'Disiscrizione avvenuta con successo' });
+
+    res.json({ message: "Disiscrizione avvenuta con successo" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
 
 exports.subscribe = async (req, res) => {
   try {
     const { channelId } = req.params;
-    const { username } = req.body;    
+    const { username } = req.body;
     const channel = await Channel.findById(channelId);
     if (!channel) {
-      return res.status(404).json({ message: 'Canale non trovato' });
+      return res.status(404).json({ message: "Canale non trovato" });
     }
 
-    const user = await User.findOne({username})
+    const user = await User.findOne({ username });
 
     if (!user) {
-      return res.status(404).json({ message: 'User non trovato' });
+      return res.status(404).json({ message: "User non trovato" });
     }
 
     // Verifica se l'utente è già iscritto al canale
     if (channel.members.includes(username)) {
-      return res.status(400).json({ message: 'Sei già iscritto a questo canale' });
+      return res
+        .status(400)
+        .json({ message: "Sei già iscritto a questo canale" });
     }
 
     // Aggiungi l'utente come membro del canale
@@ -154,7 +158,7 @@ exports.subscribe = async (req, res) => {
 
     user.channels.push(channel.name);
     await user.save();
-    res.json({ message: 'Iscrizione avvenuta con successo' });
+    res.json({ message: "Iscrizione avvenuta con successo" });
   } catch (error) {
     console.error("Errore durante la sottoscrizione del canale:", error);
     res.status(500).json({ error: "Errore interno del server." });
@@ -181,40 +185,47 @@ exports.removeMember = async (req, res) => {
     const { username } = req.body;
 
     const channel = await Channel.findById(channelId);
-    const user = await User.findOne({username})
+    const user = await User.findOne({ username });
 
     if (!channel) {
-      return res.status(404).json({ error: 'Canale non trovato' });
+      return res.status(404).json({ error: "Canale non trovato" });
     }
     if (!user) {
-      return res.status(404).json({ error: 'User non trovato' });
+      return res.status(404).json({ error: "User non trovato" });
     }
 
     // Verifica se il membro è effettivamente presente nel canale
     if (!channel.members.includes(username)) {
-      return res.status(400).json({ error: 'Membro non trovato in questo canale' });
+      return res
+        .status(400)
+        .json({ error: "Membro non trovato in questo canale" });
     }
 
     // Rimuovi il membro dal canale
     channel.members.pull(username);
     await channel.save();
 
-    user.channels.pull(channel.name)
+    user.channels.pull(channel.name);
     await user.save();
 
-    res.status(200).json({ message: 'Membro rimosso con successo' });
+    res.status(200).json({ message: "Membro rimosso con successo" });
   } catch (error) {
-    console.error('Errore durante la rimozione del membro dal canale:', error);
-    res.status(500).json({ error: 'Si è verificato un errore durante la rimozione del membro dal canale' });
+    console.error("Errore durante la rimozione del membro dal canale:", error);
+    res
+      .status(500)
+      .json({
+        error:
+          "Si è verificato un errore durante la rimozione del membro dal canale",
+      });
   }
-}
+};
 
 exports.getTopMessages = async (req, res) => {
   try {
     const squealerId = "Squealer";
-    const squealerChannels = await Channel.find({ creator: squealerId });    
+    const squealerChannels = await Channel.find({ creator: squealerId });
     const topMessagesPerChannel = [];
-    
+
     for (const channel of squealerChannels) {
       const topMessages = await Message.find({ channel: channel.name })
         .sort({ positiveReactions: -1 })
@@ -231,8 +242,6 @@ exports.getTopMessages = async (req, res) => {
     res.json(topMessagesPerChannel);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Errore interno del server' });
+    res.status(500).json({ error: "Errore interno del server" });
   }
 };
-
-

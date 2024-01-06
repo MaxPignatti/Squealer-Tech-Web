@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Button } from 'react-bootstrap';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import Cookies from 'js-cookie';
-import CharCounter from './InputSquealComponents/CharCounter';
-import ImageUploader from './InputSquealComponents/ImageUploader';
-import LocationSharer from './InputSquealComponents/LocationSharer';
-import MessageInput from './InputSquealComponents/MessageInput';
-import PublishButton from './InputSquealComponents/PublishButton';
-import LinkInserter from './InputSquealComponents/LinkInserter';
+import { Button } from "react-bootstrap";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import Cookies from "js-cookie";
+import CharCounter from "./InputSquealComponents/CharCounter";
+import ImageUploader from "./InputSquealComponents/ImageUploader";
+import LocationSharer from "./InputSquealComponents/LocationSharer";
+import MessageInput from "./InputSquealComponents/MessageInput";
+import PublishButton from "./InputSquealComponents/PublishButton";
+import LinkInserter from "./InputSquealComponents/LinkInserter";
 const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
-
   //USE STATE DA ORDINARE
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [selection, setSelection] = useState({ start: 0, end: 0 });
   const [dailyCharacters, setDailyCharacters] = useState(0);
   const [weeklyCharacters, setWeeklyCharacters] = useState(0);
@@ -19,7 +18,7 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
   const [initialDailyCharacters, setInitialDailyCharacters] = useState(0);
   const [initialWeeklyCharacters, setInitialWeeklyCharacters] = useState(0);
   const [initialMonthlyCharacters, setInitialMonthlyCharacters] = useState(0);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [publicMessage, setPublicMessage] = useState(false);
 
@@ -27,16 +26,14 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
   const [showMap, setShowMap] = useState(false);
   const [_id, set_id] = useState(null);
 
-
   const [image, setImage] = useState(null); // Stato per l'immagine in base64
   const [imagePreview, setImagePreview] = useState(null); // Stato per l'anteprima dell'immagine
-
 
   //USE EFFECT
 
   useEffect(() => {
     onStartReplying();
-    const userDataCookie = Cookies.get('user_data');
+    const userDataCookie = Cookies.get("user_data");
     if (userDataCookie) {
       const userData = JSON.parse(userDataCookie);
       const username = userData.username;
@@ -46,7 +43,7 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
           if (response.status === 200) {
             return response.json();
           } else {
-            throw new Error('API call failed');
+            throw new Error("API call failed");
           }
         })
         .then((data) => {
@@ -58,10 +55,10 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
           setInitialMonthlyCharacters(data.monthlyChars);
         })
         .catch((error) => {
-          console.error('API call error:', error);
+          console.error("API call error:", error);
         });
     } else {
-      console.error('User data not found in cookies');
+      console.error("User data not found in cookies");
     }
     return () => {
       onEndReplying();
@@ -69,7 +66,7 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
   }, []);
 
   useEffect(() => {
-    setPublicMessage(!(originalMessage.channel.length == 0))
+    setPublicMessage(!(originalMessage.channel.length == 0));
   }, []);
   /*
   useEffect(() => {
@@ -85,10 +82,17 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
   //FUNZIONE PER TEXT
   const handleMessageChange = (event) => {
     const inputMessage = event.target.value;
-    const charCounter = (currentLocation != null)*50+(image != null)*50+inputMessage.length;
+    const charCounter =
+      (currentLocation != null) * 50 +
+      (image != null) * 50 +
+      inputMessage.length;
     if (!publicMessage) {
       setMessage(inputMessage);
-    }else if (charCounter <= initialDailyCharacters && charCounter <= initialWeeklyCharacters && charCounter <= initialMonthlyCharacters) {
+    } else if (
+      charCounter <= initialDailyCharacters &&
+      charCounter <= initialWeeklyCharacters &&
+      charCounter <= initialMonthlyCharacters
+    ) {
       setMessage(inputMessage);
       setDailyCharacters(initialDailyCharacters - charCounter);
       setWeeklyCharacters(initialWeeklyCharacters - charCounter);
@@ -98,14 +102,17 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 
   //FUNZIONI PER IMMAGINI
   const handleImageChange = (e) => {
-    if(publicMessage) {
-      if(dailyCharacters >= 50 && weeklyCharacters >= 50 && monthlyCharacters >= 50) {
+    if (publicMessage) {
+      if (
+        dailyCharacters >= 50 &&
+        weeklyCharacters >= 50 &&
+        monthlyCharacters >= 50
+      ) {
         setDailyCharacters(dailyCharacters - 50);
         setWeeklyCharacters(weeklyCharacters - 50);
         setMonthlyCharacters(monthlyCharacters - 50);
-      }
-      else {
-        alert('Not enough characters for an image upload.');
+      } else {
+        alert("Not enough characters for an image upload.");
         return;
       }
     }
@@ -141,21 +148,23 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
   };
 
   const handleOpenMap = () => {
-    if(publicMessage) {
-      if(dailyCharacters >= 50 && weeklyCharacters >= 50 && monthlyCharacters >= 50) {
+    if (publicMessage) {
+      if (
+        dailyCharacters >= 50 &&
+        weeklyCharacters >= 50 &&
+        monthlyCharacters >= 50
+      ) {
         setDailyCharacters(dailyCharacters - 50);
         setWeeklyCharacters(weeklyCharacters - 50);
         setMonthlyCharacters(monthlyCharacters - 50);
-      }
-      else {
-        alert('Not enough characters for a position upload.');
+      } else {
+        alert("Not enough characters for a position upload.");
         return;
       }
     }
     setShowMap(true);
     handleGetLocation();
-
-  }
+  };
 
   const handleCloseMap = () => {
     setShowMap(false);
@@ -168,64 +177,67 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
   };
 
   const handleGetLocation = () => {
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         if (latitude != null && longitude != null) {
           setCurrentLocation([latitude, longitude]);
         } else {
-          console.error('Invalid coordinates received');
+          console.error("Invalid coordinates received");
         }
       },
       (error) => {
-        console.error('Error getting location:', error);
+        console.error("Error getting location:", error);
       }
     );
   };
 
-
   const sendLocationPeriodically = (messageId) => {
-    let intervalId; 
-  
+    let intervalId;
+
     intervalId = setInterval(async () => {
       try {
         handleGetLocation();
         sendLocationToBackend(messageId, currentLocation);
       } catch (error) {
-        console.error('Error getting current location:', error);
+        console.error("Error getting current location:", error);
       }
-    }, 30000); 
-  
-    // Interrompi l'intervallo 
+    }, 30000);
+
+    // Interrompi l'intervallo
     setTimeout(() => {
       clearInterval(intervalId);
     }, 240000);
   };
 
- 
   const sendLocationToBackend = async (messageId, position) => {
     try {
       //console.log('sendbackend ok');
-      const response = await fetch(`http://localhost:3500/position/${messageId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ position }),
-      });
-  
+      const response = await fetch(
+        `http://localhost:3500/position/${messageId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ position }),
+        }
+      );
+
       if (!response.ok) {
-        console.error('Failed to update location on the backend');
+        console.error("Failed to update location on the backend");
       }
     } catch (error) {
-      console.error('Error sending location to backend:', error);
+      console.error("Error sending location to backend:", error);
     }
   };
-  
-   // Gestione della selezione del testo
-   const handleTextSelect = (e) => {
-    setSelection({ start: e.target.selectionStart, end: e.target.selectionEnd });
+
+  // Gestione della selezione del testo
+  const handleTextSelect = (e) => {
+    setSelection({
+      start: e.target.selectionStart,
+      end: e.target.selectionEnd,
+    });
   };
 
   // Funzione per inserire il link nel messaggio
@@ -239,13 +251,13 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
       alert("Per favore, seleziona del testo nel messaggio per linkarlo.");
     }
   };
-  
+
   //FUNZIONI PER MESSAGGI TEMPORANEI
   const toggleTemp = () => {
     setIsTemp(!isTemp);
     if (!isTemp) {
-      setUpdateInterval('');
-      setMaxSendCount('');
+      setUpdateInterval("");
+      setMaxSendCount("");
     }
   };
 
@@ -258,7 +270,7 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
       } else {
         setUpdateInterval(numericValue < 1 ? 1 : 60);
       }
-    } 
+    }
   };
 
   const handleMaxSendCountChange = (e) => {
@@ -270,19 +282,19 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
       } else {
         setMaxSendCount(numericValue < 1 ? 1 : 20);
       }
-    } 
+    }
   };
 
   //PUBLISH
   const handlePublish = async () => {
     const savedMessage = message;
-  
+
     if (savedMessage) {
-      const userDataCookie = Cookies.get('user_data');
-      setMessage('');
+      const userDataCookie = Cookies.get("user_data");
+      setMessage("");
       setImage(null);
       setImagePreview(null);
-      setErrorMessage(''); // Reset del messaggio di errore
+      setErrorMessage(""); // Reset del messaggio di errore
       if (userDataCookie) {
         try {
           const userData = JSON.parse(userDataCookie);
@@ -294,17 +306,19 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
             dailyCharacters: dailyCharacters,
             weeklyCharacters: weeklyCharacters,
             monthlyCharacters: monthlyCharacters,
-            location: currentLocation ? { latitude: currentLocation[0], longitude: currentLocation[1] } : null,
+            location: currentLocation
+              ? { latitude: currentLocation[0], longitude: currentLocation[1] }
+              : null,
           };
-  
-          const url = 'http://localhost:3500/reply'; 
-  
+
+          const url = "http://localhost:3500/reply";
+
           const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(requestData),
           };
-  
+
           const response = await fetch(url, requestOptions);
           onEndReplying();
           if (response.status === 201) {
@@ -313,17 +327,17 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
             window.location.reload();
           } else {
             const data = await response.json();
-            console.error('Errore nella creazione della risposta:', data.error);
+            console.error("Errore nella creazione della risposta:", data.error);
           }
         } catch (error) {
-          console.error('Errore nella creazione della risposta:', error);
+          console.error("Errore nella creazione della risposta:", error);
         }
       }
     } else {
-      setErrorMessage('Scrivi qualcosa');
+      setErrorMessage("Scrivi qualcosa");
     }
   };
-  
+
   return (
     <div className="input-squeals-container">
       <MessageInput
@@ -331,26 +345,21 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
         handleMessageChange={handleMessageChange}
         handleTextSelect={handleTextSelect}
       />
-      <LinkInserter
-        handleInsertLink={handleInsertLink}
-        selection={selection}
-      />
-      <CharCounter 
+      <LinkInserter handleInsertLink={handleInsertLink} selection={selection} />
+      <CharCounter
         dailyCharacters={dailyCharacters}
         weeklyCharacters={weeklyCharacters}
-        monthlyCharacters={monthlyCharacters} />
+        monthlyCharacters={monthlyCharacters}
+      />
       <ImageUploader
         image={image}
         imagePreview={imagePreview}
         handleImageChange={handleImageChange}
         handleRemoveImage={handleRemoveImage}
       />
-      <LocationSharer
-        showMap={showMap}
-        toggleMap={toggleMap}
-      />
+      <LocationSharer showMap={showMap} toggleMap={toggleMap} />
       <PublishButton handlePublish={handlePublish} />
-      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
+      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
     </div>
   );
 };

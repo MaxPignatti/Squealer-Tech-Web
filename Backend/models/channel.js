@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const channelSchema = new mongoose.Schema({
   name: {
@@ -10,8 +10,8 @@ const channelSchema = new mongoose.Schema({
     type: String,
   },
   creator: {
-    type: String, 
-    ref: 'User',
+    type: String,
+    ref: "User",
     required: true,
   },
   moderatorChannel: {
@@ -21,9 +21,9 @@ const channelSchema = new mongoose.Schema({
   members: [
     {
       type: String,
-      ref: 'User',
+      ref: "User",
     },
   ],
 });
 
-module.exports = mongoose.model('Channel', channelSchema);
+module.exports = mongoose.model("Channel", channelSchema);

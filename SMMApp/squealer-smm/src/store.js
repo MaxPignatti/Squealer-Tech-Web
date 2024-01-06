@@ -1,4 +1,4 @@
-import { createStore } from 'vuex';
+import { createStore } from "vuex";
 
 export default createStore({
   state: {
@@ -20,19 +20,19 @@ export default createStore({
   actions: {
     authenticate({ commit }, token) {
       if (token) {
-        commit('setAuthentication', true);
+        commit("setAuthentication", true);
       } else {
-        commit('setAuthentication', false);
+        commit("setAuthentication", false);
       }
     },
     login({ commit }, email) {
-      commit('setUserEmail', email);
-      commit('setAuthentication', true);
+      commit("setUserEmail", email);
+      commit("setAuthentication", true);
     },
     logout({ commit }) {
-      commit('setUserEmail', null);
-      commit('setAuthentication', false);
-      commit('setVip', null); // Resetta lo stato VIP al logout
+      commit("setUserEmail", null);
+      commit("setAuthentication", false);
+      commit("setVip", null); // Resetta lo stato VIP al logout
     },
   },
 });

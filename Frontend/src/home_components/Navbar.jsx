@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faUser, faBars, faXmark} from "@fortawesome/free-solid-svg-icons";
-import {Link, NavLink} from 'react-router-dom';
-import './Navbar.css';
-
+import { faUser, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { Link, NavLink } from "react-router-dom";
+import "./Navbar.css";
 
 const Navbar = () => {
-
   const [isVerticalNavbarOpen, setVerticalNavbarOpen] = useState(false);
 
   const verBar = () => {
@@ -17,9 +15,9 @@ const Navbar = () => {
     <>
       <nav>
         <div className="left-section">
-            <Link to="/">
-              <img src="pic/logo.png" alt="Logo" className="logo" />
-            </Link>
+          <Link to="/">
+            <img src="pic/logo.png" alt="Logo" className="logo" />
+          </Link>
         </div>
 
         <div className="right-section">
@@ -50,21 +48,12 @@ const Navbar = () => {
               <li>
                 <NavLink to="/Hashtag">Hashtag</NavLink>
               </li>
-
             </ul>
           )}
         </div>
-
       </nav>
     </>
-
-
   );
 };
 
 export default Navbar;
-
-
-
-
-

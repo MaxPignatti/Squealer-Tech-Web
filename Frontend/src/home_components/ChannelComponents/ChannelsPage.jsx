@@ -17,22 +17,23 @@ const ChannelsPage = () => {
         yourChannels={yourChannels}
         setYourChannels={setYourChannels}
       />
-      <YourChannels 
-        yourChannels={yourChannels} 
+      <YourChannels
+        yourChannels={yourChannels}
         setYourChannels={setYourChannels}
         setSubscribedChannels={setSubscribedChannels}
         setAllChannels={setAllChannels}
-        />
+      />
       <SubscribedChannels
-        subscribedChannels = {subscribedChannels}
-        setSubscribedChannels = {setSubscribedChannels}
+        subscribedChannels={subscribedChannels}
+        setSubscribedChannels={setSubscribedChannels}
         setAllChannels={setAllChannels}
       />
-      <AllChannels 
+      <AllChannels
         subscribedChannels={subscribedChannels}
         setSubscribedChannels={setSubscribedChannels}
         allChannels={allChannels}
-        setAllChannels={setAllChannels} />
+        setAllChannels={setAllChannels}
+      />
     </div>
   );
 };

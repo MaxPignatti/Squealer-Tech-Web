@@ -1,23 +1,22 @@
-import React from 'react';
-import './home_style.css';
-import Navbar from './Navbar';
-import Profile from './Profile';
-import { Routes, Route, Link } from 'react-router-dom';
-import { Container, Row, Col } from 'react-bootstrap';
-import { useAuth } from '../AuthContext';
-import { Navigate } from 'react-router-dom';
-import MainPage from './MainPage';
-import ChannelsPage from './ChannelComponents/ChannelsPage';
-import ShopPage from './ShopPage';
-import Hashtag from './Hashtag';
+import React from "react";
+import "./home_style.css";
+import Navbar from "./Navbar";
+import Profile from "./Profile";
+import { Routes, Route, Link } from "react-router-dom";
+import { Container, Row, Col } from "react-bootstrap";
+import { useAuth } from "../AuthContext";
+import { Navigate } from "react-router-dom";
+import MainPage from "./MainPage";
+import ChannelsPage from "./ChannelComponents/ChannelsPage";
+import ShopPage from "./ShopPage";
+import Hashtag from "./Hashtag";
 
 const HomePage = () => {
-  const {isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
-  
   return (
     <>
       <Navbar />
@@ -27,13 +26,10 @@ const HomePage = () => {
           <Route path="/Profile" element={<Profile />} />
           <Route path="/Channels" element={<ChannelsPage />} />
           <Route path="/Shop" element={<ShopPage />} />
-          <Route path="/Hashtag" element={<Hashtag/>}/>
+          <Route path="/Hashtag" element={<Hashtag />} />
         </Routes>
       </div>
     </>
-
-    
-
   );
 };
 

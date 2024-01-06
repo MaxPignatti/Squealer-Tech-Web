@@ -1,8 +1,8 @@
-import { Button } from 'react-bootstrap';
+import { Button } from "react-bootstrap";
 const PublishButton = ({ handlePublish }) => (
-    <Button variant="success" onClick={handlePublish}>
-      Pubblica
-    </Button>
-  );
+  <Button variant="success" onClick={handlePublish}>
+    Pubblica
+  </Button>
+);
 
-export default PublishButton;  
+export default PublishButton;

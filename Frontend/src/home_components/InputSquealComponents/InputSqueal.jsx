@@ -10,7 +10,7 @@ import PublishButton from "./PublishButton";
 import RecipientSelector from "./RecipientSelector";
 import TemporaryMessageOptions from "./TemporaryMessageOptions";
 import LinkInserter from "./LinkInserter";
-const InputSqueel = () => {
+const InputSqueal = () => {
   //USE STATE DA ORDINARE
   const [message, setMessage] = useState("");
   const [selection, setSelection] = useState({ start: 0, end: 0 });
@@ -539,4 +539,4 @@ const InputSqueel = () => {
   );
 };
 
-export default InputSqueel;
+export default InputSqueal;

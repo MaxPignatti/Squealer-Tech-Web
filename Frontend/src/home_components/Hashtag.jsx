@@ -11,7 +11,7 @@ import {
 import { useAuth } from "../AuthContext";
 import { Navigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import Squeels from "./Squeels";
+import Squeals from "./Squeals";
 
 const Hashtag = () => {
   const { isAuthenticated } = useAuth();

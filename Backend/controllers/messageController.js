@@ -146,7 +146,7 @@ exports.getMessageById = async (req, res) => {
   }
 };
 
-exports.getAllSqueels = async (req, res) => {
+exports.getAllSqueals = async (req, res) => {
   try {
     //const userId = req.user.id;
     const { username } = req.params;

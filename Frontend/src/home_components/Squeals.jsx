@@ -13,7 +13,7 @@ import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import Message from "./Message";
 import { useMessageRefs } from "../MessageRefsContext";
 
-const Squeels = ({ hashtag }) => {
+const Squeals = ({ hashtag }) => {
   const [messages, setMessages] = useState([]);
   const [viewMode, setViewMode] = useState("public"); // 'public' o 'private'
   const [currentUser, setCurrentUser] = useState(null);
@@ -31,7 +31,7 @@ const Squeels = ({ hashtag }) => {
 
         let baseUrl =
           viewMode === "public"
-            ? `http://localhost:3500/Squeels/${username}`
+            ? `http://localhost:3500/squeals/${username}`
             : `http://localhost:3500/privateMessages/${username}`;
 
         const url = hashtag
@@ -61,7 +61,7 @@ const Squeels = ({ hashtag }) => {
       const username = userData.username;
       try {
         const response = await fetch(
-          `http://localhost:3500/Squeels/reaction/${messageId}`,
+          `http://localhost:3500/squeals/reaction/${messageId}`,
           {
             method: "POST",
             headers: {
@@ -116,7 +116,7 @@ const Squeels = ({ hashtag }) => {
       const username = userData.username;
       try {
         const response = await fetch(
-          `http://localhost:3500/Squeels/edit/${messageId}`,
+          `http://localhost:3500/squeals/edit/${messageId}`,
           {
             method: "POST",
             headers: {
@@ -167,7 +167,7 @@ const Squeels = ({ hashtag }) => {
             variant={viewMode === "public" ? "primary" : "secondary"}
             onClick={() => setViewMode("public")}
           >
-            Squeels Pubblici
+            Squeals Pubblici
           </Button>
           <Button
             variant={viewMode === "private" ? "primary" : "secondary"}
@@ -198,7 +198,7 @@ const Squeels = ({ hashtag }) => {
             <div className="text-center mt-4">
               <p className="lead">
                 {viewMode === "public"
-                  ? "Al momento non ci sono Squeels pubblici da mostrare."
+                  ? "Al momento non ci sono Squeals pubblici da mostrare."
                   : "Non hai messaggi privati."}
               </p>
               {viewMode === "public" && (
@@ -215,4 +215,4 @@ const Squeels = ({ hashtag }) => {
   );
 };
 
-export default Squeels;
+export default Squeals;

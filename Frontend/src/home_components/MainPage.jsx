@@ -1,5 +1,5 @@
-import InputSqueal from "./InputSquealComponents/InputSqueal"; // Importa il componente InputSqueel
-import Squeels from "./Squeels"; // Importa il componente per visualizzare i messaggi
+import InputSqueal from "./InputSquealComponents/InputSqueal"; 
+import Squeals from "./Squeals"; 
 import React, { useState } from "react";
 import { Button, Card } from "react-bootstrap";
 import "./Profile_style.css";
@@ -29,7 +29,7 @@ const MainPage = () => {
           </div>
         </div>
       )}
-      <Squeels />
+      <Squeals />
     </div>
   );
 };

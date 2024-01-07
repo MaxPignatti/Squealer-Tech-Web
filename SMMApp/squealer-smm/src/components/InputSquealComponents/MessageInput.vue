@@ -15,7 +15,6 @@ export default {
     dailyCharactersLimit: Number,
     weeklyCharactersLimit: Number,
     monthlyCharactersLimit: Number,
-    currentLocation: Boolean,
     imageAttached: Boolean,
   },
   methods: {
@@ -29,8 +28,7 @@ export default {
       }
     },
     isWithinCharacterLimits(newMessage) {
-      const additionalChars =
-        (this.currentLocation ? 50 : 0) + (this.imageAttached ? 50 : 0);
+      const additionalChars = this.imageAttached ? 50 : 0;
       const totalChars = newMessage.length + additionalChars;
       return (
         totalChars <= this.dailyCharactersLimit &&

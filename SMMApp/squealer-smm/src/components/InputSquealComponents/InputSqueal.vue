@@ -13,7 +13,6 @@
       :dailyCharactersLimit="initialDailyCharacters"
       :weeklyCharactersLimit="initialWeeklyCharacters"
       :monthlyCharactersLimit="initialMonthlyCharacters"
-      :currentLocation="currentLocation != null"
       :imageAttached="image != null"
       @messageChange="handleMessageChange"
       @textSelect="handleTextSelect"
@@ -30,7 +29,6 @@
       @imageChange="handleImageChange"
       @removeImage="handleRemoveImage"
     />
-    <LocationSharer :showMap="showMap" @toggleMap="toggleMap" />
     <TemporaryMessageOptions
       :isTemp="isTemp"
       @toggleTemp="toggleTemp"
@@ -50,7 +48,6 @@ import Cookies from "js-cookie";
 import CharCounter from "./CharCounter.vue";
 import ImageUploader from "./ImageUploader.vue";
 import LinkInserter from "./LinkInserter.vue";
-import LocationSharer from "./LocationSharer.vue";
 import MessageInput from "./MessageInput.vue";
 import PublishButton from "./PublishButton.vue";
 import RecipientSelector from "./RecipientSelector.vue";
@@ -62,7 +59,6 @@ export default {
     RecipientSelector,
     ImageUploader,
     LinkInserter,
-    LocationSharer,
     MessageInput,
     PublishButton,
     TemporaryMessageOptions,
@@ -84,9 +80,6 @@ export default {
     const isTemp = ref(false);
     const updateInterval = ref(0);
     const maxSendCount = ref(0);
-
-    const currentLocation = ref(null);
-    const showMap = ref(false);
 
     const filteredChannels = ref([]);
     const searchTerm = ref("");
@@ -156,11 +149,8 @@ export default {
         .slice(0, 5);
     });
 
-    watch([image, currentLocation], () => {
-      const charCounter =
-        (currentLocation.value != null ? 50 : 0) +
-        (image.value != null ? 50 : 0) +
-        message.value.length;
+    watch([image], () => {
+      const charCounter = (image.value != null ? 50 : 0) + message.value.length;
 
       dailyCharacters.value = initialDailyCharacters.value - charCounter;
       weeklyCharacters.value = initialWeeklyCharacters.value - charCounter;
@@ -193,10 +183,7 @@ export default {
     //FUNZIONI PER MESSAGGIO
     const handleMessageChange = (newMessage) => {
       message.value = newMessage;
-      const charCounter =
-        (currentLocation.value != null ? 50 : 0) +
-        (image.value != null ? 50 : 0) +
-        newMessage.length;
+      const charCounter = (image.value != null ? 50 : 0) + newMessage.length;
 
       dailyCharacters.value = initialDailyCharacters.value - charCounter;
       weeklyCharacters.value = initialWeeklyCharacters.value - charCounter;
@@ -228,50 +215,6 @@ export default {
     const handleRemoveImage = () => {
       image.value = null;
       imagePreview.value = null;
-    };
-
-    //FUNZIONI PER POSIZIONE
-    const toggleMap = () => {
-      if (showMap.value) {
-        handleCloseMap();
-      } else {
-        handleOpenMap();
-      }
-    };
-
-    const handleOpenMap = () => {
-      if (
-        dailyCharacters.value <= 50 ||
-        weeklyCharacters.value <= 50 ||
-        monthlyCharacters.value <= 50
-      ) {
-        alert("Not enough characters for a position upload.");
-        return;
-      }
-
-      showMap.value = true;
-      handleGetLocation();
-    };
-
-    const handleCloseMap = () => {
-      showMap.value = false;
-      currentLocation.value = null;
-    };
-
-    const handleGetLocation = () => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          if (latitude != null && longitude != null) {
-            currentLocation.value = [latitude, longitude];
-          } else {
-            console.error("Invalid coordinates received");
-          }
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
     };
 
     //FUNZIONI PER LINK
@@ -365,12 +308,7 @@ export default {
               nextSendTime: isTempMessage
                 ? new Date(currentTime.getTime() + updateInterval.value * 60000)
                 : undefined,
-              location: currentLocation.value
-                ? {
-                    latitude: currentLocation.value[0],
-                    longitude: currentLocation.value[1],
-                  }
-                : null,
+              location: null,
               recipients: {
                 channels: selectedChannels.value.map((channel) => channel.name),
                 users: [],
@@ -422,8 +360,6 @@ export default {
       isTemp,
       updateInterval,
       maxSendCount,
-      currentLocation,
-      showMap,
       filteredChannels,
       searchTerm,
       channels,
@@ -437,10 +373,6 @@ export default {
       handleMessageChange,
       handleImageChange,
       handleRemoveImage,
-      toggleMap,
-      handleCloseMap,
-      handleOpenMap,
-      handleGetLocation,
       handleTextSelect,
       handleInsertLink,
       promptForLink,

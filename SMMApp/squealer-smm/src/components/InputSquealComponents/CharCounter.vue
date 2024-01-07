@@ -1,5 +1,5 @@
 <template>
-  <div class="text-right mt-2">
+  <div class="text-left mt-2 border-2 border-red-500 p-2">
     <b>Caratteri rimanenti</b>
     <ul>
       <li>Oggi: {{ dailyCharacters }}</li>

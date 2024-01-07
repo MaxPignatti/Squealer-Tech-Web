@@ -1,44 +1,69 @@
 <template>
-  <div class="input-squeals-container">
-    <RecipientSelector
-      :searchTerm="searchTerm"
-      @update:searchTerm="handleSearchChange"
-      :filteredChannels="filteredChannels"
-      @channelSelect="handleChannelSelect"
-      :selectedChannels="selectedChannels"
-      @removeChannel="handleRemoveChannel"
-    />
-    <MessageInput
-      :message="message"
-      :dailyCharactersLimit="initialDailyCharacters"
-      :weeklyCharactersLimit="initialWeeklyCharacters"
-      :monthlyCharactersLimit="initialMonthlyCharacters"
-      :imageAttached="image != null"
-      @messageChange="handleMessageChange"
-      @textSelect="handleTextSelect"
-    />
-    <LinkInserter @insertLink="handleInsertLink" />
-    <CharCounter
-      :dailyCharacters="dailyCharacters"
-      :weeklyCharacters="weeklyCharacters"
-      :monthlyCharacters="monthlyCharacters"
-    />
-    <ImageUploader
-      :image="image"
-      :imagePreview="imagePreview"
-      @imageChange="handleImageChange"
-      @removeImage="handleRemoveImage"
-    />
-    <TemporaryMessageOptions
-      :isTemp="isTemp"
-      @toggleTemp="toggleTemp"
-      :updateInterval="updateInterval"
-      @updateIntervalChange="handleUpdateIntervalChange"
-      :maxSendCount="maxSendCount"
-      @maxSendCountChange="handleMaxSendCountChange"
-    />
-    <PublishButton @publish="handlePublish" />
-    <div v-if="errorMessage" style="color: red">{{ errorMessage }}</div>
+  <div class="flex justify-center">
+    <div class="max-w-3xl w-full p-4 bg-white shadow-md rounded-lg">
+      <div class="input-squeals-container">
+        <RecipientSelector
+          :searchTerm="searchTerm"
+          @update:searchTerm="searchTerm = $event"
+          :filteredChannels="filteredChannels"
+          @channelSelect="handleChannelSelect"
+          :selectedChannels="selectedChannels"
+          @removeChannel="handleRemoveChannel"
+        />
+        <div class="flex flex-wrap">
+          <div class="flex-1 min-w-0">
+            <MessageInput
+              :message="message"
+              :dailyCharactersLimit="initialDailyCharacters"
+              :weeklyCharactersLimit="initialWeeklyCharacters"
+              :monthlyCharactersLimit="initialMonthlyCharacters"
+              :imageAttached="image != null"
+              @messageChange="handleMessageChange"
+              @textSelect="handleTextSelect"
+            />
+          </div>
+          <div class="flex-none px-2">
+            <LinkInserter @insertLink="handleInsertLink" />
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center mt-4">
+          <ImageUploader
+            :image="image"
+            :imagePreview="imagePreview"
+            @imageChange="handleImageChange"
+            @removeImage="handleRemoveImage"
+          />
+          <TemporaryMessageOptions
+            :isTemp="isTemp"
+            @toggleTemp="toggleTemp"
+            :updateInterval="updateInterval"
+            @updateIntervalChange="handleUpdateIntervalChange"
+            :maxSendCount="maxSendCount"
+            @maxSendCountChange="handleMaxSendCountChange"
+          />
+        </div>
+        <div class="flex flex-wrap mt-4">
+          <div class="flex-1 min-w-0">
+            <CharCounter
+              :dailyCharacters="dailyCharacters"
+              :weeklyCharacters="weeklyCharacters"
+              :monthlyCharacters="monthlyCharacters"
+            />
+          </div>
+
+          <div class="flex-1 flex flex-col justify-end">
+            <button
+              class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-end"
+              @click="handlePublish"
+            >
+              Pubblica
+            </button>
+          </div>
+        </div>
+        <div v-if="errorMessage" style="color: red">{{ errorMessage }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -49,7 +74,6 @@ import CharCounter from "./CharCounter.vue";
 import ImageUploader from "./ImageUploader.vue";
 import LinkInserter from "./LinkInserter.vue";
 import MessageInput from "./MessageInput.vue";
-import PublishButton from "./PublishButton.vue";
 import RecipientSelector from "./RecipientSelector.vue";
 import TemporaryMessageOptions from "./TemporaryMessageOptions.vue";
 
@@ -60,7 +84,6 @@ export default {
     ImageUploader,
     LinkInserter,
     MessageInput,
-    PublishButton,
     TemporaryMessageOptions,
   },
   setup() {
@@ -158,11 +181,11 @@ export default {
     });
 
     //FUNZIONI PER DESTINATARI
-    const handleSearchChange = () => {
+    watch([searchTerm], () => {
       filteredChannels.value = channels.value.filter((channel) =>
         channel.name.toLowerCase().includes(searchTerm.value.toLowerCase())
       );
-    };
+    });
 
     const handleChannelSelect = (newChannel) => {
       if (
@@ -235,13 +258,8 @@ export default {
         const afterText = message.value.substring(selection.value.end);
         message.value = `${beforeText}[${linkText}](${url})${afterText}`;
       } else {
-        alert("Per favore, seleziona del testo nel messaggio per linkarlo.");
+        alert("Per favore, seleziona il testo a cui vuoi attribuire un link.");
       }
-    };
-
-    const promptForLink = () => {
-      const url = prompt("Inserisci l'URL del link:");
-      handleInsertLink(url);
     };
 
     //FUNZIONI PER MESSAGGI TEMPORANEI
@@ -253,28 +271,15 @@ export default {
       }
     };
 
-    const handleUpdateIntervalChange = () => {
-      const numericValue = parseInt(updateInterval.value);
-      if (!isNaN(numericValue)) {
-        if (numericValue >= 1 && numericValue <= 15) {
-          updateInterval.value = numericValue;
-        } else {
-          updateInterval.value = numericValue < 1 ? 1 : 60;
-        }
-      }
+    const handleUpdateIntervalChange = (newInterval) => {
+      updateInterval.value = Number(newInterval) || 0;
     };
 
-    const handleMaxSendCountChange = () => {
-      const numericValue = parseInt(maxSendCount.value);
-      if (!isNaN(numericValue)) {
-        if (numericValue >= 1 && numericValue <= 20) {
-          maxSendCount.value = numericValue;
-        } else {
-          maxSendCount.value = numericValue < 1 ? 1 : 20;
-        }
-      }
+    const handleMaxSendCountChange = (newMaxSendCount) => {
+      maxSendCount.value = Number(newMaxSendCount) || 0;
     };
 
+    //PUBLISH
     const handlePublish = async () => {
       const savedMessage = message.value;
 
@@ -367,7 +372,6 @@ export default {
       image,
       imagePreview,
 
-      handleSearchChange,
       handleChannelSelect,
       handleRemoveChannel,
       handleMessageChange,
@@ -375,7 +379,6 @@ export default {
       handleRemoveImage,
       handleTextSelect,
       handleInsertLink,
-      promptForLink,
       toggleTemp,
       handleUpdateIntervalChange,
       handleMaxSendCountChange,

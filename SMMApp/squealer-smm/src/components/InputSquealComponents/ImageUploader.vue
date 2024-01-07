@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col items-center justify-center space-y-2">
     <input
       type="file"
       id="imageInput"
@@ -8,19 +8,25 @@
       ref="fileInput"
     />
     <label
+      v-if="!imagePreview"
       for="imageInput"
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 cursor-pointer"
+      class="bg-yellow-500 hover:bg-yellow-700 text-black font-bold py-2 px-4 rounded cursor-pointer"
     >
-      Aggiungi Immagine
+      <font-awesome-icon icon="images" />
     </label>
     <button
-      class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-2"
+      v-if="imagePreview"
+      class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
       @click="onRemoveImage"
     >
       Rimuovi Immagine
     </button>
     <div v-if="imagePreview">
-      <img :src="imagePreview" alt="Anteprima immagine" class="max-w-xs" />
+      <img
+        :src="imagePreview"
+        alt="Anteprima immagine"
+        class="max-w-xs mx-auto"
+      />
     </div>
   </div>
 </template>

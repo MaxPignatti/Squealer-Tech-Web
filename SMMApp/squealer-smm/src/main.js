@@ -4,6 +4,11 @@ import router from "./router";
 import store from "./store";
 import "./assets/styles.css";
 import Cookies from "js-cookie";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faImages } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+
+library.add(faImages);
 
 async function verifyAuthentication() {
   const authToken = Cookies.get("authToken");
@@ -40,7 +45,7 @@ const app = createApp(App);
 
 app.use(router);
 app.use(store);
-
+app.component("font-awesome-icon", FontAwesomeIcon);
 app.mount("#app");
 
 verifyAuthentication();

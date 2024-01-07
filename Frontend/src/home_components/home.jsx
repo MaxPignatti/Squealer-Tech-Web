@@ -9,7 +9,7 @@ import { Navigate } from "react-router-dom";
 import MainPage from "./MainPage";
 import ChannelsPage from "./ChannelComponents/ChannelsPage";
 import ShopPage from "./ShopPage";
-import Hashtag from "./Hashtag";
+import Ricerca from "./Ricerca";
 
 const HomePage = () => {
   const { isAuthenticated } = useAuth();
@@ -26,7 +26,7 @@ const HomePage = () => {
           <Route path="/Profile" element={<Profile />} />
           <Route path="/Channels" element={<ChannelsPage />} />
           <Route path="/Shop" element={<ShopPage />} />
-          <Route path="/Hashtag" element={<Hashtag />} />
+          <Route path="/Ricerca" element={<Ricerca />} />
         </Routes>
       </div>
     </>

@@ -13,7 +13,7 @@ import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import Message from "./Message";
 import { useMessageRefs } from "../MessageRefsContext";
 
-const Squeals = ({ hashtag }) => {
+const Squeals = ({ hashtag, targetUsername, channel, text }) => {
   const [messages, setMessages] = useState([]);
   const [viewMode, setViewMode] = useState("public"); // 'public' o 'private'
   const [currentUser, setCurrentUser] = useState(null);
@@ -34,12 +34,36 @@ const Squeals = ({ hashtag }) => {
             ? `http://localhost:3500/squeals/${username}`
             : `http://localhost:3500/privateMessages/${username}`;
 
-        const url = hashtag
-          ? `${baseUrl}/${encodeURIComponent(hashtag)}`
-          : baseUrl;
+        if(hashtag){
+          baseUrl =
+          viewMode === "public"
+            ? `http://localhost:3500/squeals/hashtag/${username}/${hashtag}`
+            : `http://localhost:3500/privateMessages/hashtag/${username}/${hashtag}`; 
+        }
+        if(channel){
+          baseUrl =
+          viewMode === "public"
+            ? `http://localhost:3500/squeals/channel/${username}/${channel}`
+            : `http://localhost:3500/privateMessages/channel/${username}/${channel}`; 
+        }
+        if(text){
+          baseUrl =
+          viewMode === "public"
+            ? `http://localhost:3500/squeals/text/${username}/${text}`
+            : `http://localhost:3500/privateMessages/text/${username}/${text}`; 
+        }
+
+        if(targetUsername){
+          baseUrl =
+          viewMode === "public"
+            ? `http://localhost:3500/squeals/targetUsername/${username}/${targetUsername}`
+            : `http://localhost:3500/privateMessages/targetUsername/${username}/${targetUsername}`; 
+        }
+
+
 
         try {
-          const response = await fetch(url);
+          const response = await fetch(baseUrl);
           const data = await response.json();
           setMessages(data);
         } catch (error) {
@@ -52,7 +76,12 @@ const Squeals = ({ hashtag }) => {
       const pollingInterval = setInterval(fetchMessages, 1000);
       return () => clearInterval(pollingInterval);
     }
-  }, [viewMode, isEditing, isReplying, hashtag]);
+  }, [viewMode, isEditing, isReplying, hashtag, channel, text, targetUsername]);
+  
+  
+  
+  
+  
 
   const handleReaction = async (messageId, isPositiveReaction) => {
     const userDataCookie = Cookies.get("user_data");

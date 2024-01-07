@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faBars, faXmark, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { Link, NavLink } from "react-router-dom";
 import "./Navbar.css";
 
@@ -46,7 +46,7 @@ const Navbar = () => {
                 <NavLink to="/Shop">Shop</NavLink>
               </li>
               <li>
-                <NavLink to="/Hashtag">Hashtag</NavLink>
+                <NavLink to="/Ricerca"><FontAwesomeIcon icon={faMagnifyingGlass} /></NavLink>
               </li>
             </ul>
           )}

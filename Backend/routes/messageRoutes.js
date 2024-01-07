@@ -15,13 +15,39 @@ router.post(
   messageController.incrementImpressions
 );
 router.get(
-  "/squeals/:username/:hashtag",
+  "/squeals/hashtag/:username/:hashtag",
   messageController.getMessageByHashtag
 );
 router.get(
-  "/privateMessages/:username/:hashtag",
+  "/privateMessages/hashtag/:username/:hashtag",
   messageController.getPrivateMessByHashtag
 );
 router.post("/messages/acknowledgeBeep/:id", messageController.acknowledgeBeep);
+
+router.get(
+  "/squeals/targetUsername/:username/:targetUsername",
+  messageController.getMessageByUser
+);
+router.get(
+  "/privateMessages/targetUsername/:username/:targetUsername",
+  messageController.getPrivateMessByUser
+);
+router.get(
+  "/squeals/channel/:username/:channel",
+  messageController.getMessageByChannel
+);
+router.get(
+  "/privateMessages/channel/:username/:channel",
+  messageController.getPrivateMessByChannel
+);
+router.get(
+  "/squeals/text/:username/:text",
+  messageController.getMessageByText
+);
+router.get(
+  "/privateMessages/text/:username/:text",
+  messageController.getPrivateMessByText
+);
+
 
 module.exports = router;

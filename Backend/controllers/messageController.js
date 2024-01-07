@@ -455,6 +455,143 @@ exports.getPrivateMessByHashtag = async (req, res) => {
   }
 };
 
+exports.getMessageByUser = async (req, res) => {
+  try {
+    const { username, targetUsername } = req.params;
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "Utente non trovato" });
+    }
+
+    const userChannels = await User.findOne({ username }).select("channels");
+    const messages = await Message.find({
+      channel: { $in: userChannels.channels },
+      user: targetUsername,
+      replyTo: null, 
+    });
+
+    res.json(messages);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+exports.getPrivateMessByUser = async (req, res) => {
+  try {
+    const { username, targetUsername } = req.params;
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "Utente non trovato" });
+    }
+
+    // Prendi i messaggi privati dell'utente target inviati dall'utente attuale
+    const privateMessages = await Message.find({
+      user: targetUsername,
+      replyTo: null, 
+      _id: { $in: user.privateMessagesReceived },
+    });
+
+    res.json(privateMessages);
+  } catch (error) {
+    console.error("Errore durante il recupero dei messaggi privati:", error);
+    res.status(500).json({ error: "Errore interno del server." });
+  }
+};
+;
+
+
+exports.getMessageByChannel = async (req, res) => {
+  try {
+    const { username, channel } = req.params;
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "Utente non trovato" });
+    }
+
+    const messages = await Message.find({
+      channel: channel,
+    });
+
+    res.json(messages);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+exports.getPrivateMessByChannel = async (req, res) => {
+  try {
+    const { username, channel } = req.params;
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "Utente non trovato" });
+    }
+
+    const privateMessages = await Message.find({
+      channel: channel,
+      _id: { $in: user.privateMessagesReceived },
+    });
+
+    res.json(privateMessages);
+  } catch (error) {
+    console.error("Errore durante il recupero dei messaggi privati:", error);
+    res.status(500).json({ error: "Errore interno del server." });
+  }
+};
+
+exports.getMessageByText = async (req, res) => {
+  try {
+    const { username, text } = req.params;
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "Utente non trovato" });
+    }
+
+    const userChannels = await User.findOne({ username }).select("channels");
+    const messages = await Message.find({
+      channel: { $in: userChannels.channels },
+      text: { $regex: text, $options: 'i' }, // La ricerca è case-insensitive
+    });
+
+    res.json(messages);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+exports.getPrivateMessByText = async (req, res) => {
+  try {
+    const { username, text } = req.params;
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "Utente non trovato" });
+    }
+
+    // Prendi i messaggi privati dell'utente che contengono il testo specificato
+    const privateMessages = await Message.find({
+      _id: { $in: user.privateMessagesReceived },
+      text: { $regex: text, $options: 'i' }, // La ricerca è case-insensitive
+    });
+
+    res.json(privateMessages);
+  } catch (error) {
+    console.error("Errore durante il recupero dei messaggi privati:", error);
+    res.status(500).json({ error: "Errore interno del server." });
+  }
+};
+
+
 const extractHashtags = (text) => {
   const hashtagRegex = /#(\w+)/g;
   let match;

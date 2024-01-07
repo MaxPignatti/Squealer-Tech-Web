@@ -2,6 +2,21 @@ const User = require("../models/user");
 const Message = require("../models/message");
 const bcrypt = require("bcrypt");
 
+exports.getUser = async (req, res) => {
+  try {
+    console.log("sono qui");
+    const username = req.params.username;
+    const user = await User.findOne({ username: username });
+    if (!user) {
+      return res.status(404).json({ message: "Utente non trovato" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Errore del server" });
+  }
+};
+
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find({}); // Trova tutti gli utenti

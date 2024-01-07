@@ -1,21 +1,20 @@
 <template>
   <div class="input-squeals-container">
     <RecipientSelector
-      :recipientType="recipientType"
-      @update:recipientType="(val) => (recipientType = val)"
       :searchTerm="searchTerm"
       @update:searchTerm="handleSearchChange"
       :filteredChannels="filteredChannels"
-      :filteredUsers="filteredUsers"
-      @userSelect="handleUserSelect"
       @channelSelect="handleChannelSelect"
-      :selectedUsers="selectedUsers"
       :selectedChannels="selectedChannels"
-      @removeUser="handleRemoveUser"
       @removeChannel="handleRemoveChannel"
     />
     <MessageInput
       :message="message"
+      :dailyCharactersLimit="initialDailyCharacters"
+      :weeklyCharactersLimit="initialWeeklyCharacters"
+      :monthlyCharactersLimit="initialMonthlyCharacters"
+      :currentLocation="currentLocation != null"
+      :imageAttached="image != null"
       @messageChange="handleMessageChange"
       @textSelect="handleTextSelect"
     />
@@ -89,15 +88,10 @@ export default {
     const currentLocation = ref(null);
     const showMap = ref(false);
 
-    const recipientType = ref("user");
     const filteredChannels = ref([]);
     const searchTerm = ref("");
     const channels = ref([]);
     const selectedChannels = ref([]);
-    const filteredUsers = ref([]);
-    const users = ref([]);
-    const selectedUsers = ref([]);
-    const publicMessage = ref(false);
 
     const image = ref(null);
     const imagePreview = ref(null);
@@ -116,100 +110,68 @@ export default {
           .then((data) => {
             vipUsername.value = data.vip; // Salva lo username del VIP
 
-            fetch(
+            // Prima chiamata API per i canali
+            return fetch(
               `http://localhost:3500/channels/subscribed/${vipUsername.value}`
-            )
-              .then((response) => response.json())
-              .then((data) => {
-                const nonModeratorChannels = data.filter(
-                  (channel) => !channel.moderatorChannel
-                );
-                channels.value = nonModeratorChannels;
-              })
-              .catch((error) =>
-                console.error("Errore durante il recupero dei canali:", error)
-              );
-
-            fetch("http://localhost:3500/usr")
-              .then((response) => response.json())
-              .then((data) => (users.value = data))
-              .catch((error) =>
-                console.error("Errore durante il recupero degli utenti:", error)
-              );
+            );
           })
-          .catch((error) =>
-            console.error("Errore durante la verifica del token:", error)
-          );
-      }
-    });
+          .then((response) => response.json())
+          .then((data) => {
+            const nonModeratorChannels = data.filter(
+              (channel) => !channel.moderatorChannel
+            );
+            channels.value = nonModeratorChannels;
 
-    watch(selectedChannels, (newValue) => {
-      if (newValue.length === 0) {
-        publicMessage.value = false;
-      } else if (!publicMessage.value) {
-        publicMessage.value = true;
-      }
-    });
-
-    watch(publicMessage, (newValue) => {
-      if (newValue) {
-        const charCounter =
-          (currentLocation.value != null ? 50 : 0) +
-          (image.value != null ? 50 : 0) +
-          message.value.length;
-        if (
-          charCounter <= initialDailyCharacters.value &&
-          charCounter <= initialWeeklyCharacters.value &&
-          charCounter <= initialMonthlyCharacters.value
-        ) {
-          dailyCharacters.value = initialDailyCharacters.value - charCounter;
-          weeklyCharacters.value = initialWeeklyCharacters.value - charCounter;
-          monthlyCharacters.value =
-            initialMonthlyCharacters.value - charCounter;
-        } else {
-          selectedChannels.value = [];
-          alert("Not enough characters to send your message (to a channel)");
-        }
+            // Seconda chiamata API per gli utenti
+            return fetch(`http://localhost:3500/usr/${vipUsername.value}`);
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              return response.json();
+            } else {
+              throw new Error("API call failed");
+            }
+          })
+          .then((data) => {
+            dailyCharacters.value = data.dailyChars;
+            weeklyCharacters.value = data.weeklyChars;
+            monthlyCharacters.value = data.monthlyChars;
+            initialDailyCharacters.value = data.dailyChars;
+            initialWeeklyCharacters.value = data.weeklyChars;
+            initialMonthlyCharacters.value = data.monthlyChars;
+          })
+          .catch((error) => {
+            console.error("API call error:", error);
+          });
       } else {
-        dailyCharacters.value = initialDailyCharacters.value;
-        weeklyCharacters.value = initialWeeklyCharacters.value;
-        monthlyCharacters.value = initialMonthlyCharacters.value;
+        console.error("User data not found in cookies");
       }
     });
 
-    watch([searchTerm, channels, users, recipientType], () => {
-      if (recipientType.value === "channel") {
-        filteredChannels.value = channels.value
-          .filter((channel) =>
-            channel.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-          )
-          .slice(0, 5); // Limita a 5 canali
-      } else if (recipientType.value === "user") {
-        filteredUsers.value = users.value
-          .filter((user) =>
-            user.username.toLowerCase().includes(searchTerm.value.toLowerCase())
-          )
-          .slice(0, 5); // Limita a 5 utenti
-      }
+    watch([searchTerm, channels], () => {
+      filteredChannels.value = channels.value
+        .filter((channel) =>
+          channel.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+        )
+        .slice(0, 5);
+    });
+
+    watch([image, currentLocation], () => {
+      const charCounter =
+        (currentLocation.value != null ? 50 : 0) +
+        (image.value != null ? 50 : 0) +
+        message.value.length;
+
+      dailyCharacters.value = initialDailyCharacters.value - charCounter;
+      weeklyCharacters.value = initialWeeklyCharacters.value - charCounter;
+      monthlyCharacters.value = initialMonthlyCharacters.value - charCounter;
     });
 
     //FUNZIONI PER DESTINATARI
     const handleSearchChange = () => {
-      if (recipientType.value === "user") {
-        filteredUsers.value = users.value.filter((user) =>
-          user.username.toLowerCase().includes(searchTerm.value.toLowerCase())
-        );
-      } else if (recipientType.value === "channel") {
-        filteredChannels.value = channels.value.filter((channel) =>
-          channel.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-        );
-      }
-    };
-
-    const handleUserSelect = (newUser) => {
-      if (!selectedUsers.value.some((user) => user._id === newUser._id)) {
-        selectedUsers.value.push(newUser);
-      }
+      filteredChannels.value = channels.value.filter((channel) =>
+        channel.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+      );
     };
 
     const handleChannelSelect = (newChannel) => {
@@ -222,12 +184,6 @@ export default {
       }
     };
 
-    const handleRemoveUser = (userId) => {
-      selectedUsers.value = selectedUsers.value.filter(
-        (user) => user._id !== userId
-      );
-    };
-
     const handleRemoveChannel = (channelId) => {
       selectedChannels.value = selectedChannels.value.filter(
         (channel) => channel._id !== channelId
@@ -235,37 +191,27 @@ export default {
     };
 
     //FUNZIONI PER MESSAGGIO
-    const handleMessageChange = () => {
+    const handleMessageChange = (newMessage) => {
+      message.value = newMessage;
       const charCounter =
         (currentLocation.value != null ? 50 : 0) +
         (image.value != null ? 50 : 0) +
-        message.value.length;
-      if (
-        charCounter <= initialDailyCharacters.value &&
-        charCounter <= initialWeeklyCharacters.value &&
-        charCounter <= initialMonthlyCharacters.value
-      ) {
-        dailyCharacters.value = initialDailyCharacters.value - charCounter;
-        weeklyCharacters.value = initialWeeklyCharacters.value - charCounter;
-        monthlyCharacters.value = initialMonthlyCharacters.value - charCounter;
-      }
+        newMessage.length;
+
+      dailyCharacters.value = initialDailyCharacters.value - charCounter;
+      weeklyCharacters.value = initialWeeklyCharacters.value - charCounter;
+      monthlyCharacters.value = initialMonthlyCharacters.value - charCounter;
     };
 
     //FUNZIONI PER IMMAGINI
     const handleImageChange = (event) => {
-      if (selectedChannels.value.length !== 0) {
-        if (
-          dailyCharacters.value >= 50 &&
-          weeklyCharacters.value >= 50 &&
-          monthlyCharacters.value >= 50
-        ) {
-          dailyCharacters.value -= 50;
-          weeklyCharacters.value -= 50;
-          monthlyCharacters.value -= 50;
-        } else {
-          alert("Not enough characters for an image upload.");
-          return;
-        }
+      if (
+        dailyCharacters.value <= 50 ||
+        weeklyCharacters.value <= 50 ||
+        monthlyCharacters.value <= 50
+      ) {
+        alert("Not enough characters for an image upload.");
+        return;
       }
 
       const file = event.target.files && event.target.files[0];
@@ -282,11 +228,6 @@ export default {
     const handleRemoveImage = () => {
       image.value = null;
       imagePreview.value = null;
-      if (selectedChannels.value.length !== 0) {
-        dailyCharacters.value += 50;
-        weeklyCharacters.value += 50;
-        monthlyCharacters.value += 50;
-      }
     };
 
     //FUNZIONI PER POSIZIONE
@@ -299,20 +240,15 @@ export default {
     };
 
     const handleOpenMap = () => {
-      if (selectedChannels.value.length !== 0) {
-        if (
-          dailyCharacters.value >= 50 &&
-          weeklyCharacters.value >= 50 &&
-          monthlyCharacters.value >= 50
-        ) {
-          dailyCharacters.value -= 50;
-          weeklyCharacters.value -= 50;
-          monthlyCharacters.value -= 50;
-        } else {
-          alert("Not enough characters for a position upload.");
-          return;
-        }
+      if (
+        dailyCharacters.value <= 50 ||
+        weeklyCharacters.value <= 50 ||
+        monthlyCharacters.value <= 50
+      ) {
+        alert("Not enough characters for a position upload.");
+        return;
       }
+
       showMap.value = true;
       handleGetLocation();
     };
@@ -320,11 +256,6 @@ export default {
     const handleCloseMap = () => {
       showMap.value = false;
       currentLocation.value = null;
-      if (selectedChannels.value.length !== 0) {
-        dailyCharacters.value += 50;
-        weeklyCharacters.value += 50;
-        monthlyCharacters.value += 50;
-      }
     };
 
     const handleGetLocation = () => {
@@ -404,10 +335,7 @@ export default {
     const handlePublish = async () => {
       const savedMessage = message.value;
 
-      if (
-        savedMessage &&
-        (selectedChannels.value.length > 0 || selectedUsers.value.length > 0)
-      ) {
+      if (savedMessage && selectedChannels.value.length > 0) {
         message.value = "";
         image.value = null;
         imagePreview.value = null;
@@ -445,7 +373,7 @@ export default {
                 : null,
               recipients: {
                 channels: selectedChannels.value.map((channel) => channel.name),
-                users: selectedUsers.value.map((user) => user.username),
+                users: [],
               },
             };
 
@@ -475,10 +403,7 @@ export default {
         let errorText = "";
         if (!savedMessage) {
           errorText = "Scrivi qualcosa";
-        } else if (
-          selectedChannels.value.length === 0 &&
-          selectedUsers.value.length === 0
-        ) {
+        } else if (selectedChannels.value.length === 0) {
           errorText = "Seleziona un destinatario";
         }
         errorMessage.value = errorText;
@@ -494,28 +419,21 @@ export default {
       initialWeeklyCharacters,
       initialMonthlyCharacters,
       errorMessage,
-      publicMessage,
       isTemp,
       updateInterval,
       maxSendCount,
       currentLocation,
       showMap,
-      recipientType,
       filteredChannels,
       searchTerm,
       channels,
       selectedChannels,
-      filteredUsers,
-      users,
-      selectedUsers,
       image,
       imagePreview,
 
       handleSearchChange,
       handleChannelSelect,
-      handleUserSelect,
       handleRemoveChannel,
-      handleRemoveUser,
       handleMessageChange,
       handleImageChange,
       handleRemoveImage,

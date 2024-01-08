@@ -142,7 +142,7 @@ const Profile = () => {
       <Navbar />
       <Container>
         <Row className="justify-content-center mt-5">
-          <Col md={6}>
+          <Col xs={12} md={8} lg={6}>
             <Card>
               <Card.Body>
                 <div>

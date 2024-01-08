@@ -1,5 +1,4 @@
 import React from "react";
-import "./home_style.css";
 import Navbar from "./Navbar";
 import Profile from "./Profile";
 import { Routes, Route, Link } from "react-router-dom";
@@ -20,7 +19,7 @@ const HomePage = () => {
   return (
     <>
       <Navbar />
-      <div className="container">
+      <Container>
         <Routes>
           <Route path="/*" element={<MainPage />} />
           <Route path="/Profile" element={<Profile />} />
@@ -28,7 +27,7 @@ const HomePage = () => {
           <Route path="/Shop" element={<ShopPage />} />
           <Route path="/Ricerca" element={<Ricerca />} />
         </Routes>
-      </div>
+      </Container>
     </>
   );
 };

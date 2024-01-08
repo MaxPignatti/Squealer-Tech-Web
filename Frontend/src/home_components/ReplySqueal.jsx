@@ -339,28 +339,53 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
   };
 
   return (
-    <div className="input-squeals-container">
-      <MessageInput
-        message={message}
-        handleMessageChange={handleMessageChange}
-        handleTextSelect={handleTextSelect}
-      />
-      <LinkInserter handleInsertLink={handleInsertLink} selection={selection} />
-      <CharCounter
-        dailyCharacters={dailyCharacters}
-        weeklyCharacters={weeklyCharacters}
-        monthlyCharacters={monthlyCharacters}
-      />
-      <ImageUploader
-        image={image}
-        imagePreview={imagePreview}
-        handleImageChange={handleImageChange}
-        handleRemoveImage={handleRemoveImage}
-      />
-      <LocationSharer showMap={showMap} toggleMap={toggleMap} />
-      <PublishButton handlePublish={handlePublish} />
-      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
-    </div>
+    <Container className="my-4">
+      <Row className="justify-content-center">
+        <Col xs={12} md={8} lg={6}>
+          <Form>
+            <MessageInput
+              message={message}
+              handleMessageChange={handleMessageChange}
+              handleTextSelect={handleTextSelect}
+            />
+            <LinkInserter handleInsertLink={handleInsertLink} selection={selection} />
+            <CharCounter
+              dailyCharacters={dailyCharacters}
+              weeklyCharacters={weeklyCharacters}
+              monthlyCharacters={monthlyCharacters}
+            />
+            <ImageUploader
+              image={image}
+              imagePreview={imagePreview}
+              handleImageChange={handleImageChange}
+              handleRemoveImage={handleRemoveImage}
+            />
+            {showMap && currentLocation && (
+              <MapContainer
+                center={currentLocation}
+                zoom={14}
+                scrollWheelZoom={false}
+                style={{ height: "200px", width: "100%" }}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <Marker position={currentLocation}>
+                  <Popup>You are here.</Popup>
+                </Marker>
+              </MapContainer>
+            )}
+            <LocationSharer showMap={showMap} toggleMap={toggleMap} />
+            <Row className="mt-3">
+              <Col className="text-center">
+                <PublishButton handlePublish={handlePublish} />
+              </Col>
+            </Row>
+            {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+          </Form>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

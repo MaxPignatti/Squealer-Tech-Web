@@ -78,11 +78,10 @@ const Ricerca = () => {
   
 
   return (
-    <>
-      <h1 className="mb-4">
-        Qui puoi cercare e filtrare i messaggi 
-      </h1>
-
+    <Container>
+      <Row className="justify-content-center mt-4">
+        <Col xs={12} md={8}>
+          <h1>Qui puoi cercare e filtrare i messaggi</h1>
       <Form className="mb-4" >
         <Form.Group as={Row} >
           <Col sm="2">
@@ -116,13 +115,11 @@ const Ricerca = () => {
         </Form.Group>
       </Form>
 
-
-
-
-
       <Squeals hashtag={hashtag} targetUsername={user} channel={channel} text={text}/>
-      
-    </>
+      </Col>
+      </Row>
+    </Container>
+
   );
 };
 

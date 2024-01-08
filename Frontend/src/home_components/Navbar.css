@@ -1,101 +1,50 @@
-* {
-  box-sizing: border-box;
+.navbar {
+  background-color: #324A5F;
+  box-shadow: 0 2px 4px rgba(10, 111, 226, 0.712);
 }
 
-body {
-  margin: 0;
+.navbar-brand img.logo {
+  height: 50px;
+  transition: transform 0.5s ease;
 }
 
-.logo {
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
+.navbar-brand img.logo:hover {
+  transform: scale(1.1);
 }
 
-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #add8e6;
-  padding: 20px 50px;
-  position: sticky;
-  top: 0;
+.nav-link, .navbar-toggler {
+  color: #F7F7FF !important;
+  transition: color 0.3s ease;
 }
 
-.left-section {
-  display: flex;
-  align-items: center;
+.nav-link:hover, .navbar-toggler:hover {
+  color: #A4C3B2 !important;
 }
 
-.right-section {
-  display: flex;
-  align-items: center;
+#symbol {
+  font-size: 1.5rem;
 }
 
-.vertical-navbar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: absolute;
-  top: 65px;
-  right: 0;
-  background: #add8e6;
-  padding: 20px;
-  list-style: none;
+.nav-dropdown, .dropdown-menu {
+  background-color: #506680; 
+  border: 0; 
+  min-width: 200px;
 }
 
-.vertical-navbar li {
-  padding: 10px;
+.dropdown-item {
+  color: #F7F7FF;
+  transition: background-color 0.3s ease;
+  padding: 10px 15px;
+  font-size: 1rem;
 }
 
-.vertical-navbar a {
-  text-decoration: none;
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: white;
-  transition: 0.3s ease-in-out;
+.dropdown-item:hover {
+  background-color: #A4C3B2; /* Colore di sfondo al passaggio del mouse */
 }
 
-.vertical-navbar a:hover {
-  color: black;
-}
-
-.logo {
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-}
-
-.profile-icon {
-  color: white;
-  width: 30px;
-  height: 30px;
-}
-
-.menu {
-  color: white;
-  width: 30px;
-  height: 30px;
-  margin-left: 20px;
-}
-
-.menu:hover {
-  color: black;
-}
-
-#logoProfilo {
-  color: white;
-  width: 30px;
-  height: 30px;
-  align-items: center;
-}
-#simbol {
-  color: white;
-  width: 30px;
-  height: 30px;
-  align-items: center;
-}
-
-#simbol:hover {
-  color: black;
+/* Aggiustamenti per dispositivi mobili */
+@media (max-width: 768px) {
+  .navbar-nav .dropdown-menu {
+    position: static; /* Assicura che il dropdown non sia assoluto, ma si espanda all'interno del contenitore */
+  }
 }

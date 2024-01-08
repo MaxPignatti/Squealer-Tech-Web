@@ -1,18 +1,17 @@
+import React from "react";
+import { Form } from "react-bootstrap";
+
 const MessageInput = ({ message, handleMessageChange, handleTextSelect }) => {
-  return (
-    <textarea
-      value={message}
-      onChange={handleMessageChange}
-      onSelect={handleTextSelect}
-      placeholder="Inserisci il tuo messaggio..."
-      style={{
-        width: "100%",
-        padding: "10px",
-        marginBottom: "10px",
-        height: "100px",
-      }}
-    />
-  );
+	return (
+		<Form.Control
+			as="textarea"
+			value={message}
+			onChange={handleMessageChange}
+			onSelect={handleTextSelect}
+			placeholder="Inserisci il tuo messaggio..."
+			style={{ height: "100px", marginBottom: "10px" }}
+		/>
+	);
 };
 
 export default MessageInput;

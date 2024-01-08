@@ -1,16 +1,19 @@
+import { Card } from "react-bootstrap";
 const CharCounter = ({
-  dailyCharacters,
-  weeklyCharacters,
-  monthlyCharacters,
+	dailyCharacters,
+	weeklyCharacters,
+	monthlyCharacters,
 }) => (
-  <div className="text-right mt-2">
-    <b>Caratteri rimanenti</b> <br />
-    <ul>
-      <li>Oggi: {dailyCharacters} </li>
-      <li>Questa settimana: {weeklyCharacters}</li>
-      <li>Questo mese: {monthlyCharacters}</li>
-    </ul>
-  </div>
+	<Card className="text-right mt-2">
+		<Card.Body>
+			<b>Caratteri rimanenti</b>
+			<ul>
+				<li>Oggi: {dailyCharacters} </li>
+				<li>Questa settimana: {weeklyCharacters}</li>
+				<li>Questo mese: {monthlyCharacters}</li>
+			</ul>
+		</Card.Body>
+	</Card>
 );
 
 export default CharCounter;

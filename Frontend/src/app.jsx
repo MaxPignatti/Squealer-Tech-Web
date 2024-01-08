@@ -8,23 +8,36 @@ import Home from "./home_components/home";
 import Profile from "./home_components/Profile";
 import AutoLogin from "./AutoLogin";
 import { MessageRefsProvider } from "./MessageRefsContext";
+import { Container } from "react-bootstrap";
 
 function App() {
-  return (
-    <AuthProvider>
-      <MessageRefsProvider>
-        <AutoLogin />
-        <div>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/registration" element={<Registration />} />
-            <Route path="/*" element={<Home />} />
-            <Route path="/Profile" element={<Profile />} />
-          </Routes>
-        </div>
-      </MessageRefsProvider>
-    </AuthProvider>
-  );
+	return (
+		<AuthProvider>
+			<MessageRefsProvider>
+				<AutoLogin />
+				<Container>
+					<Routes>
+						<Route
+							path="/login"
+							element={<Login />}
+						/>
+						<Route
+							path="/registration"
+							element={<Registration />}
+						/>
+						<Route
+							path="/*"
+							element={<Home />}
+						/>
+						<Route
+							path="/Profile"
+							element={<Profile />}
+						/>
+					</Routes>
+				</Container>
+			</MessageRefsProvider>
+		</AuthProvider>
+	);
 }
 
 export default App;

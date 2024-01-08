@@ -42,7 +42,7 @@ const RegistrationPage = () => {
   return (
     <Container>
       <Row className="justify-content-center mt-5">
-        <Col md={6}>
+        <Col xs={12} md={6}> 
           <Card>
             <Card.Body>
               <div className="text-center mb-4">
@@ -54,7 +54,7 @@ const RegistrationPage = () => {
               </div>
               <h2 className="text-center">Registration</h2>
               <Form onSubmit={handleRegister}>
-                <Form.Group controlId="formBasicFirstName">
+                <Form.Group controlId="formBasicFirstName" className="mb-3">
                   <Form.Label>First Name</Form.Label>
                   <Form.Control
                     type="text"
@@ -67,7 +67,7 @@ const RegistrationPage = () => {
                   />
                 </Form.Group>
 
-                <Form.Group controlId="formBasicLastName">
+                <Form.Group controlId="formBasicLastName" className="mb-3">
                   <Form.Label>Last Name</Form.Label>
                   <Form.Control
                     type="text"
@@ -80,7 +80,7 @@ const RegistrationPage = () => {
                   />
                 </Form.Group>
 
-                <Form.Group controlId="formBasicUsername">
+                <Form.Group controlId="formBasicUsername" className="mb-3">
                   <Form.Label>Username</Form.Label>
                   <Form.Control
                     type="text"
@@ -93,7 +93,7 @@ const RegistrationPage = () => {
                   />
                 </Form.Group>
 
-                <Form.Group controlId="formBasicEmail">
+                <Form.Group controlId="formBasicEmail" className="mb-3">
                   <Form.Label>Email address</Form.Label>
                   <Form.Control
                     type="email"
@@ -106,7 +106,7 @@ const RegistrationPage = () => {
                   />
                 </Form.Group>
 
-                <Form.Group controlId="formBasicPassword">
+                <Form.Group controlId="formBasicPassword" className="mb-3">
                   <Form.Label>Password</Form.Label>
                   <Form.Control
                     type="password"
@@ -119,7 +119,7 @@ const RegistrationPage = () => {
                   />
                 </Form.Group>
 
-                <Form.Group controlId="formBasicConfirmPassword">
+                <Form.Group controlId="formBasicConfirmPassword" className="mb-3">
                   <Form.Label>Confirm Password</Form.Label>
                   <Form.Control
                     type="password"

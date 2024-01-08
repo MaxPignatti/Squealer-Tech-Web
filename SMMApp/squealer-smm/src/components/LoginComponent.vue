@@ -46,7 +46,7 @@
       </form>
       <p class="mt-8 text-center text-sm text-gray-600">
         Non sei ancora registrato? Registrati sull'<a
-          href="/login"
+          href="http://localhost:3000/registration"
           class="text-blue-500 hover:text-blue-800"
           >App principale</a
         >!

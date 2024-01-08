@@ -4,6 +4,8 @@ const messageController = require("../controllers/messageController");
 
 router.post("/create", messageController.createMessage);
 router.get("/squeals/:username", messageController.getAllSqueals);
+router.get("/sentSqueals/:username", messageController.getPublicMessagesByUser);
+router.get("/replies/:messageId", messageController.getRepliesToMessage);
 router.get("/privateMessages/:username", messageController.getPrivateMessages);
 router.post("/reply", messageController.reply);
 router.post("/squeals/reaction/:messageId", messageController.addReaction);
@@ -40,14 +42,10 @@ router.get(
   "/privateMessages/channel/:username/:channel",
   messageController.getPrivateMessByChannel
 );
-router.get(
-  "/squeals/text/:username/:text",
-  messageController.getMessageByText
-);
+router.get("/squeals/text/:username/:text", messageController.getMessageByText);
 router.get(
   "/privateMessages/text/:username/:text",
   messageController.getPrivateMessByText
 );
-
 
 module.exports = router;

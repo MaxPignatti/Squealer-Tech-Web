@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 
 exports.getUser = async (req, res) => {
   try {
-    console.log("sono qui");
     const username = req.params.username;
     const user = await User.findOne({ username: username });
     if (!user) {

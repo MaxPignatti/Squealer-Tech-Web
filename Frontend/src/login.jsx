@@ -16,6 +16,7 @@ const LoginPage = () => {
 	});
 	const [showPassword, setShowPassword] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
+	
 	const navigate = useNavigate();
 
 	const [trendingMessages, setTrendingMessages] = useState([]);

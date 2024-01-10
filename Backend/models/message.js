@@ -79,6 +79,14 @@ const messageSchema = new mongoose.Schema({
     default: false,
     required: true,
   },
+  userMentions: {
+    type: [String],
+    default: [],
+  },
+  channelMentions: {
+    type: [String],
+    default: [],
+  },  
 });
 
 module.exports = mongoose.model("Message", messageSchema);

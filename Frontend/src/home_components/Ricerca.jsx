@@ -9,21 +9,18 @@ import {
 	CardBody,
 } from "react-bootstrap";
 import { useAuth } from "../AuthContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation  } from "react-router-dom";
 import Cookies from "js-cookie";
 import Squeals from "./Squeals";
 
 const Ricerca = () => {
 	const { isAuthenticated } = useAuth();
 	const [hashtag, setHashtag] = useState("");
-	const [tempHashtag, setTempHashtag] = useState("");
 	const [user, setUser] = useState("");
-	const [tempUser, setTempUser] = useState("");
 	const [channel, setChannel] = useState("");
-	const [tempChannel, setTempChannel] = useState("");
 	const [text, setText] = useState("");
-	const [tempText, setTempText] = useState("");
-
+	
+	const location = useLocation();
 	const [searchCriteria, setSearchCriteria] = useState("user");
 	const [tempSearchText, setTempSearchText] = useState("");
 
@@ -32,6 +29,29 @@ const Ricerca = () => {
 	if (!isAuthenticated) {
 		return <Navigate to="/login" />;
 	}
+
+	useEffect(() => {
+		const query = new URLSearchParams(location.search);
+		const hashtagParam = query.get('getHashtag');
+		const userParam = query.get('user');
+		const channelParam = query.get('channel');
+	  
+		if (hashtagParam) {
+		  setTempSearchText(hashtagParam);
+		  setSearchCriteria('hashtag');
+		  setHashtag(hashtagParam);
+		} else if (userParam) {
+		  setTempSearchText(userParam);
+		  setSearchCriteria('user');
+		  setUser(userParam);
+		} else if (channelParam) {
+		  setTempSearchText(channelParam);
+		  setSearchCriteria('channel');
+		  setChannel(channelParam);
+		}
+	  }, [location]);
+	  
+	  
 
 	const handleSearchClick = () => {
 		let newHashtag = "";

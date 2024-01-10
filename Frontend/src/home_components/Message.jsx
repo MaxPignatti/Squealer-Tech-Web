@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Card, Button, Form, Badge } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -30,6 +31,9 @@ const Message = ({
 	const messageRef = useRef(null);
 	const { setRef } = useMessageRefs();
 	const [hasBeenViewed, setHasBeenViewed] = useState(false);
+
+	const navigate = useNavigate();
+
 
 	useEffect(() => {
 		const observer = new IntersectionObserver(
@@ -153,19 +157,49 @@ const Message = ({
 		handleSaveChanges(message._id, editedText);
 	};
 
-	const renderText = (text) => {
-		const textWithHashtags = text.replace(
-			/#(\w+)/g,
-			'<span style="color: #009688; font-weight: bold;">#$1</span>'
-		);
-		const textWithLinks = textWithHashtags.replace(
-			/\[([^\]]+)\]\(((?!http:\/\/|https:\/\/).+)\)/g,
-			"[$1](http://$2)"
-		);
-		const rawMarkup = marked.parse(textWithLinks);
-
-		return { __html: rawMarkup };
+	window.handleHashtagClick = (hashtag) => {
+		navigate(`/ricerca?getHashtag=${hashtag}`);
+	  };
+	  
+	window.handleUserMentionClick = (username) => {
+	navigate(`/ricerca?user=${username}`);
 	};
+	
+	window.handleChannelMentionClick = (channelName) => {
+	navigate(`/ricerca?channel=${channelName}`);
+	};
+		
+	const renderText = (text, userMentions, channelMentions) => {
+	// Evidenzia gli hashtag
+	let formattedText = text.replace(/#(\w+)/g, (match, hashtag) => {
+		return `<span style="color: #009688; font-weight: bold; cursor: pointer;" onClick="window.handleHashtagClick('${hashtag}')">${match}</span>`;
+	});
+	
+	// Evidenzia le menzioni utente
+	formattedText = formattedText.replace(/@(\w+)/g, (match, username) => {
+		if (message.userMentions.includes(username)) {
+			return `<span style="color: #009688; cursor: pointer;" onClick="window.handleUserMentionClick('${username}')">${match}</span>`;
+		}
+		return match;
+	});
+	
+	// Evidenzia le menzioni canale
+	formattedText = formattedText.replace(/§(\w+)/g, (match, channelName) => {
+		if (message.channelMentions.includes(channelName)) {
+			return `<span style="color: #009688; cursor: pointer;" onClick="window.handleChannelMentionClick('${channelName}')">${match}</span>`;
+		}
+		return match;
+	});
+	
+	// Gestione dei link
+	formattedText = formattedText.replace(/\[([^\]]+)\]\(((?!http:\/\/|https:\/\/).+)\)/g, "[$1](http://$2)");
+	
+	const rawMarkup = marked.parse(formattedText);
+	return { __html: rawMarkup };
+	};
+	  
+	  
+	  
 
 	return (
 		<Card

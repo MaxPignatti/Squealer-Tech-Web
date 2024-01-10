@@ -1,5 +1,6 @@
 const Message = require("../models/message");
 const User = require("../models/user");
+const Channel = require("../models/channel");
 const consts = require("../consts");
 
 exports.reply = async (req, res) => {
@@ -90,6 +91,10 @@ exports.createMessage = async (req, res) => {
       return res.status(400).json({ error: "User not found" });
     }
 
+    // Estrai le menzioni utente e i canali
+    const userMentions = await extractUserMentions(text);
+    const channelMentions = await extractChannelMentions(text);
+
     // Creare un nuovo messaggio
     const newMessage = new Message({
       user: userName,
@@ -102,9 +107,11 @@ exports.createMessage = async (req, res) => {
       nextSendTime: nextSendTime,
       location: location ? [location.latitude, location.longitude] : null,
       beepRequested: updateInterval !== null,
+      hashtags: extractHashtags(text),
+      userMentions: userMentions,
+      channelMentions: channelMentions,
     });
 
-    newMessage.hashtags = extractHashtags(req.body.text);
     // Salvare il messaggio
     const savedMessage = await newMessage.save();
 
@@ -359,10 +366,15 @@ exports.updateMessage = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+    const userMentions = await extractUserMentions(text);
+    const channelMentions = await extractChannelMentions(text);
     const oldTextLength = message.text.length;
+    
     if (text) {
       message.text = text;
       message.hashtags = extractHashtags(text);
+      message.userMentions = userMentions;
+      message.channelMentions = channelMentions;
     }
 
     const newTextLength = message.text.length;
@@ -641,6 +653,46 @@ const extractHashtags = (text) => {
   }
   return Array.from(hashtags);
 };
+
+const extractUserMentions = async (text) => {
+  const userMentionRegex = /@(\w+)/g;
+  let match;
+  const userMentionsSet = new Set();
+
+  while ((match = userMentionRegex.exec(text)) !== null) {
+    const username = match[1];
+    const userExists = await User.findOne({ username: username }).exec();
+    if (userExists) {
+      userMentionsSet.add(username);
+    }
+  }
+
+  return Array.from(userMentionsSet);
+};
+
+
+
+const extractChannelMentions = async (text) => {
+  const channelMentionRegex = /§(\w+)/g;
+  let match;
+  const channelMentionsSet = new Set();
+
+  while ((match = channelMentionRegex.exec(text)) !== null) {
+    const channelName = match[1];
+    const channelExists = await Channel.findOne({ name: channelName }).exec();
+    if (channelExists) {
+      channelMentionsSet.add(channelName);
+    }
+  }
+
+  return Array.from(channelMentionsSet);
+};
+
+
+
+
+
+
 // Endpoint per impostare beepRequested a false
 exports.acknowledgeBeep = async (req, res) => {
   try {

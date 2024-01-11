@@ -9,6 +9,7 @@ import MainPage from "./MainPage";
 import ChannelsPage from "./ChannelComponents/ChannelsPage";
 import ShopPage from "./ShopPage";
 import Ricerca from "./Ricerca";
+import UserMention from "./userMention";
 
 const HomePage = () => {
   const { isAuthenticated } = useAuth();
@@ -26,6 +27,7 @@ const HomePage = () => {
           <Route path="/Channels" element={<ChannelsPage />} />
           <Route path="/Shop" element={<ShopPage />} />
           <Route path="/Ricerca" element={<Ricerca />} />
+          <Route path="/UserMention" element={<UserMention />}/>
         </Routes>
       </Container>
     </>

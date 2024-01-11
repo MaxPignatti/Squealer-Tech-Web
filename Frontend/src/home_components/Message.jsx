@@ -162,16 +162,18 @@ const Message = ({
 	  };
 	  
 	window.handleUserMentionClick = (username) => {
-	navigate(`/ricerca?user=${username}`);
+		navigate(`/UserMention?user=${username}`);
 	};
 	
 	window.handleChannelMentionClick = (channelName) => {
 	navigate(`/ricerca?channel=${channelName}`);
 	};
 		
-	const renderText = (text, userMentions, channelMentions) => {
+	const renderText = (text) => {
+	
+	let formattedText = text;
 	// Evidenzia gli hashtag
-	let formattedText = text.replace(/#(\w+)/g, (match, hashtag) => {
+	formattedText = formattedText.replace(/#(\w+)/g, (match, hashtag) => {
 		return `<span style="color: #009688; font-weight: bold; cursor: pointer;" onClick="window.handleHashtagClick('${hashtag}')">${match}</span>`;
 	});
 	
@@ -190,6 +192,8 @@ const Message = ({
 		}
 		return match;
 	});
+
+	
 	
 	// Gestione dei link
 	formattedText = formattedText.replace(/\[([^\]]+)\]\(((?!http:\/\/|https:\/\/).+)\)/g, "[$1](http://$2)");

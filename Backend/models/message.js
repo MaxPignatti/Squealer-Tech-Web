@@ -44,6 +44,10 @@ const messageSchema = new mongoose.Schema({
     default: 0,
     required: true,
   },
+  popularity: {
+    type: String,
+    enum: ["popular", "unpopular", "controversial"],
+  },
   updateInterval: {
     type: Number,
     required: false,
@@ -86,7 +90,7 @@ const messageSchema = new mongoose.Schema({
   channelMentions: {
     type: [String],
     default: [],
-  },  
+  },
 });
 
 module.exports = mongoose.model("Message", messageSchema);

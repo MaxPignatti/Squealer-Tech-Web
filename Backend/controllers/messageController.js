@@ -295,8 +295,10 @@ exports.addReaction = async (req, res) => {
 
     if (message.positiveReactions > cm && message.negativeReactions <= cm) {
       //il messaggio è popolare
+      message.popularity = "popular";
       if (user.negativeMessages.includes(messageId)) {
         // il messaggio è controverso
+        message.popularity = "controversial";
         if (!user.controversialMessages.includes(messageId)) {
           user.controversialMessages.push(messageId);
         }
@@ -313,7 +315,10 @@ exports.addReaction = async (req, res) => {
       message.negativeReactions > cm
     ) {
       //il messaggio è impopolare
+      message.popularity = "unpopular";
       if (user.positiveMessages.includes(messageId)) {
+        // il messaggio è controverso
+        message.popularity = "controversial";
         if (!user.controversialMessages.includes(messageId)) {
           user.controversialMessages.push(messageId);
         }
@@ -321,7 +326,9 @@ exports.addReaction = async (req, res) => {
 
       if (!user.negativeMessages.includes(messageId)) {
         user.negativeMessages.push(messageId);
-        user.remChar += charForReaction(user, newChar); //modifico i caratteri
+        user.dailyChars -= charForReaction(user, newChar); //modifico i caratteri
+        user.weeklyChars -= charForReaction(user, newChar);
+        user.monthlyChars -= charForReaction(user, newChar);
       }
     }
     await Promise.all([message.save(), user.save()]);
@@ -369,7 +376,7 @@ exports.updateMessage = async (req, res) => {
     const userMentions = await extractUserMentions(text);
     const channelMentions = await extractChannelMentions(text);
     const oldTextLength = message.text.length;
-    
+
     if (text) {
       message.text = text;
       message.hashtags = extractHashtags(text);
@@ -381,7 +388,9 @@ exports.updateMessage = async (req, res) => {
 
     const charDifference = newTextLength - oldTextLength;
 
-    user.remChar -= charDifference;
+    user.dailyChars -= charDifference;
+    user.weeklyChars -= charDifference;
+    user.monthlyChars -= charDifference;
 
     await Promise.all([message.save(), user.save()]);
 
@@ -670,8 +679,6 @@ const extractUserMentions = async (text) => {
   return Array.from(userMentionsSet);
 };
 
-
-
 const extractChannelMentions = async (text) => {
   const channelMentionRegex = /§(\w+)/g;
   let match;
@@ -687,11 +694,6 @@ const extractChannelMentions = async (text) => {
 
   return Array.from(channelMentionsSet);
 };
-
-
-
-
-
 
 // Endpoint per impostare beepRequested a false
 exports.acknowledgeBeep = async (req, res) => {

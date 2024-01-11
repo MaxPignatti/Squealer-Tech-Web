@@ -16,7 +16,7 @@ const LoginPage = () => {
 	});
 	const [showPassword, setShowPassword] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
-	
+
 	const navigate = useNavigate();
 
 	const [trendingMessages, setTrendingMessages] = useState([]);
@@ -161,6 +161,11 @@ const LoginPage = () => {
 						<Card.Footer className="text-center">
 							<p>
 								Don't have an account? <Link to="/registration">Register</Link>
+							</p>
+						</Card.Footer>
+						<Card.Footer className="text-center">
+							<p>
+								<a href="http://localhost:8080/login"> Sei un SMM? Premi qui</a>
 							</p>
 						</Card.Footer>
 					</Card>

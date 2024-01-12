@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center">
-    <div class="max-w-3xl w-full p-4 bg-white shadow-md rounded-lg">
+    <div class="max-w-3xl w-full p-4 bg-white shadow-md rounded-lg" role="form">
       <div class="input-squeals-container">
         <RecipientSelector
           :searchTerm="searchTerm"
@@ -61,7 +61,9 @@
             </button>
           </div>
         </div>
-        <div v-if="errorMessage" style="color: red">{{ errorMessage }}</div>
+        <div v-if="errorMessage" role="alert" style="color: red">
+          {{ errorMessage }}
+        </div>
       </div>
     </div>
   </div>
@@ -216,16 +218,25 @@ export default {
     //FUNZIONI PER IMMAGINI
     const handleImageChange = (event) => {
       if (
-        dailyCharacters.value <= 50 ||
-        weeklyCharacters.value <= 50 ||
-        monthlyCharacters.value <= 50
+        dailyCharacters.value < 50 ||
+        weeklyCharacters.value < 50 ||
+        monthlyCharacters.value < 50
       ) {
+        console.log(
+          dailyCharacters.value,
+          weeklyCharacters.value,
+          monthlyCharacters.value
+        );
         alert("Not enough characters for an image upload.");
         return;
       }
 
       const file = event.target.files && event.target.files[0];
       if (file) {
+        if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
+          alert("Please select a JPEG or PNG image.");
+          return;
+        }
         const reader = new FileReader();
         reader.onload = (e) => {
           image.value = e.target.result; // Salva l'immagine in base64
@@ -282,7 +293,7 @@ export default {
     //PUBLISH
     const handlePublish = async () => {
       const savedMessage = message.value;
-
+      const savedImage = image.value;
       if (savedMessage && selectedChannels.value.length > 0) {
         message.value = "";
         image.value = null;
@@ -303,7 +314,7 @@ export default {
             }
             const requestData = {
               userName: vipUsername.value,
-              image: image.value,
+              image: savedImage,
               text: savedMessage,
               dailyCharacters: dailyCharacters.value,
               weeklyCharacters: weeklyCharacters.value,

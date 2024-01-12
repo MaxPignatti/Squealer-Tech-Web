@@ -11,13 +11,19 @@
       v-if="!imagePreview"
       for="imageInput"
       class="bg-yellow-500 hover:bg-yellow-700 text-black font-bold py-2 px-4 rounded cursor-pointer"
+      aria-label="Carica immagine"
+      tabindex="0"
+      @keydown.enter="clickFileInput"
+      @click="clickFileInput"
     >
       <font-awesome-icon icon="images" />
     </label>
+    <!-- Bottone modificato per essere raggiungibile nella sequenza di tabulazione -->
     <button
       v-if="imagePreview"
       class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
       @click="onRemoveImage"
+      tabindex="0"
     >
       Rimuovi Immagine
     </button>
@@ -37,6 +43,9 @@ export default {
     imagePreview: String,
   },
   methods: {
+    clickFileInput() {
+      this.$refs.fileInput.click();
+    },
     onImageChange(event) {
       this.$emit("imageChange", event);
       this.$refs.fileInput.value = ""; // Resetta l'input file

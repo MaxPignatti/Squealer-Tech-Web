@@ -8,6 +8,7 @@
       :placeholder="'Cerca canale...'"
       :value="searchTerm"
       @input="$emit('update:searchTerm', $event.target.value)"
+      aria-label="Cerca canale"
     />
 
     <div class="border-t border-gray-200 pt-2">
@@ -19,8 +20,11 @@
         >
           <span class="text-gray-700">{{ channel.name }}</span>
           <button
+            v-for="channel in filteredChannels"
+            :key="channel._id"
             @click="$emit('channelSelect', channel)"
             class="text-green-500 hover:text-green-600 font-bold py-1 px-3"
+            :aria-label="`Aggiungi ${channel.name}`"
           >
             +
           </button>
@@ -37,8 +41,11 @@
         >
           <span class="text-gray-700">{{ channel.name }}</span>
           <button
+            v-for="channel in selectedChannels"
+            :key="channel._id"
             @click="$emit('removeChannel', channel._id)"
             class="text-red-500 hover:text-red-600 font-bold py-1 px-3"
+            :aria-label="`Rimuovi ${channel.name}`"
           >
             -
           </button>

@@ -14,7 +14,9 @@
             >Intervallo di Aggiornamento (minuti):</label
           >
           <input
+            ref="firstInput"
             type="number"
+            aria-label="Intervallo di Aggiornamento in minuti"
             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
             :value="updateInterval"
             @input="$emit('updateIntervalChange', Number($event.target.value))"
@@ -29,6 +31,7 @@
           >
           <input
             type="number"
+            aria-label="Massimo Numero di Invii"
             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
             :value="maxSendCount"
             @input="$emit('maxSendCountChange', Number($event.target.value))"
@@ -47,6 +50,16 @@ export default {
     isTemp: Boolean,
     updateInterval: Number,
     maxSendCount: Number,
+  },
+  methods: {
+    toggleTempAndUpdateFocus() {
+      this.$emit("toggleTemp");
+      this.$nextTick(() => {
+        if (this.isTemp) {
+          this.$refs.firstInput.focus();
+        }
+      });
+    },
   },
 };
 </script>

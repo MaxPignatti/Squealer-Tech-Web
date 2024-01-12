@@ -1,5 +1,9 @@
 <template>
-  <div class="container mx-auto px-4">
+  <div
+    class="container mx-auto px-4"
+    role="region"
+    aria-label="Gestione dei messaggi"
+  >
     <div class="flex flex-col md:flex-row md:items-center mb-4">
       <!-- Bottoni per il filtraggio -->
       <div
@@ -28,10 +32,12 @@
         </button>
       </div>
 
-      <!-- Dropdown e bottoni per ordinamento -->
       <div class="flex items-center space-x-2 ml-auto">
-        <span class="text-gray-700 font-bold">Ordina per:</span>
+        <label for="sortOrder" class="text-gray-700 font-bold"
+          >Ordina per:</label
+        >
         <select
+          id="sortOrder"
           v-model="selectedSort"
           class="bg-white text-gray-700 font-bold py-2 px-4 rounded border border-gray-300"
         >
@@ -101,6 +107,7 @@ export default {
           .then((data) => {
             this.messages = data;
             this.filteredMessages = data;
+            this.sortMessages(false);
           })
           .catch((error) => {
             console.error("Errore durante il recupero dei messaggi:", error);

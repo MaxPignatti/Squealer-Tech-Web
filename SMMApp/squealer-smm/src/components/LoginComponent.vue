@@ -1,11 +1,22 @@
 <template>
   <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="max-w-md w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div
+      class="max-w-md w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+      role="form"
+    >
       <div class="mb-6">
-        <!-- Logo -->
-        <img src="../assets/logo.png" alt="Logo" class="mx-auto h-100 w-auto" />
+        <img
+          src="../assets/logo.png"
+          alt="Logo di Squealer"
+          class="mx-auto h-100 w-auto"
+        />
       </div>
-      <form @submit.prevent="handleLogin" class="space-y-6">
+      <form
+        @submit.prevent="handleLogin"
+        class="space-y-6"
+        aria-labelledby="form-title"
+      >
+        <h2 id="form-title" class="sr-only">Login</h2>
         <div>
           <label for="email" class="block text-gray-700 text-sm font-bold mb-2"
             >Email</label
@@ -15,6 +26,7 @@
             id="email"
             v-model="email"
             required
+            aria-required="true"
             class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
@@ -29,10 +41,15 @@
             id="password"
             v-model="password"
             required
+            aria-required="true"
             class="appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
-        <div v-if="errorMessage" class="text-red-500 text-center py-2">
+        <div
+          v-if="errorMessage"
+          class="text-red-500 text-center py-2"
+          role="alert"
+        >
           {{ errorMessage }}
         </div>
         <div>
@@ -45,15 +62,21 @@
         </div>
       </form>
       <p class="mt-8 text-center text-sm text-gray-600">
-        Non sei ancora registrato? Registrati sull'<a
+        Non sei ancora registrato? Registrati sull'
+        <a
           href="http://localhost:3000/registration"
           class="text-blue-500 hover:text-blue-800"
-          >App principale</a
-        >!
+          aria-label="Registrati sull'app principale"
+        >
+          App principale
+        </a>
+        !
       </p>
     </div>
   </div>
 </template>
+
+<!-- Resto del codice JavaScript e CSS rimane invariato -->
 
 <script>
 import { ref } from "vue";

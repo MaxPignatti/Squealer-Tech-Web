@@ -1,5 +1,10 @@
 <template>
-  <div class="bg-white shadow-md rounded-lg p-4 border border-blue-200">
+  <div
+    class="bg-white shadow-md rounded-lg p-4 border border-blue-200"
+    role="article"
+    aria-labelledby="message-title"
+  >
+    <h2 id="message-title" class="sr-only">Messaggio di {{ message.user }}</h2>
     <div class="flex items-center mb-2">
       <img
         v-if="message.profileImage"
@@ -39,9 +44,13 @@
     </div>
 
     <div class="flex justify-between items-center">
-      <span class="text-blue-500 cursor-pointer" @click="toggleReplies">
+      <button
+        ref="toggleButton"
+        @click="toggleReplies"
+        class="toggle-reply-button"
+      >
         {{ showReplies ? "Nascondi risposte" : "Vedi Risposte" }}
-      </span>
+      </button>
       <p class="text-sm text-gray-500 italic">
         {{ formatDate(message.createdAt) }}
       </p>
@@ -98,6 +107,14 @@ export default {
       if (this.showReplies && this.replies.length === 0) {
         this.loadReplies();
       }
+      this.$nextTick(() => {
+        if (this.$refs.toggleButton) {
+          this.$refs.toggleButton.setAttribute(
+            "aria-expanded",
+            this.showReplies
+          );
+        }
+      });
     },
     formatDate(dateString) {
       const options = {
@@ -112,3 +129,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.toggle-reply-button {
+  color: blue; /* Imposta il colore del testo */
+}
+</style>

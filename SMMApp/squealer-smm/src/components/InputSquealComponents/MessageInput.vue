@@ -4,6 +4,7 @@
     :value="message"
     @input="onInput"
     @select="$emit('textSelect', $event)"
+    :aria-label="`Inserisci il tuo messaggio. Caratteri rimanenti: ${calculatedRemainingCharacters}`"
     placeholder="Inserisci il tuo messaggio..."
   ></textarea>
 </template>
@@ -16,6 +17,14 @@ export default {
     weeklyCharactersLimit: Number,
     monthlyCharactersLimit: Number,
     imageAttached: Boolean,
+  },
+  computed: {
+    calculatedRemainingCharacters() {
+      const additionalChars = this.imageAttached ? 50 : 0;
+      return (
+        this.dailyCharactersLimit - (this.message.length + additionalChars)
+      );
+    },
   },
   methods: {
     onInput(event) {

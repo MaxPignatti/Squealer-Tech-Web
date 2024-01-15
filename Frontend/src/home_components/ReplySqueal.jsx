@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Container, Col, Row, Form } from "react-bootstrap";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import Cookies from "js-cookie";
 import CharCounter from "./InputSquealComponents/CharCounter";
@@ -248,39 +248,6 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 			setMessage(`${beforeText}[${linkText}](${url})${afterText}`);
 		} else {
 			alert("Per favore, seleziona del testo nel messaggio per linkarlo.");
-		}
-	};
-
-	//FUNZIONI PER MESSAGGI TEMPORANEI
-	const toggleTemp = () => {
-		setIsTemp(!isTemp);
-		if (!isTemp) {
-			setUpdateInterval("");
-			setMaxSendCount("");
-		}
-	};
-
-	const handleUpdateIntervalChange = (e) => {
-		const value = e.target.value;
-		if (/^\d+$/.test(value)) {
-			const numericValue = parseInt(value);
-			if (numericValue >= 1 && numericValue <= 15) {
-				setUpdateInterval(numericValue);
-			} else {
-				setUpdateInterval(numericValue < 1 ? 1 : 60);
-			}
-		}
-	};
-
-	const handleMaxSendCountChange = (e) => {
-		const value = e.target.value;
-		if (/^\d+$/.test(value)) {
-			const numericValue = parseInt(value);
-			if (numericValue >= 1 && numericValue <= 20) {
-				setMaxSendCount(numericValue);
-			} else {
-				setMaxSendCount(numericValue < 1 ? 1 : 20);
-			}
 		}
 	};
 

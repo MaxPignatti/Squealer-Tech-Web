@@ -259,6 +259,12 @@ const Profile = () => {
 										<p className="d-flex justify-content-center">
 											Email: {userData.email}
 										</p>
+										{userData.isPro && userData.socialMediaManagerEmail && (
+											<p className="d-flex justify-content-center">
+												Social Media Manager: {userData.socialMediaManagerEmail}
+											</p>
+										)}
+
 										<Button
 											variant="primary"
 											onClick={handleModifica}

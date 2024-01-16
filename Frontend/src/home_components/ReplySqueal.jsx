@@ -8,6 +8,19 @@ import LocationSharer from "./InputSquealComponents/LocationSharer";
 import MessageInput from "./InputSquealComponents/MessageInput";
 import PublishButton from "./InputSquealComponents/PublishButton";
 import LinkInserter from "./InputSquealComponents/LinkInserter";
+import {
+	handleMessageChange,
+	handleImageChange,
+	handleRemoveImage,
+	toggleMap,
+	handleOpenMap,
+	handleCloseMap,
+	handleGetLocation,
+	sendLocationPeriodically,
+	sendLocationToBackend,
+	handleTextSelect,
+	handleInsertLink,
+} from "./InputSquealComponents/commonFunction";
 const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 	//USE STATE DA ORDINARE
 	const [message, setMessage] = useState("");
@@ -79,178 +92,6 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
   }, []);
   */
 
-	//FUNZIONE PER TEXT
-	const handleMessageChange = (event) => {
-		const inputMessage = event.target.value;
-		const charCounter =
-			(currentLocation != null) * 50 +
-			(image != null) * 50 +
-			inputMessage.length;
-		if (!publicMessage) {
-			setMessage(inputMessage);
-		} else if (
-			charCounter <= initialDailyCharacters &&
-			charCounter <= initialWeeklyCharacters &&
-			charCounter <= initialMonthlyCharacters
-		) {
-			setMessage(inputMessage);
-			setDailyCharacters(initialDailyCharacters - charCounter);
-			setWeeklyCharacters(initialWeeklyCharacters - charCounter);
-			setMonthlyCharacters(initialMonthlyCharacters - charCounter);
-		}
-	};
-
-	//FUNZIONI PER IMMAGINI
-	const handleImageChange = (e) => {
-		if (publicMessage) {
-			if (
-				dailyCharacters >= 50 &&
-				weeklyCharacters >= 50 &&
-				monthlyCharacters >= 50
-			) {
-				setDailyCharacters(dailyCharacters - 50);
-				setWeeklyCharacters(weeklyCharacters - 50);
-				setMonthlyCharacters(monthlyCharacters - 50);
-			} else {
-				alert("Not enough characters for an image upload.");
-				return;
-			}
-		}
-		if (e.target.files && e.target.files[0]) {
-			const file = e.target.files[0];
-
-			const reader = new FileReader();
-			reader.onload = (event) => {
-				setImage(event.target.result); // Salva l'immagine in base64
-				setImagePreview(event.target.result); // Imposta l'anteprima dell'immagine
-			};
-			reader.readAsDataURL(file);
-		}
-	};
-
-	const handleRemoveImage = () => {
-		setImage(null); // Rimuove l'immagine
-		setImagePreview(null); // Rimuove l'anteprima dell'immagine
-		if (publicMessage) {
-			setDailyCharacters(dailyCharacters + 50);
-			setWeeklyCharacters(weeklyCharacters + 50);
-			setMonthlyCharacters(monthlyCharacters + 50);
-		}
-	};
-
-	//FUNZIONI PER POSIZIONE
-	const toggleMap = () => {
-		if (showMap) {
-			handleCloseMap();
-		} else {
-			handleOpenMap();
-		}
-	};
-
-	const handleOpenMap = () => {
-		if (publicMessage) {
-			if (
-				dailyCharacters >= 50 &&
-				weeklyCharacters >= 50 &&
-				monthlyCharacters >= 50
-			) {
-				setDailyCharacters(dailyCharacters - 50);
-				setWeeklyCharacters(weeklyCharacters - 50);
-				setMonthlyCharacters(monthlyCharacters - 50);
-			} else {
-				alert("Not enough characters for a position upload.");
-				return;
-			}
-		}
-		setShowMap(true);
-		handleGetLocation();
-	};
-
-	const handleCloseMap = () => {
-		setShowMap(false);
-		setCurrentLocation(null);
-		if (publicMessage) {
-			setDailyCharacters(dailyCharacters + 50);
-			setWeeklyCharacters(weeklyCharacters + 50);
-			setMonthlyCharacters(monthlyCharacters + 50);
-		}
-	};
-
-	const handleGetLocation = () => {
-		navigator.geolocation.getCurrentPosition(
-			(position) => {
-				const { latitude, longitude } = position.coords;
-				if (latitude != null && longitude != null) {
-					setCurrentLocation([latitude, longitude]);
-				} else {
-					console.error("Invalid coordinates received");
-				}
-			},
-			(error) => {
-				console.error("Error getting location:", error);
-			}
-		);
-	};
-
-	const sendLocationPeriodically = (messageId) => {
-		let intervalId;
-
-		intervalId = setInterval(async () => {
-			try {
-				handleGetLocation();
-				sendLocationToBackend(messageId, currentLocation);
-			} catch (error) {
-				console.error("Error getting current location:", error);
-			}
-		}, 30000);
-
-		// Interrompi l'intervallo
-		setTimeout(() => {
-			clearInterval(intervalId);
-		}, 240000);
-	};
-
-	const sendLocationToBackend = async (messageId, position) => {
-		try {
-			const response = await fetch(
-				`http://localhost:3500/position/${messageId}`,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ position }),
-				}
-			);
-
-			if (!response.ok) {
-				console.error("Failed to update location on the backend");
-			}
-		} catch (error) {
-			console.error("Error sending location to backend:", error);
-		}
-	};
-
-	// Gestione della selezione del testo
-	const handleTextSelect = (e) => {
-		setSelection({
-			start: e.target.selectionStart,
-			end: e.target.selectionEnd,
-		});
-	};
-
-	// Funzione per inserire il link nel messaggio
-	const handleInsertLink = (url) => {
-		if (url && selection.start !== selection.end) {
-			const beforeText = message.substring(0, selection.start);
-			const linkText = message.substring(selection.start, selection.end);
-			const afterText = message.substring(selection.end);
-			setMessage(`${beforeText}[${linkText}](${url})${afterText}`);
-		} else {
-			alert("Per favore, seleziona del testo nel messaggio per linkarlo.");
-		}
-	};
-
 	//PUBLISH
 	const handlePublish = async () => {
 		const savedMessage = message;
@@ -315,11 +156,27 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 					<Form>
 						<MessageInput
 							message={message}
-							handleMessageChange={handleMessageChange}
-							handleTextSelect={handleTextSelect}
+							handleMessageChange={(event) =>
+								handleMessageChange(
+									event,
+									setMessage,
+									setDailyCharacters,
+									setWeeklyCharacters,
+									setMonthlyCharacters,
+									currentLocation,
+									image,
+									publicMessage,
+									initialDailyCharacters,
+									initialWeeklyCharacters,
+									initialMonthlyCharacters
+								)
+							}
+							handleTextSelect={(e) => handleTextSelect(e, setSelection)}
 						/>
 						<LinkInserter
-							handleInsertLink={handleInsertLink}
+							handleInsertLink={(url) =>
+								handleInsertLink(url, selection, message, setMessage)
+							}
 							selection={selection}
 						/>
 						<CharCounter
@@ -330,8 +187,33 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 						<ImageUploader
 							image={image}
 							imagePreview={imagePreview}
-							handleImageChange={handleImageChange}
-							handleRemoveImage={handleRemoveImage}
+							handleImageChange={(e) =>
+								handleImageChange(
+									e,
+									setImage,
+									setImagePreview,
+									setDailyCharacters,
+									setWeeklyCharacters,
+									setMonthlyCharacters,
+									dailyCharacters,
+									weeklyCharacters,
+									monthlyCharacters,
+									publicMessage
+								)
+							}
+							handleRemoveImage={() =>
+								handleRemoveImage(
+									setImage,
+									setImagePreview,
+									setDailyCharacters,
+									setWeeklyCharacters,
+									setMonthlyCharacters,
+									publicMessage,
+									dailyCharacters,
+									weeklyCharacters,
+									monthlyCharacters
+								)
+							}
 						/>
 						{showMap && currentLocation && (
 							<MapContainer
@@ -348,7 +230,20 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 						)}
 						<LocationSharer
 							showMap={showMap}
-							toggleMap={toggleMap}
+							toggleMap={() =>
+								toggleMap(
+									showMap,
+									setShowMap,
+									setCurrentLocation,
+									setDailyCharacters,
+									setWeeklyCharacters,
+									setMonthlyCharacters,
+									publicMessage,
+									dailyCharacters,
+									weeklyCharacters,
+									monthlyCharacters
+								)
+							}
 						/>
 						<Row className="mt-3">
 							<Col className="text-center">

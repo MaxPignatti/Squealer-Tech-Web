@@ -10,5 +10,5 @@ router
 	.get(userController.getUser);
 router.post("/usr/:username/password", userController.updateUserPassword);
 router.get("/usr", userController.getAllUsers);
-router.get("/getSMM/:username", userController.getSMM);
+//router.get("/getSMM/:username", userController.getSMM);
 module.exports = router;

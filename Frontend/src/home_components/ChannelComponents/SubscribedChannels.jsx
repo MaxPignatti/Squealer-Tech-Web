@@ -7,6 +7,12 @@ const SubscribedChannels = ({
 	setSubscribedChannels,
 	setAllChannels,
 }) => {
+
+	const listGroupStyle = {
+		maxHeight: '142px', 
+		overflowY: 'auto',
+	};
+
 	useEffect(() => {
 		const userDataCookie = Cookies.get("user_data");
 		if (userDataCookie) {
@@ -59,7 +65,7 @@ const SubscribedChannels = ({
 		<div className="container mt-3">
 			<h1 className="display-4 text-center">CANALI A CUI SEI ISCRITTO</h1>
 			<Card>
-				<ListGroup variant="flush">
+				<ListGroup variant="flush" style={listGroupStyle}>
 					{subscribedChannels.map((channel) => (
 						<ListGroup.Item key={channel._id}>
 							{channel.name}

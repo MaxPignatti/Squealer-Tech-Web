@@ -9,8 +9,9 @@ const ChannelsPage = () => {
 	const [yourChannels, setYourChannels] = useState([]);
 	const [allChannels, setAllChannels] = useState([]);
 
+
 	return (
-		<div className="container mt-3">
+		<div className="container mt-3" style={{ marginBottom: '30px' }}>
 			<CreateChannel
 				subscribedChannels={subscribedChannels}
 				setSubscribedChannels={setSubscribedChannels}

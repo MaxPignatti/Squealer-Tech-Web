@@ -11,6 +11,11 @@ const YourChannels = ({
 	const [membersList, setMembersList] = useState([]);
 	const [selectedChannelId, setSelectedChannelId] = useState(null);
 
+	const listGroupStyle = {
+		maxHeight: '142px', 
+		overflowY: 'auto',
+	};
+
 	useEffect(() => {
 		const userDataCookie = Cookies.get("user_data");
 		if (userDataCookie) {
@@ -107,7 +112,7 @@ const YourChannels = ({
 		<div className="container mt-3">
 			<h1 className="display-4 text-center">I TUOI CANALI</h1>
 			<Card>
-				<ListGroup variant="flush">
+				<ListGroup variant="flush" style={listGroupStyle}>
 					{yourChannels.map((channel) => (
 						<ListGroup.Item key={channel._id}>
 							{channel.name}
@@ -133,7 +138,7 @@ const YourChannels = ({
 								Elimina
 							</Button>
 							{selectedChannelId === channel._id && (
-								<ListGroup className="mt-2">
+								<ListGroup className="mt-2" >
 									{membersList.map((member) => (
 										<ListGroup.Item key={member}>
 											{member}

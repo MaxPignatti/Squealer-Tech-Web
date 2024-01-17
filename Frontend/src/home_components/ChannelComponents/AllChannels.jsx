@@ -9,6 +9,11 @@ const AllChannels = ({
 }) => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [filteredChannels, setFilteredChannels] = useState([]);
+	
+	const listGroupStyle = {
+		maxHeight: '142px',
+		overflowY: 'auto',
+	};
 
 	useEffect(() => {
 		const userDataCookie = Cookies.get("user_data");
@@ -80,7 +85,7 @@ const AllChannels = ({
 				/>
 			</Form.Group>
 			<Card>
-				<ListGroup variant="flush">
+				<ListGroup variant="flush"style={listGroupStyle}>
 					{filteredChannels.map((channel, index) => (
 						<ListGroup.Item key={channel._id + index}>
 							{channel.name}

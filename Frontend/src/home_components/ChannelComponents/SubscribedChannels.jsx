@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Cookies from "js-cookie";
 import { Card, ListGroup, Button } from "react-bootstrap";
 

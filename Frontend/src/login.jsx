@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "./AuthContext";
@@ -132,7 +131,8 @@ const LoginPage = () => {
 											}
 											aria-label="Password"
 										/>
-										<span
+										<input
+											type="button"
 											className="password-toggle"
 											onClick={togglePasswordVisibility}
 										>
@@ -141,7 +141,7 @@ const LoginPage = () => {
 											) : (
 												<FontAwesomeIcon icon={faEye} />
 											)}
-										</span>
+										</input>
 									</div>
 								</Form.Group>
 

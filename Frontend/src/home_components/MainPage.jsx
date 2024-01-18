@@ -1,9 +1,8 @@
 import InputSqueal from "./InputSquealComponents/InputSqueal";
 import Squeals from "./Squeals";
 import React, { useState } from "react";
-import { Button, Card } from "react-bootstrap";
+import { Button, Card, Row, Col, Container } from "react-bootstrap";
 import "./Profile_style.css";
-import { Row, Col, Container } from "react-bootstrap";
 
 const MainPage = () => {
 	const [showInputSqueal, setShowInputSqueal] = useState(false);

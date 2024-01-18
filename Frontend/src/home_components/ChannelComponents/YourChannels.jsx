@@ -116,7 +116,8 @@ const YourChannels = ({
 					{yourChannels.map((channel) => (
 						<ListGroup.Item key={channel._id}>
 							{channel.name}
-							<span
+							<input
+								type="button"
 								className="badge bg-primary ms-2"
 								style={{ cursor: "pointer" }}
 								onClick={() => {
@@ -128,7 +129,7 @@ const YourChannels = ({
 								}}
 							>
 								{channel.members.length} Iscritti
-							</span>
+							</input>
 							<Button
 								variant="danger"
 								size="sm"

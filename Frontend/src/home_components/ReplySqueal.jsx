@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Container, Col, Row, Form } from "react-bootstrap";
+import { Container, Col, Row, Form } from "react-bootstrap";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import Cookies from "js-cookie";
 import CharCounter from "./InputSquealComponents/CharCounter";

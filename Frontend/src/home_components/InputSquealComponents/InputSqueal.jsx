@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Container, Form } from "react-bootstrap";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { Container, Form } from "react-bootstrap";
 import Cookies from "js-cookie";
 import CharCounter from "./CharCounter";
 import ImageUploader from "./ImageUploader";
@@ -312,7 +311,6 @@ const InputSqueal = () => {
 						const data = await response.json();
 						set_id(data._id);
 						window.location.reload();
-						//sendLocationPeriodically(data._id);
 					} else {
 						const data = await response.json();
 						console.error("Errore nella creazione del messaggio:", data.error);

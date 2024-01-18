@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Cookies from "js-cookie";
-import { Button, Form } from "react-bootstrap";
+import { Button, Alert, Form } from "react-bootstrap";
 
 const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
 	const [showForm, setShowForm] = useState(false);

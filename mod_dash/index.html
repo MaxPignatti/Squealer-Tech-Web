@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>My JavaScript App</title>
+		<link
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+		<script
+			src="script.js"
+			defer
+		></script>
+	</head>
+	<body>
+		<div class="container mt-5">
+			<h1 class="text-center">User Management Dashboard</h1>
+			<button
+				id="loadUsersButton"
+				class="btn btn-primary mt-3"
+			>
+				Load Users
+			</button>
+			<div class="filter-section mt-3">
+				<!-- Filter by Name -->
+				<input
+					type="text"
+					id="nameFilter"
+					placeholder="Filter by Name"
+					class="form-control"
+				/>
+				<button
+					id="nameAsc"
+					class="btn btn-outline-secondary"
+				>
+					Name Asc
+				</button>
+				<button
+					id="nameDesc"
+					class="btn btn-outline-secondary"
+				>
+					Name Desc
+				</button>
+
+				<!-- Filter by Type - Example -->
+				<button
+					id="typeAsc"
+					class="btn btn-outline-secondary"
+				>
+					Type Asc
+				</button>
+				<button
+					id="typeDesc"
+					class="btn btn-outline-secondary"
+				>
+					Type Desc
+				</button>
+
+				<!-- Filter by Popularity - Example -->
+				<button
+					id="popularityAsc"
+					class="btn btn-outline-secondary"
+				>
+					Popularity Asc
+				</button>
+				<button
+					id="popularityDesc"
+					class="btn btn-outline-secondary"
+				>
+					Popularity Desc
+				</button>
+
+				<button
+					id="filterButton"
+					class="btn btn-secondary"
+				>
+					Apply Filters
+				</button>
+			</div>
+			<div
+				id="userList"
+				class="mt-4"
+			></div>
+
+			<div
+				id="userList"
+				class="mt-4"
+			></div>
+
+			<div
+				id="userList"
+				class="mt-4"
+			></div>
+			<div
+				id="userList"
+				class="mt-4"
+			></div>
+		</div>
+	</body>
+</html>

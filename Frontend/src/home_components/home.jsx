@@ -1,10 +1,9 @@
 import React from "react";
 import Navbar from "./Navbar";
 import Profile from "./Profile";
-import { Routes, Route, Link } from "react-router-dom";
-import { Container, Row, Col } from "react-bootstrap";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Container } from "react-bootstrap";
 import { useAuth } from "../AuthContext";
-import { Navigate } from "react-router-dom";
 import MainPage from "./MainPage";
 import ChannelsPage from "./ChannelComponents/ChannelsPage";
 import ShopPage from "./ShopPage";

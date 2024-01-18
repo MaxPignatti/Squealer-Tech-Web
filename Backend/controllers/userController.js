@@ -18,8 +18,29 @@ exports.getUser = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
 	try {
-		const users = await User.find({}); // Trova tutti gli utenti
-		res.json(users); // Restituisci l'elenco degli utenti
+		const { firstName, lastName, email, username, sortField, sortOrder } =
+			req.query;
+
+		let filter = {};
+		if (firstName) filter.firstName = { $regex: firstName, $options: "i" };
+		if (lastName) filter.lastName = { $regex: lastName, $options: "i" };
+		if (email) filter.email = { $regex: email, $options: "i" };
+		if (username) filter.username = { $regex: username, $options: "i" };
+
+		let sort = {};
+		if (sortField && sortOrder) {
+			if (sortField === "popularity") {
+				// Custom sorting logic for popularity
+				sort = {
+					"positiveReactionsGiven.length": sortOrder === "asc" ? 1 : -1,
+				};
+			} else {
+				sort[sortField] = sortOrder === "asc" ? 1 : -1;
+			}
+		}
+
+		const users = await User.find(filter).sort(sort);
+		res.json(users);
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: "Internal server error" });

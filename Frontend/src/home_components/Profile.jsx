@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-	Container,
-	Row,
-	Col,
-	Card,
-	Form,
-	Button,
-	CardBody,
-} from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Cookies from "js-cookie";
@@ -97,7 +89,6 @@ const Profile = () => {
 
 				seteditChange(false);
 			} else {
-				//console.error('Failed to save data:', response.status);
 				const data = await response.json();
 				setErrorMessage(data.error);
 			}
@@ -124,7 +115,6 @@ const Profile = () => {
 				// Puoi gestire ulteriori azioni qui, ad esempio, reindirizzare l'utente
 				setShowChangePasswordForm(false);
 			} else {
-				//console.error('Failed to update password:', responsePassword.status);
 				const data = await responsePassword.json();
 				setErrorMessage(data.error);
 			}
@@ -152,7 +142,7 @@ const Profile = () => {
 								<div>
 									<img
 										src={`${userData.profileImage}`}
-										alt="Profile Image"
+										alt="Profile Picture"
 										style={{ maxWidth: "20%" }}
 									/>
 								</div>
@@ -289,6 +279,7 @@ const Profile = () => {
 													<span
 														className="password-toggle"
 														onClick={() => setShowOldPassword(!showOldPassword)}
+														role="button"
 													>
 														{showOldPassword ? (
 															<FontAwesomeIcon icon={faEyeSlash} />

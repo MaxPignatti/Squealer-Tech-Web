@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-	Card,
-	Col,
-	Container,
-	Row,
-	Button,
-	ButtonGroup,
-} from "react-bootstrap";
+import { Col, Container, Row, Button, ButtonGroup } from "react-bootstrap";
 import Cookies from "js-cookie";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import Message from "./Message";
 import { useMessageRefs } from "../MessageRefsContext";
 

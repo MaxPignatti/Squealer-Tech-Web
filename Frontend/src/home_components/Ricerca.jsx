@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-	Container,
-	Row,
-	Col,
-	Card,
-	Form,
-	Button,
-	CardBody,
-} from "react-bootstrap";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { useAuth } from "../AuthContext";
-import { Navigate, useLocation  } from "react-router-dom";
-import Cookies from "js-cookie";
+import { Navigate, useLocation } from "react-router-dom";
 import Squeals from "./Squeals";
 
 const Ricerca = () => {
@@ -19,12 +10,10 @@ const Ricerca = () => {
 	const [user, setUser] = useState("");
 	const [channel, setChannel] = useState("");
 	const [text, setText] = useState("");
-	
+
 	const location = useLocation();
 	const [searchCriteria, setSearchCriteria] = useState("user");
 	const [tempSearchText, setTempSearchText] = useState("");
-
-	//const [messages, setMessages] = useState([]);
 
 	if (!isAuthenticated) {
 		return <Navigate to="/login" />;
@@ -32,26 +21,24 @@ const Ricerca = () => {
 
 	useEffect(() => {
 		const query = new URLSearchParams(location.search);
-		const hashtagParam = query.get('getHashtag');
-		const userParam = query.get('user');
-		const channelParam = query.get('channel');
-	  
+		const hashtagParam = query.get("getHashtag");
+		const userParam = query.get("user");
+		const channelParam = query.get("channel");
+
 		if (hashtagParam) {
-		  setTempSearchText(hashtagParam);
-		  setSearchCriteria('hashtag');
-		  setHashtag(hashtagParam);
+			setTempSearchText(hashtagParam);
+			setSearchCriteria("hashtag");
+			setHashtag(hashtagParam);
 		} else if (userParam) {
-		  setTempSearchText(userParam);
-		  setSearchCriteria('user');
-		  setUser(userParam);
+			setTempSearchText(userParam);
+			setSearchCriteria("user");
+			setUser(userParam);
 		} else if (channelParam) {
-		  setTempSearchText(channelParam);
-		  setSearchCriteria('channel');
-		  setChannel(channelParam);
+			setTempSearchText(channelParam);
+			setSearchCriteria("channel");
+			setChannel(channelParam);
 		}
-	  }, [location]);
-	  
-	  
+	}, [location]);
 
 	const handleSearchClick = () => {
 		let newHashtag = "";

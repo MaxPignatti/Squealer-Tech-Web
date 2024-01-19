@@ -102,15 +102,28 @@ document.addEventListener("DOMContentLoaded", () => {
 			const tr = document.createElement("tr");
 			tr.innerHTML = `
 				<td>${user.firstName} ${user.lastName}</td>
+				<td>${user.firstName} ${user.lastName}</td>
 				<td>${user.username}</td>
 				<td>${user.email}</td>
 				<td><input type="number" value="${user.dailyChars}" id="daily-${index}"></td>
 				<td><input type="number" value="${user.weeklyChars}" id="weekly-${index}"></td>
-				<td><input type="number" value="${user.monthlyChars}" id="monthly-${index}"></td>
+				<td><input type="number" value="${
+					user.monthlyChars
+				}" id="monthly-${index}"></td>
 				<td>
-					<button onclick="updateChars('${user.username}', ${index})" class="btn btn-primary">Update</button>
-					<button onclick="deleteUser('${user.username}')" class="btn btn-danger">Delete</button>
-				</td>`;
+				<button onclick="updateChars('${
+					user.username
+				}', ${index})" class="btn btn-primary">Update</button>
+				<button onclick="deleteUser('${
+					user.username
+				}')" class="btn btn-danger">Delete</button>
+				<button onclick="toggleBlockUser('${user.username}')" id="blockUserBtn-${
+				user.username
+			}" class="btn ${user.isBlocked ? "btn-success" : "btn-danger"}">
+					${user.isBlocked ? "Sblocca" : "Blocca"}
+				</button>
+				</td>
+				`;
 			tbody.appendChild(tr);
 		});
 		table.appendChild(tbody);
@@ -172,6 +185,33 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 		}
 	};
+
 	highlightActiveFilter();
 	fetchUsers();
 });
+
+function toggleBlockUser(username) {
+	const blockButton = document.getElementById("blockUserBtn-" + username);
+
+	// Invia una richiesta al backend per bloccare/sbloccare l'utente
+	fetch(`http://localhost:3500/api/toggleBlockUser/${username}`, {
+		method: "POST",
+	})
+		.then((response) => response.json())
+		.then((data) => {
+			console.log(data.message);
+
+			if (data.blocked) {
+				blockButton.textContent = "Sblocca";
+				blockButton.classList.remove("btn-danger");
+				blockButton.classList.add("btn-success");
+			} else {
+				blockButton.textContent = "Blocca";
+				blockButton.classList.remove("btn-success");
+				blockButton.classList.add("btn-danger");
+			}
+		})
+		.catch((error) => {
+			console.error("Errore durante il blocco/sblocco dell'utente:", error);
+		});
+}

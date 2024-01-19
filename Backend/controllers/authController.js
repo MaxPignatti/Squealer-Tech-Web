@@ -74,6 +74,9 @@ exports.login = async (req, res) => {
 			return res.status(401).json({ error: "Invalid password" });
 		}
 
+		if (user.isBlocked) {
+			return res.status(402).json({ error: "User is currently blocked" });
+		}
 		const userData = {
 			username: user.username,
 			accessToken: jwt.sign(

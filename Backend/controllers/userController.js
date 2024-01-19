@@ -18,21 +18,18 @@ exports.getUser = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
 	try {
-		const { firstName, lastName, email, username, sortField, sortOrder } =
-			req.query;
+		const { sortField, sortOrder } = req.query;
 
 		let filter = {};
-		if (firstName) filter.firstName = { $regex: firstName, $options: "i" };
-		if (lastName) filter.lastName = { $regex: lastName, $options: "i" };
-		if (email) filter.email = { $regex: email, $options: "i" };
-		if (username) filter.username = { $regex: username, $options: "i" };
-
 		let sort = {};
 		if (sortField && sortOrder) {
 			if (sortField === "popularity") {
-				// Custom sorting logic for popularity
 				sort = {
-					"positiveReactionsGiven.length": sortOrder === "asc" ? 1 : -1,
+					positiveMessages: sortOrder === "asc" ? 1 : -1,
+				};
+			} else if (sortField === "accountType") {
+				sort = {
+					isPro: sortOrder === "asc" ? 1 : -1,
 				};
 			} else {
 				sort[sortField] = sortOrder === "asc" ? 1 : -1;
@@ -159,5 +156,48 @@ exports.updateUserPassword = async (req, res) => {
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: "Internal server error" });
+	}
+};
+
+exports.updateUserChars = async (req, res) => {
+	try {
+		const { username, dailyChars, weeklyChars, monthlyChars } = req.body;
+
+		// Trova l'utente dal database
+		const user = await User.findOne({ username });
+
+		if (!user) {
+			return res.status(404).json({ error: "Utente non trovato" });
+		}
+
+		// Aggiorna i valori dei caratteri rimanenti
+		user.dailyChars = dailyChars;
+		user.weeklyChars = weeklyChars;
+		user.monthlyChars = monthlyChars;
+
+		// Salva le modifiche nell'utente
+		await user.save();
+
+		res.json({ message: "Dati dell'utente aggiornati con successo" });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: "Errore interno del server" });
+	}
+};
+
+exports.deleteUser = async (req, res) => {
+	try {
+		const username = req.params.username;
+		const user = await User.findOne({ username });
+
+		if (!user) {
+			return res.status(404).json({ error: "Utente non trovato" });
+		}
+
+		await User.deleteOne({ username });
+		res.json({ message: "Utente eliminato con successo" });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: "Errore interno del server" });
 	}
 };

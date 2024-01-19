@@ -9,5 +9,8 @@ router.post(userController.updateUserProfile);
 router.get(userController.getUser);
 router.post("/usr/:username/password", userController.updateUserPassword);
 router.get("/usr", userController.getAllUsers);
+router.post("/api/updateUserChars", userController.updateUserChars);
+router.delete("/api/deleteUser/:username", userController.deleteUser);
+
 //router.get("/getSMM/:username", userController.getSMM);
 module.exports = router;

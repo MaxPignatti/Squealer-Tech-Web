@@ -1,57 +1,52 @@
 document.addEventListener("DOMContentLoaded", () => {
-	const filterButton = document.getElementById("filterButton");
-	const ascOrderButton = document.getElementById("ascOrder");
-	const descOrderButton = document.getElementById("descOrder");
 	const userList = document.getElementById("userList");
-	let currentOrder = "asc"; // Default sorting order
 
-	let currentFilter = { field: "", order: "" };
+	let currentFilter = { id: "nameAsc", field: "firstName", order: "asc" };
 
 	// Event listeners for each sorting button
 	document
 		.getElementById("nameAsc")
-		.addEventListener("click", () => setOrder("firstName", "asc"));
+		.addEventListener("click", () => setOrder("nameAsc", "firstName", "asc"));
 	document
 		.getElementById("nameDesc")
-		.addEventListener("click", () => setOrder("firstName", "desc"));
+		.addEventListener("click", () => setOrder("nameDesc", "firstName", "desc"));
 	document
 		.getElementById("typeAsc")
-		.addEventListener("click", () => setOrder("accountType", "asc")); // Example
+		.addEventListener("click", () => setOrder("typeAsc", "accountType", "asc"));
 	document
 		.getElementById("typeDesc")
-		.addEventListener("click", () => setOrder("accountType", "desc")); // Example
+		.addEventListener("click", () =>
+			setOrder("typeDesc", "accountType", "desc")
+		);
 	document
 		.getElementById("popularityAsc")
-		.addEventListener("click", () => setOrder("positiveReactionsGiven", "asc")); // Example
+		.addEventListener("click", () =>
+			setOrder("popularityAsc", "positiveReactionsGiven", "asc")
+		);
 	document
 		.getElementById("popularityDesc")
 		.addEventListener("click", () =>
-			setOrder("positiveReactionsGiven", "desc")
-		); // Example
+			setOrder("popularityDesc", "positiveReactionsGiven", "desc")
+		);
 
-	function setOrder(field, order) {
-		currentFilter = { field, order };
+	function setOrder(id, field, order) {
+		currentFilter = { id, field, order };
 		highlightActiveFilter();
 		fetchUsers();
 	}
 
 	function highlightActiveFilter() {
-		// Reset all button classes
 		document.querySelectorAll(".filter-section button").forEach((button) => {
-			button.classList.remove("btn-success");
+			button.classList.remove("btn-success", "active");
 			button.classList.add("btn-outline-secondary");
 		});
 
 		// Highlight the active filter button
 		if (currentFilter.field && currentFilter.order) {
-			const buttonId = `${currentFilter.field}${
-				currentFilter.order.charAt(0).toUpperCase() +
-				currentFilter.order.slice(1)
-			}`;
-			const activeButton = document.getElementById(buttonId);
+			const activeButton = document.getElementById(currentFilter.id);
 			if (activeButton) {
-				activeButton.classList.add("btn-success");
 				activeButton.classList.remove("btn-outline-secondary");
+				activeButton.classList.add("btn-success", "active");
 			}
 		}
 	}
@@ -68,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		const url = `http://localhost:3500/usr?${queryParams.toString()}`;
-		console.log("Fetching users from URL:", url); // Debugging
+		console.log("Fetching users from URL:", url);
 
 		userList.innerHTML = "Loading users...";
 		fetch(url)
@@ -81,34 +76,102 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	function renderUsers(users) {
-		const userRows = users
-			.map(
-				(user) => `
-            <div class="user-row">
-                <p>Name: ${user.firstName} ${user.lastName}</p>
-                <p>Username: ${user.username}</p>
-                <p>Email: ${user.email}</p>
-                <div>
-                    <button onclick="blockUnblockUser('${user.username}', true)" class="btn btn-warning">Block</button>
-                    <button onclick="blockUnblockUser('${user.username}', false)" class="btn btn-success">Unblock</button>
-                    <input type="number" placeholder="Adjust characters" min="0" id="char-${user.username}" class="form-control">
-                    <button onclick="adjustCharacters('${user.username}')" class="btn btn-info">Adjust</button>
-                </div>
-            </div>
-        `
-			)
-			.join("");
-		userList.innerHTML = userRows;
+		const userListContainer = document.getElementById("userList");
+
+		// Crea la tabella e i suoi componenti
+		const table = document.createElement("table");
+		table.className = "table";
+
+		// Crea e aggiungi l'intestazione della tabella
+		const thead = document.createElement("thead");
+		thead.innerHTML = `
+			<tr>
+				<th>Name</th>
+				<th>Username</th>
+				<th>Email</th>
+				<th>Caratteri Giornalieri</th>
+				<th>Caratteri Settimanali</th>
+				<th>Caratteri Mensili</th>
+				<th>Actions</th>
+			</tr>`;
+		table.appendChild(thead);
+
+		// Crea e aggiungi il corpo della tabella
+		const tbody = document.createElement("tbody");
+		users.forEach((user, index) => {
+			const tr = document.createElement("tr");
+			tr.innerHTML = `
+				<td>${user.firstName} ${user.lastName}</td>
+				<td>${user.username}</td>
+				<td>${user.email}</td>
+				<td><input type="number" value="${user.dailyChars}" id="daily-${index}"></td>
+				<td><input type="number" value="${user.weeklyChars}" id="weekly-${index}"></td>
+				<td><input type="number" value="${user.monthlyChars}" id="monthly-${index}"></td>
+				<td>
+					<button onclick="updateChars('${user.username}', ${index})" class="btn btn-primary">Update</button>
+					<button onclick="deleteUser('${user.username}')" class="btn btn-danger">Delete</button>
+				</td>`;
+			tbody.appendChild(tr);
+		});
+		table.appendChild(tbody);
+
+		// Svuota il contenitore e aggiungi la tabella creata
+		userListContainer.innerHTML = "";
+		userListContainer.appendChild(table);
 	}
 
 	window.blockUnblockUser = function (username, blockStatus) {
 		console.log(`${blockStatus ? "Blocking" : "Unblocking"} user: ${username}`);
-		// Implement the actual logic to block/unblock the user
 	};
 
 	window.adjustCharacters = function (username) {
 		const additionalChars = document.getElementById(`char-${username}`).value;
 		console.log(`Adjusting characters for ${username} by ${additionalChars}`);
-		// Implement the logic to adjust characters
 	};
+
+	window.updateChars = function (username, index) {
+		const dailyChars = document.getElementById(`daily-${index}`).value;
+		const weeklyChars = document.getElementById(`weekly-${index}`).value;
+		const monthlyChars = document.getElementById(`monthly-${index}`).value;
+
+		// Creare un oggetto con i dati da inviare
+		const requestData = {
+			username: username,
+			dailyChars: dailyChars,
+			weeklyChars: weeklyChars,
+			monthlyChars: monthlyChars,
+		};
+
+		fetch("http://localhost:3500/api/updateUserChars", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(requestData),
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(data.message);
+			})
+			.catch((error) => {
+				console.error("Errore durante l'aggiornamento dei caratteri:", error);
+			});
+	};
+
+	window.deleteUser = function (username) {
+		if (confirm("Sei sicuro di voler eliminare questo utente?")) {
+			fetch(`http://localhost:3500/api/deleteUser/${username}`, {
+				method: "DELETE",
+			})
+				.then(() => {
+					console.log("Utente eliminato con successo");
+					fetchUsers();
+				})
+				.catch((error) => {
+					console.error("Errore durante l'eliminazione dell'utente:", error);
+				});
+		}
+	};
+	highlightActiveFilter();
+	fetchUsers();
 });

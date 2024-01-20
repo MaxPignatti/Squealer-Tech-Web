@@ -131,7 +131,7 @@ const LoginPage = () => {
 											}
 											aria-label="Password"
 										/>
-										<input
+										<button
 											type="button"
 											className="password-toggle"
 											onClick={togglePasswordVisibility}
@@ -141,7 +141,7 @@ const LoginPage = () => {
 											) : (
 												<FontAwesomeIcon icon={faEye} />
 											)}
-										</input>
+										</button>
 									</div>
 								</Form.Group>
 

@@ -187,3 +187,29 @@ exports.verifyTokenSMM = async (req, res) => {
 		res.status(401).json({ error: "Invalid or expired token" });
 	}
 };
+
+exports.loginMod = async (req, res) => {
+	const { username, password } = req.body;
+	try {
+		const user = await User.findOne({ username });
+
+		if (!user) {
+			return res.status(404).json({ error: "User not found" });
+		}
+
+		const passwordMatch = await bcrypt.compare(password, user.password);
+
+		if (!passwordMatch) {
+			return res.status(401).json({ error: "Invalid password" });
+		}
+
+		if (user.isBlocked) {
+			return res.status(402).json({ error: "User is currently blocked" });
+		}
+
+		res.json({ message: "Login successful", isMod: user.isMod });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: "Internal server error" });
+	}
+};

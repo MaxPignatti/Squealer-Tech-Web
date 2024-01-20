@@ -15,19 +15,15 @@
 	<body>
 		<div class="container mt-5">
 			<h1 class="text-center">User Management Dashboard</h1>
-			<button
-				id="loadUsersButton"
-				class="btn btn-primary mt-3"
-			>
-				Load Users
-			</button>
 			<div class="filter-section mt-3">
 				<input
 					type="text"
 					id="nameFilter"
 					placeholder="Filter by Name"
 					class="form-control"
+					oninput="filterUsersByName()"
 				/>
+
 				<button
 					id="nameAsc"
 					class="btn"
@@ -67,7 +63,7 @@
 			</div>
 			<div
 				id="userList"
-				class="mt-4"
+				class="container mt-4"
 			></div>
 		</div>
 		<script src="script.js"></script>

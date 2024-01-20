@@ -93,6 +93,10 @@ const userSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false,
 	},
+	isMod: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 module.exports = mongoose.model("User", userSchema);

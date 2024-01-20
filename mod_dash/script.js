@@ -102,7 +102,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			const tr = document.createElement("tr");
 			tr.innerHTML = `
 				<td>${user.firstName} ${user.lastName}</td>
-				<td>${user.firstName} ${user.lastName}</td>
 				<td>${user.username}</td>
 				<td>${user.email}</td>
 				<td><input type="number" value="${user.dailyChars}" id="daily-${index}"></td>
@@ -122,6 +121,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			}" class="btn ${user.isBlocked ? "btn-success" : "btn-danger"}">
 					${user.isBlocked ? "Sblocca" : "Blocca"}
 				</button>
+				<button onclick="toggleModUser('${user.username}')" id="modUserBtn-${
+				user.username
+			}" class="btn ${user.isMod ? "btn-danger" : "btn-success"}">
+						${user.isMod ? "Rimuovi moderatore" : "Imposta moderatore"}
+					</button>
 				</td>
 				`;
 			tbody.appendChild(tr);
@@ -186,6 +190,35 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	};
 
+	window.toggleModUser = function (username) {
+		const modButton = document.getElementById("modUserBtn-" + username);
+
+		// Invia una richiesta al backend per impostare/rimuovere il ruolo di moderatore per l'utente
+		fetch(`http://localhost:3500/api/toggleModUser/${username}`, {
+			method: "POST",
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(data.message);
+
+				if (data.isMod) {
+					modButton.textContent = "Rimuovi Moderatore";
+					modButton.classList.remove("btn-primary");
+					modButton.classList.add("btn-danger");
+				} else {
+					modButton.textContent = "Imposta Moderatore";
+					modButton.classList.remove("btn-danger");
+					modButton.classList.add("btn-primary");
+				}
+			})
+			.catch((error) => {
+				console.error(
+					"Errore durante l'impostazione/rimozione del ruolo di moderatore:",
+					error
+				);
+			});
+	};
+
 	highlightActiveFilter();
 	fetchUsers();
 });
@@ -214,4 +247,23 @@ function toggleBlockUser(username) {
 		.catch((error) => {
 			console.error("Errore durante il blocco/sblocco dell'utente:", error);
 		});
+}
+
+function filterUsersByName() {
+	const nameFilterInput = document.getElementById("nameFilter");
+	const nameFilter = nameFilterInput.value.toLowerCase();
+
+	const userList = document.getElementById("userList");
+	const userRows = userList.querySelectorAll("tbody tr");
+
+	userRows.forEach((userRow) => {
+		const userName = userRow
+			.querySelector("td:first-child")
+			.textContent.toLowerCase();
+		if (userName.includes(nameFilter)) {
+			userRow.style.display = ""; // Mostra la riga se il nome contiene il filtro
+		} else {
+			userRow.style.display = "none"; // Nascondi la riga se il nome non contiene il filtro
+		}
+	});
 }

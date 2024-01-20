@@ -228,3 +228,30 @@ exports.toggleBlockUser = async (req, res) => {
 		res.status(500).json({ error: "Errore interno del server" });
 	}
 };
+
+exports.toggleModUser = async (req, res) => {
+	try {
+		const username = req.params.username;
+		const user = await User.findOne({ username });
+
+		if (!user) {
+			return res.status(404).json({ error: "Utente non trovato" });
+		}
+
+		// Cambia lo stato di blocco dell'utente
+		user.isMod = !user.isMod;
+
+		// Salva le modifiche nell'utente
+		await user.save();
+
+		res.json({
+			message: `Utente ${
+				user.isMod ? "é moderatore" : "non  é piú moderatore"
+			} con successo`,
+			isMod: user.isMod,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: "Errore interno del server" });
+	}
+};

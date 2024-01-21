@@ -81,6 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		// Crea la tabella e i suoi componenti
 		const table = document.createElement("table");
 		table.className = "table";
+		table.style.width = "100%";
+		table.style.textAlign = "center";
 
 		// Crea e aggiungi l'intestazione della tabella
 		const thead = document.createElement("thead");
@@ -234,14 +236,11 @@ document.addEventListener("DOMContentLoaded", () => {
 function toggleBlockUser(username) {
 	const blockButton = document.getElementById("blockUserBtn-" + username);
 
-	// Invia una richiesta al backend per bloccare/sbloccare l'utente
 	fetch(`http://localhost:3500/api/toggleBlockUser/${username}`, {
 		method: "POST",
 	})
 		.then((response) => response.json())
 		.then((data) => {
-			console.log(data.message);
-
 			if (data.blocked) {
 				blockButton.textContent = "Sblocca";
 				blockButton.classList.remove("btn-danger");
@@ -269,9 +268,9 @@ function filterUsersByName() {
 			.querySelector("td:first-child")
 			.textContent.toLowerCase();
 		if (userName.includes(nameFilter)) {
-			userRow.style.display = ""; // Mostra la riga se il nome contiene il filtro
+			userRow.style.display = "";
 		} else {
-			userRow.style.display = "none"; // Nascondi la riga se il nome non contiene il filtro
+			userRow.style.display = "none";
 		}
 	});
 }

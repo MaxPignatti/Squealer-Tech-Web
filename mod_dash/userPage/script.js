@@ -219,6 +219,14 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 	};
 
+	const logoutLink = document.getElementById("logoutLink");
+	logoutLink.style.display = "block";
+
+	logoutLink.addEventListener("click", () => {
+		localStorage.removeItem("userData");
+
+		window.location.href = "../loginPage/index.html";
+	});
 	highlightActiveFilter();
 	fetchUsers();
 });

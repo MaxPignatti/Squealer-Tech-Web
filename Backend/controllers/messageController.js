@@ -652,6 +652,16 @@ exports.getPrivateMessByText = async (req, res) => {
 	}
 };
 
+exports.getAllMessages = async (req, res) => {
+	try {
+		const messages = await Message.find({});
+		res.json(messages);
+	} catch (error) {
+		console.error("Errore durante il recupero di tutti i messaggi:", error);
+		res.status(500).json({ error: "Errore interno del server" });
+	}
+};
+
 const extractHashtags = (text) => {
 	const hashtagRegex = /#(\w+)/g;
 	let match;

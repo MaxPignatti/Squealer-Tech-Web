@@ -19,6 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		if (response.ok) {
 			const data = await response.json();
 			if (data.isMod) {
+				const userData = {
+					username: username,
+				};
+				localStorage.setItem("userData", JSON.stringify(userData));
 				window.location.href = "../userPage/index.html";
 			} else {
 				alert("You are not a moderator.");

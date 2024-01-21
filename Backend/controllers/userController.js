@@ -254,3 +254,31 @@ exports.toggleModUser = async (req, res) => {
 		res.status(500).json({ error: "Errore interno del server" });
 	}
 };
+
+exports.handleProAction = async (req, res) => {
+    try {
+        const { username } = req.params;
+        const { action } = req.body; // 'action' può essere 'request' o 'cancel'
+
+        const user = await User.findOne({ username });
+        if (!user) {
+            return res.status(404).json({ error: "Utente non trovato" });
+        }
+
+        if (action === "request") {
+            // Logica per gestire la richiesta dell'account Pro
+            user.isProRequested = true;
+        } else if (action === "cancel") {
+            // Logica per gestire l'annullamento della richiesta Pro
+            user.isProRequested = false;
+        } else {
+            return res.status(400).json({ error: "Azione non valida" });
+        }
+
+        await user.save();
+        res.json({ message: `Richiesta Pro ${action === "request" ? "inviata" : "annullata"} con successo` });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Errore interno del server" });
+    }
+};

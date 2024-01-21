@@ -46,6 +46,10 @@ const HomePage = () => {
 						path="/UserMention"
 						element={<UserMention />}
 					/>
+					<Route 
+						path= "/Pro"
+						element={<Pro/>}
+					/>
 				</Routes>
 			</Container>
 		</>

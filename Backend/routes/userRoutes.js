@@ -14,6 +14,7 @@ router.post("/api/updateUserChars", userController.updateUserChars);
 router.delete("/api/deleteUser/:username", userController.deleteUser);
 router.post("/api/toggleBlockUser/:username", userController.toggleBlockUser);
 router.post("/api/toggleModUser/:username", userController.toggleModUser);
+router.post("/usr/:username/proAction", userController.handleProAction);
 
 //router.get("/getSMM/:username", userController.getSMM);
 module.exports = router;

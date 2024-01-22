@@ -1,22 +1,17 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div
-      class="max-w-md w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-      role="form"
-    >
-      <div class="mb-6">
+  <div class="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+    <div class="max-w-lg w-full p-6 bg-white shadow-md rounded-lg space-y-6">
+      <div class="text-center">
         <img
           src="../assets/logo.png"
           alt="Logo di Squealer"
-          class="mx-auto h-100 w-auto"
+          class="mx-auto h-48 w-auto"
         />
       </div>
-      <form
-        @submit.prevent="handleLogin"
-        class="space-y-6"
-        aria-labelledby="form-title"
-      >
-        <h2 id="form-title" class="sr-only">Login</h2>
+      <form @submit.prevent="handleLogin" aria-labelledby="form-title">
+        <h2 id="form-title" class="text-2xl font-semibold text-gray-800 mb-4">
+          Login
+        </h2>
         <div>
           <label for="email" class="block text-gray-700 text-sm font-bold mb-2"
             >Email</label
@@ -27,7 +22,7 @@
             v-model="email"
             required
             aria-required="true"
-            class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            class="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
         <div>
@@ -42,7 +37,7 @@
             v-model="password"
             required
             aria-required="true"
-            class="appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            class="border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
         <div
@@ -55,28 +50,25 @@
         <div>
           <button
             type="submit"
-            class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-2 transition-colors duration-200"
           >
             Login
           </button>
         </div>
       </form>
       <p class="mt-8 text-center text-sm text-gray-600">
-        Non sei ancora registrato? Registrati sull'
+        Non sei ancora registrato?
         <a
           href="http://localhost:3000/registration"
           class="text-blue-500 hover:text-blue-800"
           aria-label="Registrati sull'app principale"
         >
-          App principale
-        </a>
-        !
+          Registrati sull'App principale</a
+        >!
       </p>
     </div>
   </div>
 </template>
-
-<!-- Resto del codice JavaScript e CSS rimane invariato -->
 
 <script>
 import { ref } from "vue";
@@ -121,6 +113,7 @@ export default {
           store.dispatch("login", data.user_data.email); // Aggiorna lo stato globale con userData
           if (data.user_data.vip) {
             store.commit("setVip", data.user_data.vip); // Aggiorna lo stato globale con l'oggetto VIP
+            console.log(store.state.vip);
           }
           router.push("/");
         } else {

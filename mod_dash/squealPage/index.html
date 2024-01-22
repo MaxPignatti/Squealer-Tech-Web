@@ -41,7 +41,24 @@
 	<body>
 		<div class="container mt-5">
 			<h1 class="text-center">Message Management Dashboard</h1>
-			<div class="filter-section mt-3"></div>
+			<div id="filterOptions">
+				<input
+					type="text"
+					id="senderFilter"
+					placeholder="Filtra per mittente"
+				/>
+				<input
+					type="date"
+					id="dateFilter"
+				/>
+				<input
+					type="text"
+					id="recipientFilter"
+					placeholder="Filtra per destinatari"
+				/>
+				<button onclick="applyFilters()">Applica filtri</button>
+			</div>
+
 			<div
 				id="messageList"
 				class="container mt-4"

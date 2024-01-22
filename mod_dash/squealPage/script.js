@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
 	fetchAllMessages();
 });
+let allMessages = [];
 
-// Funzione per recuperare tutti i messaggi
 function fetchAllMessages() {
 	const messageList = document.getElementById("messageList");
 	messageList.innerHTML = "Caricamento messaggi in corso...";
@@ -15,7 +15,7 @@ function fetchAllMessages() {
 			return response.json();
 		})
 		.then((messages) => {
-			console.log(messages);
+			allMessages = messages;
 			renderMessages(messages);
 		})
 		.catch((error) => {
@@ -88,12 +88,6 @@ function isTemporizzato(message) {
 	return message.updateInterval && message.nextSendTime && message.maxSendCount;
 }
 
-// Funzione per modificare un messaggio
-function editMessage(messageId) {
-	console.log(`Modifica del messaggio ${messageId}`);
-	// Aggiungi qui la logica per modificare il messaggio
-}
-
 // Funzione per eliminare un messaggio
 function deleteMessage(messageId) {
 	if (confirm("Sei sicuro di voler eliminare questo messaggio?")) {
@@ -108,4 +102,61 @@ function deleteMessage(messageId) {
 				console.error("Errore durante l'eliminazione del messaggio:", error);
 			});
 	}
+}
+
+function applyFilters() {
+	const senderFilter = document
+		.getElementById("senderFilter")
+		.value.toLowerCase();
+	const dateFilter = document.getElementById("dateFilter").value;
+	const recipientFilter = document
+		.getElementById("recipientFilter")
+		.value.toLowerCase();
+
+	const filteredMessages = allMessages.filter((message) => {
+		const messageDate = new Date(message.createdAt).toISOString().split("T")[0];
+		return (
+			(senderFilter === "" ||
+				message.user.toLowerCase().includes(senderFilter)) &&
+			(dateFilter === "" || messageDate === dateFilter) &&
+			(recipientFilter === "" ||
+				message.channel.some((channel) =>
+					channel.toLowerCase().includes(recipientFilter)
+				))
+		);
+	});
+
+	renderMessages(filteredMessages);
+}
+
+function editMessage(messageId) {
+	const message = allMessages.find((m) => m._id === messageId);
+	if (!message) return;
+
+	const channelsString = prompt(
+		"Modifica i canali (separati da virgola):",
+		message.channel.join(", ")
+	);
+	if (channelsString !== null) {
+		const updatedChannels = channelsString.split(",").map((ch) => ch.trim());
+		updateMessageChannels(messageId, updatedChannels);
+	}
+}
+
+// Funzione per inviare la richiesta di aggiornamento dei canali al server
+function updateMessageChannels(messageId, newChannels) {
+	fetch(`http://localhost:3500/squeals/updateChannels/${messageId}`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ channels: newChannels }),
+	})
+		.then((response) => response.json())
+		.then((data) => {
+			console.log("Canali aggiornati:", data);
+			fetchAllMessages();
+			applyFilters();
+		})
+		.catch((error) =>
+			console.error("Errore durante l'aggiornamento dei canali:", error)
+		);
 }

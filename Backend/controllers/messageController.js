@@ -704,7 +704,6 @@ const extractChannelMentions = async (text) => {
 	return Array.from(channelMentionsSet);
 };
 
-// Endpoint per impostare beepRequested a false
 exports.acknowledgeBeep = async (req, res) => {
 	try {
 		const messageId = req.params.id;
@@ -727,5 +726,32 @@ exports.acknowledgeBeep = async (req, res) => {
 	} catch (error) {
 		console.error(error);
 		return res.status(500).json({ error: "Server error" });
+	}
+};
+
+exports.updateMessageChannels = async (req, res) => {
+	try {
+		const { messageId } = req.params;
+		const { channels } = req.body;
+
+		const message = await Message.findById(messageId);
+		if (!message) {
+			return res.status(404).json({ error: "Messaggio non trovato" });
+		}
+
+		// Aggiorna i canali del messaggio
+		message.channel = channels;
+		await message.save();
+
+		res.status(200).json({
+			message: "Canali aggiornati con successo",
+			updatedChannels: message.channel,
+		});
+	} catch (error) {
+		console.error(
+			"Errore durante l'aggiornamento dei canali del messaggio:",
+			error
+		);
+		res.status(500).json({ error: "Errore interno del server" });
 	}
 };

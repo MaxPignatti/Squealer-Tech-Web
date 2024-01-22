@@ -38,6 +38,8 @@ export default {
 }
 
 .user-is-tabbing :focus {
-  outline: 2px solid blue;
+  outline: 2px solid #ffd700; /* Giallo brillante per alta visibilità */
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.7); /* Ombra interna scura per contrasto */
+  transition: outline 0.3s, box-shadow 0.3s; /* Transizione fluida */
 }
 </style>

@@ -53,8 +53,8 @@ function renderMessages(messages) {
             <td>${message.user}</td>
             <td>${formatChannels(message.channel)}</td>
             <td>${message.text}</td>
-            <td>${new Date(message.createdAt).toLocaleString()}</td>
-            <td>${formatBooleanIcon(message.location)}</td>
+            <td>${formatDate(new Date(message.createdAt))}</td>
+			<td>${formatBooleanIcon(message.location)}</td>
             <td>${formatBooleanIcon(message.image)}</td>
             <td>${formatBooleanIcon(isTemporizzato(message))}</td>
             <td>
@@ -73,6 +73,13 @@ function renderMessages(messages) {
 	messageListContainer.appendChild(table);
 }
 
+function formatDate(date) {
+	return date.toLocaleDateString("en-US", {
+		month: "2-digit",
+		day: "2-digit",
+		year: "numeric",
+	});
+}
 function formatBooleanIcon(value) {
 	if (value) {
 		return '<span style="color: green;">✔️</span>';

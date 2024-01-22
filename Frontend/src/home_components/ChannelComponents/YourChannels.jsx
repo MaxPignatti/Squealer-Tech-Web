@@ -12,8 +12,8 @@ const YourChannels = ({
 	const [selectedChannelId, setSelectedChannelId] = useState(null);
 
 	const listGroupStyle = {
-		maxHeight: '142px', 
-		overflowY: 'auto',
+		maxHeight: "142px",
+		overflowY: "auto",
 	};
 
 	useEffect(() => {
@@ -112,14 +112,20 @@ const YourChannels = ({
 		<div className="container mt-3">
 			<h1 className="display-4 text-center">I TUOI CANALI</h1>
 			<Card>
-				<ListGroup variant="flush" style={listGroupStyle}>
+				<ListGroup
+					variant="flush"
+					style={listGroupStyle}
+				>
 					{yourChannels.map((channel) => (
 						<ListGroup.Item key={channel._id}>
 							{channel.name}
-							<input
-								type="button"
+							<button
 								className="badge bg-primary ms-2"
-								style={{ cursor: "pointer" }}
+								style={{
+									cursor: "pointer",
+									border: "none",
+									background: "none",
+								}}
 								onClick={() => {
 									if (selectedChannelId === channel._id) {
 										setSelectedChannelId(null);
@@ -129,7 +135,7 @@ const YourChannels = ({
 								}}
 							>
 								{channel.members.length} Iscritti
-							</input>
+							</button>
 							<Button
 								variant="danger"
 								size="sm"
@@ -139,7 +145,7 @@ const YourChannels = ({
 								Elimina
 							</Button>
 							{selectedChannelId === channel._id && (
-								<ListGroup className="mt-2" >
+								<ListGroup className="mt-2">
 									{membersList.map((member) => (
 										<ListGroup.Item key={member}>
 											{member}

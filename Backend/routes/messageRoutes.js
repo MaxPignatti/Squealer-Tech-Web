@@ -12,6 +12,10 @@ router.post("/squeals/reaction/:messageId", messageController.addReaction);
 router.post("/squeals/edit/:messageId", messageController.updateMessage);
 router.post("/position/:messageId", messageController.updatePosition);
 router.post(
+	"/squeals/updateReactions/:messageId",
+	messageController.updateReactions
+);
+router.post(
 	"/squeals/updateChannels/:messageId",
 	messageController.updateMessageChannels
 );

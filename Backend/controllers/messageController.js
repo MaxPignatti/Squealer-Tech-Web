@@ -755,3 +755,28 @@ exports.updateMessageChannels = async (req, res) => {
 		res.status(500).json({ error: "Errore interno del server" });
 	}
 };
+
+exports.updateReactions = async (req, res) => {
+	try {
+		const { messageId } = req.params;
+		const { positiveReactions, negativeReactions } = req.body;
+
+		const message = await Message.findById(messageId);
+		if (!message) {
+			return res.status(404).json({ error: "Message not found" });
+		}
+
+		// Aggiorna le reazioni positive e negative
+		message.positiveReactions = positiveReactions;
+		message.negativeReactions = negativeReactions;
+		await message.save();
+
+		res.status(200).json({
+			message: "Reactions updated successfully",
+			updatedMessage: message,
+		});
+	} catch (error) {
+		console.error("Error updating reactions:", error);
+		res.status(500).json({ error: "Internal server error" });
+	}
+};

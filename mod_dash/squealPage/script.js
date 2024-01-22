@@ -24,7 +24,6 @@ function fetchAllMessages() {
 		});
 }
 
-// Funzione per mostrare i messaggi in una tabella
 function renderMessages(messages) {
 	const messageListContainer = document.getElementById("messageList");
 	const table = document.createElement("table");
@@ -39,6 +38,8 @@ function renderMessages(messages) {
             <th>Canali</th>
             <th>Messaggio</th>
             <th>Creazione</th>
+            <th>Reazioni Pos.</th>
+            <th>Reazioni Neg.</th>
             <th>Posizione Reale</th>
             <th>Immagine</th>
             <th>Temporizzato</th>
@@ -54,13 +55,22 @@ function renderMessages(messages) {
             <td>${formatChannels(message.channel)}</td>
             <td>${message.text}</td>
             <td>${formatDate(new Date(message.createdAt))}</td>
-			<td>${formatBooleanIcon(message.location)}</td>
+            <td><input type="number" value="${
+							message.positiveReactions
+						}" id="positive-${message._id}" style="width: 80px;"></td>
+            <td><input type="number" value="${
+							message.negativeReactions
+						}" id="negative-${message._id}" style="width: 80px;"></td>
+            <td>${formatBooleanIcon(message.location)}</td>
             <td>${formatBooleanIcon(message.image)}</td>
             <td>${formatBooleanIcon(isTemporizzato(message))}</td>
             <td>
                 <button onclick="editMessage('${
 									message._id
 								}')" class="btn btn-primary">Modifica</button>
+                <button onclick="updateReactions('${
+									message._id
+								}')" class="btn btn-success">Salva Reazioni</button>
                 <button onclick="deleteMessage('${
 									message._id
 								}')" class="btn btn-danger">Elimina</button>
@@ -165,5 +175,28 @@ function updateMessageChannels(messageId, newChannels) {
 		})
 		.catch((error) =>
 			console.error("Errore durante l'aggiornamento dei canali:", error)
+		);
+}
+
+function updateReactions(messageId) {
+	const positiveReactions = document.getElementById(
+		`positive-${messageId}`
+	).value;
+	const negativeReactions = document.getElementById(
+		`negative-${messageId}`
+	).value;
+
+	fetch(`http://localhost:3500/squeals/updateReactions/${messageId}`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ positiveReactions, negativeReactions }),
+	})
+		.then((response) => response.json())
+		.then((data) => {
+			console.log("Reazioni aggiornate:", data);
+			fetchAllMessages(); // Ricarica i messaggi per mostrare i dati aggiornati
+		})
+		.catch((error) =>
+			console.error("Errore durante l'aggiornamento delle reazioni:", error)
 		);
 }

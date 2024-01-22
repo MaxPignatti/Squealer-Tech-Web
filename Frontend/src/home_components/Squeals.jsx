@@ -4,13 +4,16 @@ import Cookies from "js-cookie";
 import Message from "./Message";
 import { useMessageRefs } from "../MessageRefsContext";
 
-const Squeals = ({ hashtag, targetUsername, channel, text }) => {
+const Squeals = ({ searchType, searchText }) => {
 	const [messages, setMessages] = useState([]);
 	const [viewMode, setViewMode] = useState("public"); // 'public' o 'private'
 	const [currentUser, setCurrentUser] = useState(null);
 	const { messageRefs } = useMessageRefs();
 	const [isEditing, setIsEditing] = useState(false);
 	const [isReplying, setIsReplying] = useState(false);
+	const [customPublicMessage, setCustomPublicMessage] = useState("");
+	const [customPrivateMessage, setCustomPrivateMessage] = useState("");
+
 
 	useEffect(() => {
 		const fetchMessages = async () => {
@@ -19,42 +22,51 @@ const Squeals = ({ hashtag, targetUsername, channel, text }) => {
 				const userData = JSON.parse(userDataCookie);
 				const username = userData.username;
 				setCurrentUser(username);
-
+	
 				let baseUrl =
 					viewMode === "public"
 						? `http://localhost:3500/squeals/${username}`
 						: `http://localhost:3500/privateMessages/${username}`;
-
-				if (hashtag) {
-					baseUrl =
-						viewMode === "public"
-							? `http://localhost:3500/squeals/hashtag/${username}/${hashtag}`
-							: `http://localhost:3500/privateMessages/hashtag/${username}/${hashtag}`;
+	
+				if (searchType && searchText) {
+					const encodedSearchText = encodeURIComponent(searchText);
+	
+					switch (searchType) {
+						case "hashtag":
+							baseUrl =
+								viewMode === "public"
+								? `http://localhost:3500/squeals/hashtag/${username}/${encodedSearchText}`
+								: `http://localhost:3500/privateMessages/hashtag/${username}/${encodedSearchText}`;
+							break;
+						case "channel":
+							baseUrl =
+								viewMode === "public"
+								? `http://localhost:3500/squeals/channel/${username}/${encodedSearchText}`
+								: `http://localhost:3500/privateMessages/channel/${username}/${encodedSearchText}`;
+							break;
+						case "text":
+							baseUrl =
+								viewMode === "public"
+									? `http://localhost:3500/squeals/text/${username}/${encodedSearchText}`
+									: `http://localhost:3500/privateMessages/text/${username}/${encodedSearchText}`;
+							break;
+						case "user":
+							baseUrl =
+							viewMode === "public"
+								? `http://localhost:3500/squeals/targetUsername/${username}/${encodedSearchText}`
+								: `http://localhost:3500/privateMessages/targetUsername/${username}/${encodedSearchText}`;
+							break;
+						default:
+							break;
+					}
 				}
-				if (channel) {
-					baseUrl =
-						viewMode === "public"
-							? `http://localhost:3500/squeals/channel/${username}/${channel}`
-							: `http://localhost:3500/privateMessages/channel/${username}/${channel}`;
-				}
-				if (text) {
-					baseUrl =
-						viewMode === "public"
-							? `http://localhost:3500/squeals/text/${username}/${text}`
-							: `http://localhost:3500/privateMessages/text/${username}/${text}`;
-				}
-
-				if (targetUsername) {
-					baseUrl =
-						viewMode === "public"
-							? `http://localhost:3500/squeals/targetUsername/${username}/${targetUsername}`
-							: `http://localhost:3500/privateMessages/targetUsername/${username}/${targetUsername}`;
-				}
-
+	
 				try {
 					const response = await fetch(baseUrl);
 					const data = await response.json();
-					setMessages(data);
+					setMessages(data.messages);
+					setCustomPrivateMessage(data.privateMessage);
+					setCustomPublicMessage(data.publicMessage);
 				} catch (error) {
 					console.error(error);
 				}
@@ -65,7 +77,8 @@ const Squeals = ({ hashtag, targetUsername, channel, text }) => {
 			const pollingInterval = setInterval(fetchMessages, 1000);
 			return () => clearInterval(pollingInterval);
 		}
-	}, [viewMode, isEditing, isReplying, hashtag, channel, text, targetUsername]);
+	}, [viewMode, isEditing, isReplying, searchType, searchText]);
+	
 
 	const handleReaction = async (messageId, isPositiveReaction) => {
 		const userDataCookie = Cookies.get("user_data");
@@ -213,11 +226,12 @@ const Squeals = ({ hashtag, targetUsername, channel, text }) => {
 					) : (
 						<div className="text-center mt-4">
 							<p className="lead">
-								{viewMode === "public"
-									? "Al momento non ci sono Squeals pubblici da mostrare."
-									: "Non hai messaggi privati."}
+								{viewMode === "public" ? 
+									(customPublicMessage || "Al momento non ci sono Squeals pubblici da mostrare.") :
+									(customPrivateMessage || "Non hai messaggi privati.")
+								}
 							</p>
-							{viewMode === "public" && (
+							{viewMode === "public" && !customPublicMessage && (
 								<p>
 									Iscriviti a dei canali per iniziare a esplorare i messaggi e
 									interagire con la community!

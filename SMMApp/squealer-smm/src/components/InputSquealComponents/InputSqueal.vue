@@ -1,69 +1,72 @@
 <template>
-  <div class="flex justify-center">
-    <div class="max-w-3xl w-full p-4 bg-white shadow-md rounded-lg" role="form">
-      <div class="input-squeals-container">
-        <RecipientSelector
-          :searchTerm="searchTerm"
-          @update:searchTerm="searchTerm = $event"
-          :filteredChannels="filteredChannels"
-          @channelSelect="handleChannelSelect"
-          :selectedChannels="selectedChannels"
-          @removeChannel="handleRemoveChannel"
+  <div class="flex">
+    <div
+      class="input-squeal-container"
+      role="form"
+      aria-labelledby="form-heading"
+    >
+      <RecipientSelector
+        :searchTerm="searchTerm"
+        @update:searchTerm="searchTerm = $event"
+        :filteredChannels="filteredChannels"
+        @channelSelect="handleChannelSelect"
+        :selectedChannels="selectedChannels"
+        @removeChannel="handleRemoveChannel"
+      />
+      <div class="flex flex-wrap">
+        <div class="flex-1 min-w-0">
+          <MessageInput
+            :message="message"
+            :dailyCharactersLimit="initialDailyCharacters"
+            :weeklyCharactersLimit="initialWeeklyCharacters"
+            :monthlyCharactersLimit="initialMonthlyCharacters"
+            :imageAttached="image != null"
+            @messageChange="handleMessageChange"
+            @textSelect="handleTextSelect"
+          />
+        </div>
+        <div class="flex-none px-2">
+          <LinkInserter @insertLink="handleInsertLink" />
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center mt-4">
+        <ImageUploader
+          :image="image"
+          :imagePreview="imagePreview"
+          @imageChange="handleImageChange"
+          @removeImage="handleRemoveImage"
         />
-        <div class="flex flex-wrap">
-          <div class="flex-1 min-w-0">
-            <MessageInput
-              :message="message"
-              :dailyCharactersLimit="initialDailyCharacters"
-              :weeklyCharactersLimit="initialWeeklyCharacters"
-              :monthlyCharactersLimit="initialMonthlyCharacters"
-              :imageAttached="image != null"
-              @messageChange="handleMessageChange"
-              @textSelect="handleTextSelect"
-            />
-          </div>
-          <div class="flex-none px-2">
-            <LinkInserter @insertLink="handleInsertLink" />
-          </div>
-        </div>
-
-        <div class="flex justify-between items-center mt-4">
-          <ImageUploader
-            :image="image"
-            :imagePreview="imagePreview"
-            @imageChange="handleImageChange"
-            @removeImage="handleRemoveImage"
-          />
-          <TemporaryMessageOptions
-            :isTemp="isTemp"
-            @toggleTemp="toggleTemp"
-            :updateInterval="updateInterval"
-            @updateIntervalChange="handleUpdateIntervalChange"
-            :maxSendCount="maxSendCount"
-            @maxSendCountChange="handleMaxSendCountChange"
+        <TemporaryMessageOptions
+          :isTemp="isTemp"
+          @toggleTemp="toggleTemp"
+          :updateInterval="updateInterval"
+          @updateIntervalChange="handleUpdateIntervalChange"
+          :maxSendCount="maxSendCount"
+          @maxSendCountChange="handleMaxSendCountChange"
+        />
+      </div>
+      <div class="flex flex-wrap mt-4">
+        <div class="flex-1 min-w-0">
+          <CharCounter
+            :dailyCharacters="dailyCharacters"
+            :weeklyCharacters="weeklyCharacters"
+            :monthlyCharacters="monthlyCharacters"
           />
         </div>
-        <div class="flex flex-wrap mt-4">
-          <div class="flex-1 min-w-0">
-            <CharCounter
-              :dailyCharacters="dailyCharacters"
-              :weeklyCharacters="weeklyCharacters"
-              :monthlyCharacters="monthlyCharacters"
-            />
-          </div>
 
-          <div class="flex-1 flex flex-col justify-end">
-            <button
-              class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-end"
-              @click="handlePublish"
-            >
-              Pubblica
-            </button>
-          </div>
+        <div class="flex-1 flex flex-col justify-end">
+          <button
+            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-end"
+            @click="handlePublish"
+            aria-label="Pubblica messaggio"
+          >
+            Pubblica
+          </button>
         </div>
-        <div v-if="errorMessage" role="alert" style="color: red">
-          {{ errorMessage }}
-        </div>
+      </div>
+      <div v-if="errorMessage" role="alert" style="color: red">
+        {{ errorMessage }}
       </div>
     </div>
   </div>
@@ -398,3 +401,14 @@ export default {
   },
 };
 </script>
+
+<style>
+.input-squeal-container {
+  width: 100%;
+  margin: 1rem;
+  padding: 2rem;
+  box-shadow: 0 8px 16px rgba(0, 128, 0, 0.4); /* Ombra verde più intensa e più grande */
+  color: #333; /* Colore del testo scuro per miglior contrasto */
+  background-color: #fff; /* Sfondo chiaro */
+}
+</style>

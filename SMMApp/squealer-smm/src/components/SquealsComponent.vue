@@ -105,8 +105,8 @@ export default {
           })
           .then((response) => response.json())
           .then((data) => {
-            this.messages = data;
-            this.filteredMessages = data;
+            this.messages = data.messages;
+            this.filteredMessages = data.messages;
             this.sortMessages(false);
           })
           .catch((error) => {

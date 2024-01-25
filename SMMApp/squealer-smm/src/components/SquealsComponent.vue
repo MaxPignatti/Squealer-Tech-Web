@@ -6,58 +6,60 @@
   >
     <div class="flex flex-col md:flex-row md:items-center mb-4">
       <!-- Bottoni per il filtraggio -->
-      <div
-        class="flex flex-wrap justify-center md:justify-start space-x-2 mb-2 md:mb-0"
-      >
+      <div class="filter-buttons">
         <button :class="buttonClass('all')" @click="filterMessages('all')">
           Mostra Tutti
         </button>
-        <button
-          :class="buttonClass('popular')"
-          @click="filterMessages('popular')"
-        >
-          Popolari
-        </button>
-        <button
-          :class="buttonClass('unpopular')"
-          @click="filterMessages('unpopular')"
-        >
-          Impopolari
-        </button>
-        <button
-          :class="buttonClass('controversial')"
-          @click="filterMessages('controversial')"
-        >
-          Controversi
-        </button>
+        <div class="button-group">
+          <button
+            :class="buttonClass('popular')"
+            @click="filterMessages('popular')"
+          >
+            Popolari
+          </button>
+          <button
+            :class="buttonClass('unpopular')"
+            @click="filterMessages('unpopular')"
+          >
+            Impopolari
+          </button>
+          <button
+            :class="buttonClass('controversial')"
+            @click="filterMessages('controversial')"
+          >
+            Controversi
+          </button>
+        </div>
       </div>
-
-      <div class="flex items-center space-x-2 ml-auto">
-        <label for="sortOrder" class="text-gray-700 font-bold"
-          >Ordina per:</label
-        >
-        <select
-          id="sortOrder"
-          v-model="selectedSort"
-          class="bg-white text-gray-700 font-bold py-2 px-4 rounded border border-gray-300"
-        >
-          <option value="createdAt">Data</option>
-          <option value="positiveReactions">Reazioni Positive</option>
-          <option value="negativeReactions">Reazioni Negative</option>
-        </select>
-
-        <button
-          @click="sortMessages(true)"
-          class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded"
-        >
-          ↑
-        </button>
-        <button
-          @click="sortMessages(false)"
-          class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded"
-        >
-          ↓
-        </button>
+      <div class="order-section mt-2 md:mt-0 md:ml-auto">
+        <div class="flex items-center">
+          <label for="sortOrder" class="text-gray-700 font-bold"
+            >Ordina per:</label
+          >
+          <select
+            id="sortOrder"
+            v-model="selectedSort"
+            class="bg-white text-gray-700 font-bold py-2 px-4 rounded border border-gray-300"
+          >
+            <option value="createdAt">Data</option>
+            <option value="positiveReactions">Reazioni Positive</option>
+            <option value="negativeReactions">Reazioni Negative</option>
+          </select>
+        </div>
+        <div class="flex items-center ml-2">
+          <button
+            @click="sortMessages(true)"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded"
+          >
+            ↑
+          </button>
+          <button
+            @click="sortMessages(false)"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded"
+          >
+            ↓
+          </button>
+        </div>
       </div>
     </div>
     <div v-if="messages.length === 0">Caricamento messaggi...</div>
@@ -151,3 +153,45 @@ export default {
   },
 };
 </script>
+
+<style>
+.filter-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Aggiungi margine solo quando i bottoni sono in colonna */
+@media (max-width: 767px) {
+  .filter-buttons > button:first-child {
+    margin-bottom: 0.5rem; /* Distanza tra "Mostra Tutti" e gli altri bottoni */
+  }
+}
+
+.filter-buttons .button-group {
+  display: flex;
+  gap: 0.5rem; /* Spazio uniforme tra i bottoni */
+}
+
+.order-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.order-section .flex.items-center {
+  gap: 0.25rem;
+}
+
+@media (min-width: 768px) {
+  .filter-buttons {
+    flex-direction: row;
+    align-items: center;
+  }
+  .order-section {
+    flex-direction: row;
+    align-items: center;
+    margin-left: 1rem;
+  }
+}
+</style>

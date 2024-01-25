@@ -13,7 +13,7 @@
         :selectedChannels="selectedChannels"
         @removeChannel="handleRemoveChannel"
       />
-      <div class="flex flex-wrap">
+      <div class="flex flex-wrap message-input-row">
         <div class="flex-1 min-w-0">
           <MessageInput
             :message="message"
@@ -410,5 +410,27 @@ export default {
   box-shadow: 0 8px 16px rgba(0, 128, 0, 0.4); /* Ombra verde più intensa e più grande */
   color: #333; /* Colore del testo scuro per miglior contrasto */
   background-color: #fff; /* Sfondo chiaro */
+}
+
+/* Stili specifici per i componenti interni */
+.flex.flex-wrap {
+  gap: 1rem; /* Spazio tra i componenti */
+}
+
+@media (max-width: 768px) {
+  .input-squeal-container .flex-1 {
+    flex-basis: 100%; /* MessageInput occupa tutta la larghezza */
+  }
+
+  .input-squeal-container .flex-none {
+    flex-basis: 100%; /* Anche il componente LinkInserter diventa a tutta larghezza */
+  }
+  .input-squeal-container .flex.justify-between {
+    gap: 1rem;
+  }
+}
+
+.input-squeal-container .message-input-row {
+  margin-top: 0.5rem; /* Aggiunge un piccolo margine superiore */
 }
 </style>

@@ -6,14 +6,11 @@ import Squeals from "./Squeals";
 
 const Ricerca = () => {
 	const { isAuthenticated } = useAuth();
-	const [hashtag, setHashtag] = useState("");
-	const [user, setUser] = useState("");
-	const [channel, setChannel] = useState("");
-	const [text, setText] = useState("");
-
 	const location = useLocation();
 	const [searchCriteria, setSearchCriteria] = useState("user");
 	const [tempSearchText, setTempSearchText] = useState("");
+	const [searchType, setSearchType] = useState("user");
+    const [searchText, setSearchText] = useState("");
 
 	if (!isAuthenticated) {
 		return <Navigate to="/login" />;
@@ -28,53 +25,29 @@ const Ricerca = () => {
 		if (hashtagParam) {
 			setTempSearchText(hashtagParam);
 			setSearchCriteria("hashtag");
-			setHashtag(hashtagParam);
+			setSearchType("hashtag");
+			setSearchText(hashtagParam);
 		} else if (userParam) {
 			setTempSearchText(userParam);
 			setSearchCriteria("user");
-			setUser(userParam);
+			setSearchType("user");
+			setSearchText(userParam);
 		} else if (channelParam) {
 			setTempSearchText(channelParam);
 			setSearchCriteria("channel");
-			setChannel(channelParam);
+			setSearchType("channel");
+			setSearchText(channelParam);
 		}
 	}, [location]);
 
-	const handleSearchClick = () => {
-		let newHashtag = "";
-		let newUser = "";
-		let newChannel = "";
-		let newText = "";
-
-		switch (searchCriteria) {
-			case "user":
-				newUser = tempSearchText;
-				break;
-			case "channel":
-				newChannel = tempSearchText;
-				break;
-			case "hashtag":
-				newHashtag = tempSearchText;
-				break;
-			case "text":
-				newText = tempSearchText;
-				break;
-			default:
-				break;
-		}
-
-		setHashtag(newHashtag);
-		setUser(newUser);
-		setChannel(newChannel);
-		setText(newText);
-	};
+    const handleSearchClick = () => {
+        setSearchType(searchCriteria);
+        setSearchText(tempSearchText);
+    };
 	const handleReset = () => {
-		setTempSearchText("");
-		setUser("");
-		setChannel("");
-		setHashtag("");
-		setText("");
-	};
+        setTempSearchText("");
+        setSearchText("");
+    };
 
 	return (
 		<Container>
@@ -125,10 +98,8 @@ const Ricerca = () => {
 					</Form>
 
 					<Squeals
-						hashtag={hashtag}
-						targetUsername={user}
-						channel={channel}
-						text={text}
+						searchType={searchType}
+						searchText={searchText}
 					/>
 				</Col>
 			</Row>

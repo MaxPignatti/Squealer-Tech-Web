@@ -1,7 +1,37 @@
 document.addEventListener("DOMContentLoaded", () => {
-	fetchAllMessages();
+	validateUserAndFetchMessages();
 });
+
 let allMessages = [];
+
+function validateUserAndFetchMessages() {
+	const userData = JSON.parse(localStorage.getItem("userData"));
+	if (!userData) {
+		redirectToLogin();
+	} else {
+		fetch(`http://localhost:3500/usr/${userData.username}`)
+			.then((response) => response.json())
+			.then((userDetails) => {
+				if (!userDetails.isMod) {
+					redirectToLogin();
+				} else {
+					fetchAllMessages();
+				}
+			})
+			.catch((error) => {
+				console.error(
+					"Errore durante il recupero dei dettagli dell'utente:",
+					error
+				);
+				redirectToLogin();
+			});
+	}
+}
+
+function redirectToLogin() {
+	localStorage.removeItem("userData");
+	window.location.href = "../loginPage/index.html";
+}
 
 function fetchAllMessages() {
 	const messageList = document.getElementById("messageList");
@@ -179,12 +209,24 @@ function updateMessageChannels(messageId, newChannels) {
 }
 
 function updateReactions(messageId) {
-	const positiveReactions = document.getElementById(
-		`positive-${messageId}`
-	).value;
-	const negativeReactions = document.getElementById(
-		`negative-${messageId}`
-	).value;
+	const positiveReactions = parseInt(
+		document.getElementById(`positive-${messageId}`).value,
+		10
+	);
+	const negativeReactions = parseInt(
+		document.getElementById(`negative-${messageId}`).value,
+		10
+	);
+
+	if (
+		isNaN(positiveReactions) ||
+		isNaN(negativeReactions) ||
+		positiveReactions < 0 ||
+		negativeReactions < 0
+	) {
+		alert("Le reazioni devono essere numeri non negativi.");
+		return;
+	}
 
 	fetch(`http://localhost:3500/squeals/updateReactions/${messageId}`, {
 		method: "POST",
@@ -194,7 +236,7 @@ function updateReactions(messageId) {
 		.then((response) => response.json())
 		.then((data) => {
 			console.log("Reazioni aggiornate:", data);
-			fetchAllMessages(); // Ricarica i messaggi per mostrare i dati aggiornati
+			fetchAllMessages();
 		})
 		.catch((error) =>
 			console.error("Errore durante l'aggiornamento delle reazioni:", error)

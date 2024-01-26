@@ -66,7 +66,7 @@ function deleteChannel(channelId) {
 	})
 		.then(() => {
 			console.log("Canale eliminato");
-			fetchChannels();
+			window.location.reload();
 		})
 		.catch((error) =>
 			console.error("Errore nell'eliminazione del canale:", error)
@@ -164,7 +164,7 @@ function deleteMessage(messageId) {
 	})
 		.then(() => {
 			console.log("Messaggio eliminato");
-			fetchAllMessages(); // Ricarica i messaggi
+			fetchAllMessages();
 		})
 		.catch((error) =>
 			console.error("Errore nell'eliminazione del messaggio:", error)
@@ -219,7 +219,7 @@ function saveMessage(messageId, channelName) {
 		.then((response) => response.json())
 		.then((data) => {
 			console.log("Messaggio aggiornato:", data);
-			window.location.reload(); // Ricarica la pagina dopo l'aggiornamento
+			window.location.reload();
 		})
 		.catch((error) => console.error("Errore:", error));
 }

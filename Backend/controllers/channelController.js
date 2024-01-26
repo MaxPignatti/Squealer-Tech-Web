@@ -244,7 +244,6 @@ exports.getTopMessages = async (req, res) => {
 	}
 };
 
-// Nel tuo server Express
 exports.modChannels = async (req, res) => {
 	try {
 		const moderatorChannels = await Channel.find({ moderatorChannel: true });

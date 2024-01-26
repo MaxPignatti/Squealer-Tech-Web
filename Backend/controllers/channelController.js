@@ -243,3 +243,14 @@ exports.getTopMessages = async (req, res) => {
 		res.status(500).json({ error: "Errore interno del server" });
 	}
 };
+
+// Nel tuo server Express
+exports.modChannels = async (req, res) => {
+	try {
+		const moderatorChannels = await Channel.find({ moderatorChannel: true });
+		res.json(moderatorChannels);
+	} catch (error) {
+		console.error("Errore:", error);
+		res.status(500).json({ error: "Errore interno del server" });
+	}
+};

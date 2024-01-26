@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="it">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>Gestione §CANALI</title>
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		/>
+	</head>
+	<body>
+		<div class="container mt-5">
+			<h1 class="text-center">Gestione §CANALI</h1>
+			<div
+				id="channelList"
+				class="mt-4"
+			></div>
+			<div class="mt-4">
+				<input
+					type="text"
+					id="newChannelName"
+					placeholder="Nome del nuovo canale"
+				/>
+				<input
+					type="text"
+					id="newChannelDesc"
+					placeholder="Descrizione del nuovo canale"
+				/>
+				<button onclick="createNewChannel()">Crea Nuovo Canale</button>
+			</div>
+		</div>
+		<script src="script.js"></script>
+	</body>
+</html>

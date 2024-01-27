@@ -112,8 +112,7 @@ export default {
           Cookies.set("authToken", data.user_data.accessToken, { expires: 1 });
           store.dispatch("login", data.user_data.email); // Aggiorna lo stato globale con userData
           if (data.user_data.vip) {
-            store.commit("setVip", data.user_data.vip); // Aggiorna lo stato globale con l'oggetto VIP
-            console.log(store.state.vip);
+            store.commit("setVip", data.user_data.vip);
           }
           router.push("/");
         } else {

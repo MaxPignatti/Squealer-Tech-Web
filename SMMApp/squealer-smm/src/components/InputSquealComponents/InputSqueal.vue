@@ -225,11 +225,6 @@ export default {
         weeklyCharacters.value < 50 ||
         monthlyCharacters.value < 50
       ) {
-        console.log(
-          dailyCharacters.value,
-          weeklyCharacters.value,
-          monthlyCharacters.value
-        );
         alert("Not enough characters for an image upload.");
         return;
       }

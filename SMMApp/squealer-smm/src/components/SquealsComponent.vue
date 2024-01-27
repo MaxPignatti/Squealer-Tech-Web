@@ -7,9 +7,11 @@
     <div class="flex flex-col md:flex-row md:items-center mb-4">
       <!-- Bottoni per il filtraggio -->
       <div class="filter-buttons">
-        <button :class="buttonClass('all')" @click="filterMessages('all')">
-          Mostra Tutti
-        </button>
+        <div class="show-all-button">
+          <button :class="buttonClass('all')" @click="filterMessages('all')">
+            Mostra Tutti
+          </button>
+        </div>
         <div class="button-group">
           <button
             :class="buttonClass('popular')"
@@ -32,7 +34,7 @@
         </div>
       </div>
       <div class="order-section mt-2 md:mt-0 md:ml-auto">
-        <div class="flex items-center">
+        <div class="flex items-center gap-0.25rem">
           <label for="sortOrder" class="text-gray-700 font-bold"
             >Ordina per:</label
           >
@@ -42,11 +44,9 @@
             class="bg-white text-gray-700 font-bold py-2 px-4 rounded border border-gray-300"
           >
             <option value="createdAt">Data</option>
-            <option value="positiveReactions">Reazioni Positive</option>
-            <option value="negativeReactions">Reazioni Negative</option>
+            <option value="positiveReactions">Mi piace</option>
+            <option value="negativeReactions">Non mi piace</option>
           </select>
-        </div>
-        <div class="flex items-center ml-2">
           <button
             @click="sortMessages(true)"
             class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded"
@@ -157,41 +157,46 @@ export default {
 <style>
 .filter-buttons {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-/* Aggiungi margine solo quando i bottoni sono in colonna */
-@media (max-width: 767px) {
-  .filter-buttons > button:first-child {
-    margin-bottom: 0.5rem; /* Distanza tra "Mostra Tutti" e gli altri bottoni */
-  }
-}
-
-.filter-buttons .button-group {
-  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem; /* Spazio uniforme tra i bottoni */
+}
+
+.show-all-button {
+  margin-right: 2rem; /* Spazio dopo "Mostra Tutti" quando non ristretto */
+}
+
+@media (max-width: 386px) {
+  .filter-buttons {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-buttons .show-all-button {
+    margin-bottom: 0.5rem; /* Distanza tra "Mostra Tutti" e i bottoni successivi quando ristretto */
+  }
 }
 
 .order-section {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.25rem;
 }
-
 .order-section .flex.items-center {
   gap: 0.25rem;
 }
 
 @media (min-width: 768px) {
-  .filter-buttons {
-    flex-direction: row;
-    align-items: center;
-  }
   .order-section {
-    flex-direction: row;
-    align-items: center;
     margin-left: 1rem;
+  }
+}
+
+/* Riduzione del padding/margin dei bottoni per adattarsi ai piccoli schermi */
+@media (max-width: 405px) {
+  .filter-buttons button {
+    padding: 0.4rem; /* Riduci ulteriormente il padding */
+    font-size: 0.9rem; /* Riduci leggermente la dimensione del testo */
   }
 }
 </style>

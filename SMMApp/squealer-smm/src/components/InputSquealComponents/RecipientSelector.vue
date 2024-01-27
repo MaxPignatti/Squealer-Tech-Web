@@ -2,48 +2,47 @@
   <div class="space-y-4">
     <div class="text-lg font-semibold">Seleziona i canali destinatari:</div>
 
-    <input
-      type="text"
-      class="form-control mb-2 p-2 border border-gray-300 rounded w-full"
-      :placeholder="'Cerca canale...'"
-      :value="searchTerm"
-      @input="$emit('update:searchTerm', $event.target.value)"
-      aria-label="Cerca canale"
-    />
-
-    <div class="border-t border-gray-200 pt-2">
-      <ul class="space-y-1">
+    <!-- Input di ricerca con menu a tendina -->
+    <div class="relative">
+      <input
+        type="text"
+        class="form-control w-full p-2 border border-gray-300 rounded"
+        placeholder="Cerca canale..."
+        v-model="searchTerm"
+        @focus="isFocused = true"
+        @blur="handleBlur"
+        aria-label="Cerca canale"
+      />
+      <ul
+        v-if="isFocused && searchTerm.length && filteredChannels.length"
+        class="absolute w-full mt-1 z-10 bg-white border border-gray-200 rounded shadow-lg overflow-hidden"
+      >
         <li
           v-for="channel in filteredChannels"
           :key="channel._id"
-          class="flex justify-between items-center"
+          class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+          @click="selectChannel(channel)"
         >
-          <span class="text-gray-700">{{ channel.name }}</span>
-          <button
-            @click="$emit('channelSelect', channel)"
-            class="text-green-500 hover:text-green-600 font-bold py-1 px-3"
-            :aria-label="`Aggiungi ${channel.name}`"
-          >
-            +
-          </button>
+          {{ channel.name }}
         </li>
       </ul>
     </div>
 
+    <!-- Elenco canali selezionati -->
     <div class="border-t border-gray-200 pt-2 mt-4">
-      <ul class="space-y-1">
+      <ul class="flex flex-wrap gap-2">
         <li
           v-for="channel in selectedChannels"
           :key="channel._id"
-          class="flex justify-between items-center bg-gray-100 p-2 rounded"
+          class="bg-gray-100 p-2 rounded flex items-center gap-2"
         >
           <span class="text-gray-700">{{ channel.name }}</span>
           <button
-            @click="$emit('removeChannel', channel._id)"
-            class="text-red-500 hover:text-red-600 font-bold py-1 px-3"
-            :aria-label="`Rimuovi ${channel.name}`"
+            @click="removeChannel(channel._id)"
+            class="text-red-500 hover:text-red-600"
+            aria-label="Rimuovi"
           >
-            -
+            &times;
           </button>
         </li>
       </ul>
@@ -54,10 +53,36 @@
 <script>
 export default {
   props: {
-    searchTerm: String,
     filteredChannels: Array,
-    selectedChannels: Array,
   },
-  emits: ["update:searchTerm", "channelSelect", "removeChannel"],
+  data() {
+    return {
+      searchTerm: "",
+      isFocused: false,
+      selectedChannels: [],
+    };
+  },
+  methods: {
+    selectChannel(channel) {
+      if (
+        !this.selectedChannels.some((selected) => selected._id === channel._id)
+      ) {
+        this.selectedChannels.push(channel);
+      }
+      this.searchTerm = "";
+      this.isFocused = false;
+    },
+    removeChannel(channelId) {
+      this.selectedChannels = this.selectedChannels.filter(
+        (c) => c._id !== channelId
+      );
+    },
+    handleBlur() {
+      // Ritardo prima di nascondere il menu a tendina
+      setTimeout(() => {
+        this.isFocused = false;
+      }, 300);
+    },
+  },
 };
 </script>

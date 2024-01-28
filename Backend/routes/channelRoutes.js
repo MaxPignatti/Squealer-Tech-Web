@@ -19,4 +19,5 @@ router.post(
 );
 router.get("/api/topMessages", channelController.getTopMessages);
 router.get("/channels/moderator", channelController.modChannels);
+router.post("/channels/update/:channelId", channelController.updateChannel);
 module.exports = router;

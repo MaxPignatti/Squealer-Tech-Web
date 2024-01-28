@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-	fetchAllMessages();
 	fetchChannels();
+	fetchAllMessages();
 });
 
 let allMessages = [];
@@ -25,18 +25,22 @@ function renderChannels(channels) {
 		const div = document.createElement("div");
 		div.id = `channel-${channel.name}`;
 		div.innerHTML = `
-            <h3>${channel.name}</h3>
-            <p>${channel.description}</p>
-            <button onclick="deleteChannel('${channel._id}')">Elimina Canale</button>
-            <button onclick="showEditChannelForm('${channel._id}', '${channel.name}', '${channel.description}')">Modifica Canale</button>
-            <button onclick="manageChannelPosts('${channel._id}')">Gestisci Post</button>
-            <div class="messagesContainer"></div>
-        `;
+		<h3>${channel.name}</h3>
+		<p>${channel.description}</p>
+		<button onclick="deleteChannel('${channel._id}')">Elimina Canale</button>
+		<button onclick="updateChannel('${channel._id}', '${channel.name}', '${channel.description}')">Modifica Canale</button>
+		<button onclick="manageChannelPosts('${channel._id}')">Gestisci Post</button>
+		<div class="messagesContainer"></div>
+	`;
 		channelList.appendChild(div);
-
-		// Aggiunta dei messaggi al canale
-		renderMessagesForChannel(channel.name);
 	});
+}
+
+function showEditChannelForm(channelId, name, description) {
+	document.getElementById("editChannelName").value = name;
+	document.getElementById("editChannelDescription").value = description;
+	document.getElementById("editChannelId").value = channelId;
+	$("#editChannelModal").modal("show");
 }
 
 // Crea un nuovo canale
@@ -51,8 +55,8 @@ function createNewChannel() {
 	})
 		.then((response) => response.json())
 		.then((data) => {
-			console.log("Canale creato:", data);
 			fetchChannels();
+			// window.location.reload();
 		})
 		.catch((error) =>
 			console.error("Errore nella creazione del canale:", error)
@@ -65,31 +69,40 @@ function deleteChannel(channelId) {
 		method: "DELETE",
 	})
 		.then(() => {
-			console.log("Canale eliminato");
-			window.location.reload();
+			fetchChannels();
+			// window.location.reload();
 		})
 		.catch((error) =>
 			console.error("Errore nell'eliminazione del canale:", error)
 		);
 }
 
-function updateChannel(channelId) {
-	const newName = document.getElementById(`channelName-${channelId}`).value;
-	const newDescription = document.getElementById(
-		`channelDescription-${channelId}`
-	).value;
+function updateChannel(channelId, currentName, currentDescription) {
+	const newName = prompt("Inserisci il nuovo nome del canale", currentName);
+	const newDescription = prompt(
+		"Inserisci la nuova descrizione del canale",
+		currentDescription
+	);
 
-	fetch(`http://localhost:3500/channels/updateModeratorChannel/${channelId}`, {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ name: newName, description: newDescription }),
-	})
-		.then((response) => response.json())
-		.then((data) => {
-			console.log("Canale aggiornato:", data);
-			fetchChannels();
+	if (newName && newDescription) {
+		fetch(`http://localhost:3500/channels/update/${channelId}`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ name: newName, description: newDescription }),
 		})
-		.catch((error) => console.error("Errore:", error));
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error("Errore nella risposta del server");
+				}
+				return response.json();
+			})
+			.then((data) => {
+				fetchChannels();
+			})
+			.catch((error) =>
+				console.error("Errore nella modifica del canale:", error)
+			);
+	}
 }
 
 function fetchAllMessages() {
@@ -97,7 +110,6 @@ function fetchAllMessages() {
 		.then((response) => response.json())
 		.then((messages) => {
 			allMessages = messages;
-			console.log(messages);
 		})
 		.catch((error) => {
 			console.error("Errore durante il recupero dei messaggi:", error);
@@ -162,13 +174,16 @@ function deleteMessage(messageId) {
 	fetch(`http://localhost:3500/squeals/delete/${messageId}`, {
 		method: "DELETE",
 	})
-		.then(() => {
-			console.log("Messaggio eliminato");
-			fetchAllMessages();
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error("Errore nella risposta del server ");
+			}
+			fetchChannels();
+			// window.location.reload();
 		})
-		.catch((error) =>
-			console.error("Errore nell'eliminazione del messaggio:", error)
-		);
+		.catch((error) => {
+			console.error("Errore nell'eliminazione del messaggio:", error);
+		});
 }
 
 function editMessage(messageId, channelName) {
@@ -218,8 +233,8 @@ function saveMessage(messageId, channelName) {
 	})
 		.then((response) => response.json())
 		.then((data) => {
-			console.log("Messaggio aggiornato:", data);
-			window.location.reload();
+			fetchChannels();
+			// window.location.reload();
 		})
 		.catch((error) => console.error("Errore:", error));
 }

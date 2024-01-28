@@ -8,6 +8,7 @@ router.get("/sentSqueals/:username", messageController.getPublicMessagesByUser);
 router.get("/replies/:messageId", messageController.getRepliesToMessage);
 router.get("/privateMessages/:username", messageController.getPrivateMessages);
 router.post("/reply", messageController.reply);
+router.delete("/squeals/delete/:id", messageController.deleteMessage);
 router.post("/squeals/reaction/:messageId", messageController.addReaction);
 router.post("/squeals/edit/:messageId", messageController.updateMessage);
 router.post("/position/:messageId", messageController.updatePosition);

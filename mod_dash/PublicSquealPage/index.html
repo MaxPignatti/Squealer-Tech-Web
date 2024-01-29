@@ -6,7 +6,7 @@
 			name="viewport"
 			content="width=device-width, initial-scale=1.0"
 		/>
-		<title>Gestione §CANALI</title>
+		<title>Gestione CANALI</title>
 		<link
 			rel="stylesheet"
 			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -14,23 +14,37 @@
 	</head>
 	<body>
 		<div class="container mt-5">
-			<h1 class="text-center">Gestione §CANALI</h1>
+			<h1 class="text-center">Gestione CANALI</h1>
 			<div
 				id="channelList"
 				class="mt-4"
 			></div>
-			<div class="mt-4">
+			<div class="input-group mb-3">
 				<input
 					type="text"
 					id="newChannelName"
+					class="form-control"
 					placeholder="Nome del nuovo canale"
+					aria-label="Nome del nuovo canale"
+					aria-describedby="button-addon2"
 				/>
 				<input
 					type="text"
 					id="newChannelDesc"
+					class="form-control"
 					placeholder="Descrizione del nuovo canale"
+					aria-label="Descrizione del nuovo canale"
 				/>
-				<button onclick="createNewChannel()">Crea Nuovo Canale</button>
+				<div class="input-group-append">
+					<button
+						class="btn btn-outline-secondary"
+						type="button"
+						id="button-addon2"
+						onclick="createNewChannel()"
+					>
+						Crea Nuovo Canale
+					</button>
+				</div>
 			</div>
 		</div>
 		<script src="script.js"></script>

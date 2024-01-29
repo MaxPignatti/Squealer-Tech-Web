@@ -11,54 +11,51 @@
 			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
 			rel="stylesheet"
 		/>
-		<script>
-			const userData = JSON.parse(localStorage.getItem("userData"));
-			if (!userData) {
-				window.location.href = "../loginPage/index.html";
-			} else {
-				fetch(`http://localhost:3500/usr/${userData.username}`)
-					.then((response) => {
-						if (!response.ok) {
-							throw new Error("Network response was not ok");
-						}
-						return response.json();
-					})
-					.then((userDetails) => {
-						if (!userDetails.isMod) {
-							localStorage.removeItem("userData");
-							window.location.href = "../loginPage/index.html";
-						}
-					})
-					.catch((error) => {
-						console.error(
-							"Errore durante il recupero dei dettagli dell'utente:",
-							error
-						);
-					});
-			}
-		</script>
 	</head>
 	<body>
 		<div class="container mt-5">
-			<h1 class="text-center">Message Management Dashboard</h1>
-			<div id="filterOptions">
-				<input
-					type="text"
-					id="senderFilter"
-					placeholder="Filtra per mittente"
-				/>
-				<input
-					type="date"
-					id="dateFilter"
-				/>
-				<input
-					type="text"
-					id="recipientFilter"
-					placeholder="Filtra per destinatari"
-				/>
-				<button onclick="applyFilters()">Applica filtri</button>
+			<h1 class="text-center">Dashboard di Gestione dei Messaggi</h1>
+			<div
+				id="filterOptions"
+				class="mt-3"
+			>
+				<div class="row">
+					<div class="col">
+						<input
+							type="text"
+							class="form-control"
+							id="senderFilter"
+							placeholder="Filtra per mittente"
+							aria-label="Filtra per mittente"
+						/>
+					</div>
+					<div class="col">
+						<input
+							type="date"
+							class="form-control"
+							id="dateFilter"
+							aria-label="Filtra per data"
+						/>
+					</div>
+					<div class="col">
+						<input
+							type="text"
+							class="form-control"
+							id="recipientFilter"
+							placeholder="Filtra per destinatario"
+							aria-label="Filtra per destinatario"
+						/>
+					</div>
+					<div class="col">
+						<button
+							class="btn btn-primary"
+							onclick="applyFilters()"
+						>
+							Applica filtri
+						</button>
+					</div>
+				</div>
 			</div>
-
 			<div
 				id="messageList"
 				class="container mt-4"

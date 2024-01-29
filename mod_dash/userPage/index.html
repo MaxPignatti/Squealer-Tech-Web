@@ -11,32 +11,6 @@
 			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
 			rel="stylesheet"
 		/>
-		<script>
-			const userData = JSON.parse(localStorage.getItem("userData"));
-			if (!userData) {
-				window.location.href = "../loginPage/index.html";
-			} else {
-				fetch(`http://localhost:3500/usr/${userData.username}`)
-					.then((response) => {
-						if (!response.ok) {
-							throw new Error("Network response was not ok");
-						}
-						return response.json();
-					})
-					.then((userDetails) => {
-						if (!userDetails.isMod) {
-							localStorage.removeItem("userData");
-							window.location.href = "../loginPage/index.html";
-						}
-					})
-					.catch((error) => {
-						console.error(
-							"Errore durante il recupero dei dettagli dell'utente:",
-							error
-						);
-					});
-			}
-		</script>
 	</head>
 	<body>
 		<!-- Navbar -->
@@ -83,48 +57,51 @@
 					placeholder="Filter by Name"
 					class="form-control"
 					oninput="filterUsersByName()"
+					aria-label="Filter users by name"
 				/>
 
-				<button
-					id="nameAsc"
-					class="btn"
-				>
-					Name Asc
-				</button>
-				<button
-					id="nameDesc"
-					class="btn"
-				>
-					Name Desc
-				</button>
-				<button
-					id="typeAsc"
-					class="btn"
-				>
-					Type Asc
-				</button>
-				<button
-					id="typeDesc"
-					class="btn"
-				>
-					Type Desc
-				</button>
-				<button
-					id="popularityAsc"
-					class="btn"
-				>
-					Popularity Asc
-				</button>
-				<button
-					id="popularityDesc"
-					class="btn"
-				>
-					Popularity Desc
-				</button>
+				<div class="mt-3 d-flex justify-content-around">
+					<button
+						id="nameAsc"
+						class="btn btn-outline-primary"
+					>
+						Name Asc
+					</button>
+					<button
+						id="nameDesc"
+						class="btn btn-outline-primary"
+					>
+						Name Desc
+					</button>
+					<button
+						id="typeAsc"
+						class="btn btn-outline-primary"
+					>
+						Type Asc
+					</button>
+					<button
+						id="typeDesc"
+						class="btn btn-outline-primary"
+					>
+						Type Desc
+					</button>
+					<button
+						id="popularityAsc"
+						class="btn btn-outline-primary"
+					>
+						Popularity Asc
+					</button>
+					<button
+						id="popularityDesc"
+						class="btn btn-outline-primary"
+					>
+						Popularity Desc
+					</button>
+				</div>
 			</div>
 			<div
 				id="userList"
-				class="container mt-4"
+				class="mt-4"
 			></div>
 		</div>
 		<script src="script.js"></script>

@@ -5,7 +5,7 @@ const user = require("../models/user");
 
 exports.createChannel = async (req, res) => {
 	try {
-		const { name, description, creator } = req.body;
+		const { name, description, creator, isMod } = req.body;
 
 		// Verifica se esiste già un canale con lo stesso nome
 		const existingChannel = await Channel.findOne({ name });
@@ -20,7 +20,8 @@ exports.createChannel = async (req, res) => {
 			name,
 			description,
 			creator,
-			members: [creator], // Aggiunge il creatore come membro iniziale del canale
+			moderatorChannel: isMod ? true : false,
+			members: [creator],
 		});
 
 		await newChannel.save();

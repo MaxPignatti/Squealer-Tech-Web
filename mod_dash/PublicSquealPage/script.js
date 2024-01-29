@@ -29,7 +29,6 @@ function renderChannels(channels) {
 		<p>${channel.description}</p>
 		<button onclick="deleteChannel('${channel._id}')">Elimina Canale</button>
 		<button onclick="updateChannel('${channel._id}', '${channel.name}', '${channel.description}')">Modifica Canale</button>
-		<button onclick="manageChannelPosts('${channel._id}')">Gestisci Post</button>
 		<div class="messagesContainer"></div>
 	`;
 		channelList.appendChild(div);
@@ -41,26 +40,6 @@ function showEditChannelForm(channelId, name, description) {
 	document.getElementById("editChannelDescription").value = description;
 	document.getElementById("editChannelId").value = channelId;
 	$("#editChannelModal").modal("show");
-}
-
-// Crea un nuovo canale
-function createNewChannel() {
-	const name = document.getElementById("newChannelName").value;
-	const description = document.getElementById("newChannelDesc").value;
-
-	fetch("http://localhost:3500/channels/create", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ name, description }),
-	})
-		.then((response) => response.json())
-		.then((data) => {
-			fetchChannels();
-			// window.location.reload();
-		})
-		.catch((error) =>
-			console.error("Errore nella creazione del canale:", error)
-		);
 }
 
 // Elimina un canale
@@ -237,4 +216,42 @@ function saveMessage(messageId, channelName) {
 			// window.location.reload();
 		})
 		.catch((error) => console.error("Errore:", error));
+}
+
+function createNewChannel() {
+	const name = document.getElementById("newChannelName").value;
+	const description = document.getElementById("newChannelDesc").value;
+
+	if (!name.trim() || !description.trim()) {
+		alert("Inserisci sia il nome che la descrizione del canale.");
+		return;
+	}
+
+	const userData = JSON.parse(localStorage.getItem("userData"));
+	const username = userData ? userData.username : null;
+
+	fetch("http://localhost:3500/channels", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({
+			name: name.toUpperCase(),
+			description,
+			creator: username,
+			isMod: true,
+		}),
+	})
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error("Errore nella risposta del server");
+			}
+			return response.json();
+		})
+		.then((data) => {
+			alert("Canale creato con successo!");
+			fetchChannels();
+		})
+		.catch((error) => {
+			console.error("Errore nella creazione del canale:", error);
+			alert("Si è verificato un errore durante la creazione del canale.");
+		});
 }

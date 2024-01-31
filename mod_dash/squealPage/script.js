@@ -1,8 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
+	checkLoginStatus();
 	validateUserAndFetchMessages();
 });
 
 let allMessages = [];
+
+const logoutLink = document.getElementById("logoutLink");
+logoutLink.style.display = "block";
+
+logoutLink.addEventListener("click", () => {
+	localStorage.removeItem("userData");
+
+	window.location.href = "../loginPage/login.html";
+});
 
 function validateUserAndFetchMessages() {
 	const userData = JSON.parse(localStorage.getItem("userData"));
@@ -30,7 +40,7 @@ function validateUserAndFetchMessages() {
 
 function redirectToLogin() {
 	localStorage.removeItem("userData");
-	window.location.href = "../loginPage/index.html";
+	window.location.href = "../loginPage/login.html";
 }
 
 function fetchAllMessages() {
@@ -241,4 +251,24 @@ function updateReactions(messageId) {
 		.catch((error) =>
 			console.error("Errore durante l'aggiornamento delle reazioni:", error)
 		);
+}
+
+function checkLoginStatus() {
+	const isLoggedIn = localStorage.getItem("userData") !== null;
+	const currentPage = window.location.pathname.split("/").pop();
+
+	console.log("Is Logged In:", isLoggedIn);
+	console.log("Current Page:", currentPage);
+
+	if (isLoggedIn) {
+		if (currentPage === "login.html") {
+			console.log("Redirecting to user page...");
+			window.location.href = "../userPage/user.html";
+		}
+	} else {
+		if (currentPage !== "login.html") {
+			console.log("Redirecting to login page...");
+			window.location.href = "../loginPage/login.html";
+		}
+	}
 }

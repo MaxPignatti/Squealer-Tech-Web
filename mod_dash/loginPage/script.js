@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+	checkLoginStatus();
 	const loginForm = document.getElementById("loginForm");
 
 	loginForm.addEventListener("submit", async (e) => {
@@ -23,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					username: username,
 				};
 				localStorage.setItem("userData", JSON.stringify(userData));
-				window.location.href = "../userPage/index.html";
+				window.location.href = "../userPage/user.html";
 			} else {
 				alert("You are not a moderator.");
 			}
@@ -32,3 +33,23 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	});
 });
+
+function checkLoginStatus() {
+	const isLoggedIn = localStorage.getItem("userData") !== null;
+	const currentPage = window.location.pathname.split("/").pop();
+
+	console.log("Is Logged In:", isLoggedIn);
+	console.log("Current Page:", currentPage);
+
+	if (isLoggedIn) {
+		if (currentPage === "login.html") {
+			console.log("Redirecting to user page...");
+			window.location.href = "../userPage/user.html";
+		}
+	} else {
+		if (currentPage !== "login.html") {
+			console.log("Redirecting to login page...");
+			window.location.href = "../loginPage/login.html";
+		}
+	}
+}

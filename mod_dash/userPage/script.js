@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+	checkLoginStatus();
 	const userList = document.getElementById("userList");
 
 	let currentFilter = { id: "nameAsc", field: "firstName", order: "asc" };
@@ -227,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	logoutLink.addEventListener("click", () => {
 		localStorage.removeItem("userData");
 
-		window.location.href = "../loginPage/index.html";
+		window.location.href = "../loginPage/login.html";
 	});
 	highlightActiveFilter();
 	fetchUsers();
@@ -273,4 +274,24 @@ function filterUsersByName() {
 			userRow.style.display = "none";
 		}
 	});
+}
+
+function checkLoginStatus() {
+	const isLoggedIn = localStorage.getItem("userData") !== null;
+	const currentPage = window.location.pathname.split("/").pop();
+
+	console.log("Is Logged In:", isLoggedIn);
+	console.log("Current Page:", currentPage);
+
+	if (isLoggedIn) {
+		if (currentPage === "login.html") {
+			console.log("Redirecting to user page...");
+			window.location.href = "../userPage/user.html";
+		}
+	} else {
+		if (currentPage !== "login.html") {
+			console.log("Redirecting to login page...");
+			window.location.href = "../loginPage/login.html";
+		}
+	}
 }

@@ -5,6 +5,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 let allMessages = [];
 
+const logoutLink = document.getElementById("logoutLink");
+logoutLink.style.display = "block";
+
+logoutLink.addEventListener("click", () => {
+	localStorage.removeItem("userData");
+
+	window.location.href = "../loginPage/login.html";
+});
+
 function validateUserAndFetchMessages() {
 	const userData = JSON.parse(localStorage.getItem("userData"));
 	if (!userData) {
@@ -31,7 +40,7 @@ function validateUserAndFetchMessages() {
 
 function redirectToLogin() {
 	localStorage.removeItem("userData");
-	window.location.href = "../loginPage/index.html";
+	window.location.href = "../loginPage/login.html";
 }
 
 function fetchAllMessages() {

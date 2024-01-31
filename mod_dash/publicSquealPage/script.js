@@ -7,6 +7,15 @@ document.addEventListener("DOMContentLoaded", () => {
 let allMessages = [];
 let allChannels = [];
 
+const logoutLink = document.getElementById("logoutLink");
+logoutLink.style.display = "block";
+
+logoutLink.addEventListener("click", () => {
+	localStorage.removeItem("userData");
+
+	window.location.href = "../loginPage/login.html";
+});
+
 // Fetch e mostra tutti i canali
 function fetchChannels() {
 	fetch("http://localhost:3500/channels/moderator")

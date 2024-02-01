@@ -11,6 +11,7 @@ import Maps from "./Maps";
 import { marked } from "marked";
 import ReplySqueal from "./ReplySqueal";
 import { useMessageRefs } from "../MessageRefsContext";
+import Cookies from "js-cookie";
 
 const Message = ({
 	message,
@@ -31,6 +32,12 @@ const Message = ({
 	const messageRef = useRef(null);
 	const { setRef } = useMessageRefs();
 	const [hasBeenViewed, setHasBeenViewed] = useState(false);
+	const [userChannels, setUserChannels] = useState([]);
+
+	const [showInviteCard, setShowInviteCard] = useState(false);
+	const [inviteChannelName, setInviteChannelName] = useState("");
+	const [channel, setChannel] = useState([]);
+	const [selectedChannel, setSelectedChannel] = useState([]);
 
 	const navigate = useNavigate();
 
@@ -101,6 +108,50 @@ const Message = ({
 		return () => clearInterval(intervalId);
 	}, [message]);
 
+	useEffect(() => {
+		const userDataCookie = Cookies.get("user_data");
+		if (userDataCookie) {
+			const userData = JSON.parse(userDataCookie);
+			const username = userData.username;
+
+			fetch(`http://localhost:3500/usr/${username}`)
+				.then((response) => {
+					if (response.status === 200) {
+						return response.json();
+					} else {
+						throw new Error("API call failed");
+					}
+				})
+				.then((data) => {
+
+					if (data && data.channels) {
+                        setUserChannels(data.channels);
+                    }
+					//setUserData(newData);
+				})
+				.catch((error) => {
+					console.error("API call error:", error);
+				});
+		} else {
+			console.error("User data not found in cookies");
+		}
+	}, []);
+
+	useEffect(() => {
+		const userDataCookie = Cookies.get("user_data");
+		if (userDataCookie) {
+			const userData = JSON.parse(userDataCookie);
+			const username = userData.username;
+
+			fetch(`http://localhost:3500/channels/all/${username}`)
+				.then((response) => response.json())
+				.then((data) => setChannel(data))
+				.catch((error) =>
+					console.error("Errore durante il recupero di tutti i canali:", error)
+				);
+		}
+	}, []);
+
 	const handleBeepAcknowledged = async (messageId) => {
 		try {
 			const response = await fetch(
@@ -166,9 +217,57 @@ const Message = ({
 	};
 	
 	window.handleChannelMentionClick = (channelName) => {
-	navigate(`/ricerca?channel=${channelName}`);
-	};
+
+		if (isUserSubscribedToChannel(channelName, userChannels)){
+			navigate(`/ricerca?channel=${channelName}`);
+			setShowInviteCard(false);
+		}
+		else{
+			const c = channel.find(chan => chan.name === channelName);
+			setSelectedChannel(c);
+			setInviteChannelName(channelName);
+			setShowInviteCard(true);
+			
+		}
 		
+	};
+	
+	const isUserSubscribedToChannel = (channelName, userChannels) => {
+		return userChannels.includes(channelName);
+	};
+	
+	const subscribeToChannel = async (channel, channelName) => {
+		try {
+			const userDataCookie = Cookies.get("user_data");
+			if (userDataCookie) {
+				const userData = JSON.parse(userDataCookie);
+				const username = userData.username;
+
+				const response = await fetch(
+					`http://localhost:3500/channels/subscribe/${channel._id}`,
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ username }),
+					}
+				);
+
+				if (response.status === 200) {
+					console.log("Iscrizione avvenuta con successo.");
+					setShowInviteCard(false);
+					navigate(`/ricerca?channel=${channelName}`);
+
+				} else {
+					console.error("Errore durante l'iscrizione:", response.status);
+				}
+			}
+		} catch (error) {
+			console.error("Errore durante la richiesta di iscrizione:", error);
+		}
+	};
+	
 	const renderText = (text) => {
 	
 	let formattedText = text;
@@ -191,10 +290,8 @@ const Message = ({
 			return `<span style="color: #009688; cursor: pointer;" onClick="window.handleChannelMentionClick('${channelName}')">${match}</span>`;
 		}
 		return match;
-	});
+	}); 
 
-	
-	
 	// Gestione dei link
 	formattedText = formattedText.replace(/\[([^\]]+)\]\(((?!http:\/\/|https:\/\/).+)\)/g, "[$1](http://$2)");
 	
@@ -202,10 +299,57 @@ const Message = ({
 	return { __html: rawMarkup };
 	};
 	  
+	const overlayStyle = {
+		position: 'fixed',
+		top: 0,
+		left: 0,
+		width: '100%',
+		height: '100%',
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+		zIndex: 1050, // Sovraimpressione rispetto agli altri contenuti
+	  };
 	  
 	  
+	const cardStyle = {
+		maxWidth: '600px', 
+		width: '90%', 
+		padding: '20px', 
+		margin: '20px', 
+		display: 'flex', 
+		flexDirection: 'column', 
+		alignItems: 'center', 
+		backgroundColor: '#fff', 
+		borderRadius: '8px', 
+		boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', 
+	};
 
 	return (
+
+		<>
+		{
+		showInviteCard && (
+			<div style={overlayStyle}>
+			<Card style={cardStyle}>
+				<Card.Body>
+				<Card.Title>Non sei iscritto a questo canale, unisciti così potrai vedere i suoi squeals</Card.Title>
+				<Card.Text>
+					Vuoi unirti al canale {inviteChannelName}?
+				</Card.Text>
+				<Button variant="primary" onClick={() => subscribeToChannel(selectedChannel, inviteChannelName)}>
+					Unisciti
+				</Button>
+				{' '}
+				<Button variant="secondary" onClick={() => setShowInviteCard(false)}>
+					Chiudi
+				</Button>
+				</Card.Body>
+			</Card>
+			</div>
+		)
+		}
 		<Card
 			ref={messageRef}
 			key={message._id}
@@ -359,8 +503,11 @@ const Message = ({
 						onEndReplying={onEndReplying}
 					/>
 				)}
+
+
 			</Card.Body>
 		</Card>
+		</>
 	);
 };
 

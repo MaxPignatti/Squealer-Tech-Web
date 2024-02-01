@@ -1,5 +1,5 @@
 .navbar {
-  background-color: #324A5F;
+  background-color: #324a5f;
   box-shadow: 0 2px 4px rgba(10, 111, 226, 0.712);
 }
 
@@ -12,34 +12,37 @@
   transform: scale(1.1);
 }
 
-.nav-link, .navbar-toggler {
-  color: #F7F7FF !important;
+.nav-link,
+.navbar-toggler {
+  color: #1100ff !important; /* Cambiato il colore delle scritte */
   transition: color 0.3s ease;
 }
 
-.nav-link:hover, .navbar-toggler:hover {
-  color: #A4C3B2 !important;
+.nav-link:hover,
+.navbar-toggler:hover {
+  color: #a4c3b2 !important;
 }
 
 #symbol {
   font-size: 1.5rem;
 }
 
-.nav-dropdown, .dropdown-menu {
-  background-color: #506680; 
-  border: 0; 
+.nav-dropdown,
+.dropdown-menu {
+  background-color: #506680;
+  border: 0;
   min-width: 200px;
 }
 
 .dropdown-item {
-  color: #F7F7FF;
+  color: #f7f7ff;
   transition: background-color 0.3s ease;
   padding: 10px 15px;
   font-size: 1rem;
 }
 
 .dropdown-item:hover {
-  background-color: #A4C3B2; /* Colore di sfondo al passaggio del mouse */
+  background-color: #a4c3b2; /* Colore di sfondo al passaggio del mouse */
 }
 
 /* Aggiustamenti per dispositivi mobili */

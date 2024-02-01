@@ -283,15 +283,8 @@ function checkLoginStatus() {
 	console.log("Is Logged In:", isLoggedIn);
 	console.log("Current Page:", currentPage);
 
-	if (isLoggedIn) {
-		if (currentPage === "login.html") {
-			console.log("Redirecting to user page...");
-			window.location.href = "../userPage/user.html";
-		}
-	} else {
-		if (currentPage !== "login.html") {
-			console.log("Redirecting to login page...");
-			window.location.href = "../loginPage/login.html";
-		}
+	if (!isLoggedIn && currentPage !== "login.html") {
+		console.log("Redirecting to login page...");
+		window.location.href = "../loginPage/login.html";
 	}
 }

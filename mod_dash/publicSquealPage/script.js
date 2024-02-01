@@ -1,7 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
 	checkLoginStatus();
-	fetchChannels();
 	fetchAllMessages();
+	fetchChannels();
 });
 
 let allMessages = [];
@@ -12,7 +12,6 @@ logoutLink.style.display = "block";
 
 logoutLink.addEventListener("click", () => {
 	localStorage.removeItem("userData");
-
 	window.location.href = "../loginPage/login.html";
 });
 
@@ -31,17 +30,24 @@ function fetchChannels() {
 function renderChannels(channels) {
 	const channelList = document.getElementById("channelList");
 	channelList.innerHTML = "";
+
 	channels.forEach((channel) => {
-		const div = document.createElement("div");
-		div.id = `channel-${channel.name}`;
-		div.innerHTML = `
-		<h3>${channel.name}</h3>
-		<p>${channel.description}</p>
-		<button onclick="deleteChannel('${channel._id}')">Elimina Canale</button>
-		<button onclick="updateChannel('${channel._id}', '${channel.name}', '${channel.description}')">Modifica Canale</button>
-		<div class="messagesContainer"></div>
-	`;
-		channelList.appendChild(div);
+		const card = document.createElement("div");
+		card.className = "card mb-3";
+		card.id = `channel-${channel._id}`;
+
+		card.innerHTML = `
+            <div class="card-body">
+                <h5 class="card-title">${channel.name}</h5>
+                <p class="card-text">${channel.description}</p>
+                <button onclick="deleteChannel('${channel._id}')" class="btn btn-danger btn-sm">Elimina Canale</button>
+                <button onclick="updateChannel('${channel._id}', '${channel.name}', '${channel.description}')" class="btn btn-primary btn-sm">Modifica Canale</button>
+                <div class="messagesContainer"></div> 
+            </div>
+        `;
+
+		channelList.appendChild(card);
+		renderMessagesForChannel(channel.name, channel._id);
 	});
 }
 
@@ -59,7 +65,6 @@ function deleteChannel(channelId) {
 	})
 		.then(() => {
 			fetchChannels();
-			// window.location.reload();
 		})
 		.catch((error) =>
 			console.error("Errore nell'eliminazione del canale:", error)
@@ -108,8 +113,12 @@ function fetchAllMessages() {
 }
 
 function renderMessagesForChannel(channelName, channelId) {
-	const channelDiv = document.getElementById(`channel-${channelName}`);
-	if (!channelDiv) return;
+	// Usa channelId per selezionare il div del canale
+	const channelDiv = document.getElementById(`channel-${channelId}`);
+	if (!channelDiv) {
+		console.error(`Div del canale non trovato per ID: channel-${channelId}`);
+		return;
+	}
 
 	// Crea la tabella con le classi di Bootstrap
 	const table = document.createElement("table");
@@ -137,7 +146,7 @@ function renderMessagesForChannel(channelName, channelId) {
 		const tr = document.createElement("tr");
 		tr.innerHTML = `
             <td>${message.user}</td>
-            <td id="messageText-${message._id}-${channelName}">${
+            <td id="messageText-${message._id}-${channelId}">${
 			message.text
 		}</td>
             <td>${new Date(message.createdAt).toLocaleDateString()}</td>
@@ -168,7 +177,6 @@ function deleteMessage(messageId) {
 				throw new Error("Errore nella risposta del server ");
 			}
 			fetchChannels();
-			// window.location.reload();
 		})
 		.catch((error) => {
 			console.error("Errore nell'eliminazione del messaggio:", error);
@@ -223,7 +231,6 @@ function saveMessage(messageId, channelName) {
 		.then((response) => response.json())
 		.then((data) => {
 			fetchChannels();
-			// window.location.reload();
 		})
 		.catch((error) => console.error("Errore:", error));
 }
@@ -270,18 +277,8 @@ function checkLoginStatus() {
 	const isLoggedIn = localStorage.getItem("userData") !== null;
 	const currentPage = window.location.pathname.split("/").pop();
 
-	console.log("Is Logged In:", isLoggedIn);
-	console.log("Current Page:", currentPage);
-
-	if (isLoggedIn) {
-		if (currentPage === "login.html") {
-			console.log("Redirecting to user page...");
-			window.location.href = "../userPage/user.html";
-		}
-	} else {
-		if (currentPage !== "login.html") {
-			console.log("Redirecting to login page...");
-			window.location.href = "../loginPage/login.html";
-		}
+	if (!isLoggedIn && currentPage !== "login.html") {
+		console.log("Redirecting to login page...");
+		window.location.href = "../loginPage/login.html";
 	}
 }

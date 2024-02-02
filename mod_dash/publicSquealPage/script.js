@@ -40,8 +40,8 @@ function renderChannels(channels) {
             <div class="card-body">
                 <h5 class="card-title">${channel.name}</h5>
                 <p class="card-text">${channel.description}</p>
-                <button onclick="deleteChannel('${channel._id}')" class="btn btn-danger btn-sm">Elimina Canale</button>
-                <button onclick="updateChannel('${channel._id}', '${channel.name}', '${channel.description}')" class="btn btn-primary btn-sm">Modifica Canale</button>
+                <button onclick="deleteChannel('${channel._id}')" class="btn btn-danger btn-sm" aria-label="Elimina canale ${channel.name}">Elimina Canale</button>
+				<button onclick="updateChannel('${channel._id}', '${channel.name}', '${channel.description}')" class="btn btn-primary btn-sm" aria-label="Modifica canale ${channel.name}">Modifica Canale</button>
                 <div class="messagesContainer"></div> 
             </div>
         `;
@@ -150,14 +150,17 @@ function renderMessagesForChannel(channelName, channelId) {
 			message.text
 		}</td>
             <td>${new Date(message.createdAt).toLocaleDateString()}</td>
-            <td>
-                <button class="btn btn-primary btn-sm" onclick="editMessage('${
-									message._id
-								}', '${channelName}')">Modifica</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteMessage('${
-									message._id
-								}')">Elimina</button>
-            </td>`;
+			<td>
+			<button class="btn btn-primary btn-sm" onclick="editMessage('${
+				message._id
+			}', '${channelName}')" aria-label="Modifica messaggio ${
+			message._id
+		} in ${channelName}">Modifica</button>
+			<button class="btn btn-danger btn-sm" onclick="deleteMessage('${
+				message._id
+			}')" aria-label="Elimina messaggio ${message._id}">Elimina</button>
+		</td>
+		`;
 		tbody.appendChild(tr);
 	});
 
@@ -198,8 +201,9 @@ function editMessage(messageId, channelName) {
 	const currentText = messageTextElement.innerText;
 
 	messageTextElement.innerHTML = `
-        <input type="text" id="editText-${messageId}-${channelName}" value="${currentText}">
-        <button onclick="saveMessage('${messageId}', '${channelName}')">Conferma</button>`;
+    <label for="editText-${messageId}-${channelName}" class="sr-only">Modifica Messaggio</label>
+    <input type="text" id="editText-${messageId}-${channelName}" value="${currentText}" aria-label="Campo di testo per modifica messaggio">
+    <button onclick="saveMessage('${messageId}', '${channelName}')" aria-label="Salva modifiche al messaggio">Conferma</button>`;
 }
 
 function saveMessage(messageId, channelName) {
@@ -278,7 +282,6 @@ function checkLoginStatus() {
 	const currentPage = window.location.pathname.split("/").pop();
 
 	if (!isLoggedIn && currentPage !== "login.html") {
-		console.log("Redirecting to login page...");
 		window.location.href = "../loginPage/login.html";
 	}
 }

@@ -38,11 +38,7 @@ function checkLoginStatus() {
 	const isLoggedIn = localStorage.getItem("userData") !== null;
 	const currentPage = window.location.pathname.split("/").pop();
 
-	console.log("Is Logged In:", isLoggedIn);
-	console.log("Current Page:", currentPage);
-
 	if (isLoggedIn && currentPage === "login.html") {
-		console.log("Redirecting to home page...");
 		window.location.href = "../homePage/home.html";
 	}
 }

@@ -3,32 +3,54 @@ document.addEventListener("DOMContentLoaded", () => {
 	const userList = document.getElementById("userList");
 
 	let currentFilter = { id: "nameAsc", field: "firstName", order: "asc" };
+	setupButtons();
 
-	// Event listeners for each sorting button
-	document
-		.getElementById("nameAsc")
-		.addEventListener("click", () => setOrder("nameAsc", "firstName", "asc"));
-	document
-		.getElementById("nameDesc")
-		.addEventListener("click", () => setOrder("nameDesc", "firstName", "desc"));
-	document
-		.getElementById("typeAsc")
-		.addEventListener("click", () => setOrder("typeAsc", "accountType", "asc"));
-	document
-		.getElementById("typeDesc")
-		.addEventListener("click", () =>
-			setOrder("typeDesc", "accountType", "desc")
-		);
-	document
-		.getElementById("popularityAsc")
-		.addEventListener("click", () =>
-			setOrder("popularityAsc", "positiveReactionsGiven", "asc")
-		);
-	document
-		.getElementById("popularityDesc")
-		.addEventListener("click", () =>
-			setOrder("popularityDesc", "positiveReactionsGiven", "desc")
-		);
+	function setupButtons() {
+		const buttonsInfo = [
+			{
+				id: "nameAsc",
+				field: "firstName",
+				order: "asc",
+				label: "Ordina per nome crescente",
+			},
+			{
+				id: "nameDesc",
+				field: "firstName",
+				order: "desc",
+				label: "Ordina per nome decrescente",
+			},
+			{
+				id: "typeAsc",
+				field: "accountType",
+				order: "asc",
+				label: "Ordina per tipo di account crescente",
+			},
+			{
+				id: "typeDesc",
+				field: "accountType",
+				order: "desc",
+				label: "Ordina per tipo di account decrescente",
+			},
+			{
+				id: "popularityAsc",
+				field: "positiveReactionsGiven",
+				order: "asc",
+				label: "Ordina per popolarità crescente",
+			},
+			{
+				id: "popularityDesc",
+				field: "positiveReactionsGiven",
+				order: "desc",
+				label: "Ordina per popolarità decrescente",
+			},
+		];
+
+		buttonsInfo.forEach(({ id, field, order, label }) => {
+			const button = document.getElementById(id);
+			button.setAttribute("aria-label", label);
+			button.addEventListener("click", () => setOrder(id, field, order));
+		});
+	}
 
 	function setOrder(id, field, order) {
 		currentFilter = { id, field, order };
@@ -64,7 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		const url = `http://localhost:3500/usr?${queryParams.toString()}`;
-		console.log("Fetching users from URL:", url);
 
 		userList.innerHTML = "Loading users...";
 		fetch(url)
@@ -170,9 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			body: JSON.stringify(requestData),
 		})
 			.then((response) => response.json())
-			.then((data) => {
-				console.log(data.message);
-			})
+			.then((data) => {})
 			.catch((error) => {
 				console.error("Errore durante l'aggiornamento dei caratteri:", error);
 			});
@@ -184,7 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				method: "DELETE",
 			})
 				.then(() => {
-					console.log("Utente eliminato con successo");
 					fetchUsers();
 				})
 				.catch((error) => {
@@ -202,16 +220,22 @@ document.addEventListener("DOMContentLoaded", () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log(data.message);
-
 				if (data.isMod) {
 					modButton.textContent = "Rimuovi Moderatore";
 					modButton.classList.remove("btn-primary");
 					modButton.classList.add("btn-danger");
+					modButton.setAttribute(
+						"aria-label",
+						"Rimuovi il ruolo di moderatore per " + username
+					);
 				} else {
 					modButton.textContent = "Imposta Moderatore";
 					modButton.classList.remove("btn-danger");
 					modButton.classList.add("btn-primary");
+					modButton.setAttribute(
+						"aria-label",
+						"Imposta come moderatore " + username
+					);
 				}
 			})
 			.catch((error) => {
@@ -246,10 +270,12 @@ function toggleBlockUser(username) {
 				blockButton.textContent = "Sblocca";
 				blockButton.classList.remove("btn-danger");
 				blockButton.classList.add("btn-success");
+				blockButton.setAttribute("aria-label", "Sblocca utente " + username);
 			} else {
 				blockButton.textContent = "Blocca";
 				blockButton.classList.remove("btn-success");
 				blockButton.classList.add("btn-danger");
+				blockButton.setAttribute("aria-label", "Blocca utente " + username);
 			}
 		})
 		.catch((error) => {
@@ -280,11 +306,7 @@ function checkLoginStatus() {
 	const isLoggedIn = localStorage.getItem("userData") !== null;
 	const currentPage = window.location.pathname.split("/").pop();
 
-	console.log("Is Logged In:", isLoggedIn);
-	console.log("Current Page:", currentPage);
-
 	if (!isLoggedIn && currentPage !== "login.html") {
-		console.log("Redirecting to login page...");
 		window.location.href = "../loginPage/login.html";
 	}
 }

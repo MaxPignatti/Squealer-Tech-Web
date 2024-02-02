@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
 let allMessages = [];
 
 const logoutLink = document.getElementById("logoutLink");
-logoutLink.style.display = "block";
+logoutLink.setAttribute("role", "button");
+logoutLink.setAttribute("aria-label", "Effettua logout");
 
 logoutLink.addEventListener("click", () => {
 	localStorage.removeItem("userData");
@@ -97,23 +98,37 @@ function renderMessages(messages) {
             <td>${formatDate(new Date(message.createdAt))}</td>
             <td><input type="number" value="${
 							message.positiveReactions
-						}" id="positive-${message._id}" style="width: 80px;"></td>
+						}" id="positive-${
+			message._id
+		}" style="width: 80px;" aria-label="Reazioni positive per messaggio ID ${
+			message._id
+		}"></td>
             <td><input type="number" value="${
 							message.negativeReactions
-						}" id="negative-${message._id}" style="width: 80px;"></td>
+						}" id="negative-${
+			message._id
+		}" style="width: 80px;" aria-label="Reazioni negative per messaggio ID ${
+			message._id
+		}"></td>
             <td>${formatBooleanIcon(message.location)}</td>
             <td>${formatBooleanIcon(message.image)}</td>
             <td>${formatBooleanIcon(isTemporizzato(message))}</td>
             <td>
                 <button onclick="editMessage('${
 									message._id
-								}')" class="btn btn-primary">Modifica</button>
+								}')" class="btn btn-primary" aria-label="Modifica messaggio ID ${
+			message._id
+		}">Modifica</button>
                 <button onclick="updateReactions('${
 									message._id
-								}')" class="btn btn-success">Salva Reazioni</button>
+								}')" class="btn btn-success" aria-label="Salva reazioni per messaggio ID ${
+			message._id
+		}">Salva Reazioni</button>
                 <button onclick="deleteMessage('${
 									message._id
-								}')" class="btn btn-danger">Elimina</button>
+								}')" class="btn btn-danger" aria-label="Elimina messaggio ID ${
+			message._id
+		}">Elimina</button>
             </td>`;
 		tbody.appendChild(tr);
 	});
@@ -152,7 +167,6 @@ function deleteMessage(messageId) {
 			method: "DELETE",
 		})
 			.then(() => {
-				console.log("Messaggio eliminato con successo");
 				fetchAllMessages();
 			})
 			.catch((error) => {
@@ -209,7 +223,6 @@ function updateMessageChannels(messageId, newChannels) {
 	})
 		.then((response) => response.json())
 		.then((data) => {
-			console.log("Canali aggiornati:", data);
 			fetchAllMessages();
 			applyFilters();
 		})
@@ -245,7 +258,6 @@ function updateReactions(messageId) {
 	})
 		.then((response) => response.json())
 		.then((data) => {
-			console.log("Reazioni aggiornate:", data);
 			fetchAllMessages();
 		})
 		.catch((error) =>
@@ -257,11 +269,7 @@ function checkLoginStatus() {
 	const isLoggedIn = localStorage.getItem("userData") !== null;
 	const currentPage = window.location.pathname.split("/").pop();
 
-	console.log("Is Logged In:", isLoggedIn);
-	console.log("Current Page:", currentPage);
-
 	if (!isLoggedIn && currentPage !== "login.html") {
-		console.log("Redirecting to login page...");
 		window.location.href = "../loginPage/login.html";
 	}
 }

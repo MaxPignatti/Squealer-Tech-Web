@@ -1,131 +1,171 @@
 import React from "react";
-import { Form, Button, Badge } from "react-bootstrap";
+import { Form, Badge, Alert } from "react-bootstrap";
+import "./RecipientSelector.css";
 
 const RecipientSelector = ({
-	recipientType,
-	handleRecipientChange,
-	searchTerm,
-	handleSearchChange,
-	filteredChannels,
-	filteredUsers,
-	handleUserSelect,
-	handleChannelSelect,
-	selectedUsers,
-	selectedChannels,
-	handleRemoveUser,
-	handleRemoveChannel,
+  recipientType,
+  handleRecipientChange,
+  searchTerm,
+  handleSearchChange,
+  filteredChannels,
+  filteredUsers,
+  handleUserSelect,
+  handleChannelSelect,
+  selectedUsers,
+  selectedChannels,
+  handleRemoveUser,
+  handleRemoveChannel,
 }) => {
-	return (
-		<div>
-			<Form.Group>
-				<Form.Check
-					inline
-					label="Utente Singolo"
-					type="radio"
-					name="recipientType"
-					value="user"
-					checked={recipientType === "user"}
-					onChange={() => handleRecipientChange("user")}
-				/>
-				<Form.Check
-					inline
-					label="Canale"
-					type="radio"
-					name="recipientType"
-					value="channel"
-					checked={recipientType === "channel"}
-					onChange={() => handleRecipientChange("channel")}
-				/>
-			</Form.Group>
-			<Form.Control
-				type="text"
-				placeholder={
-					recipientType === "user" ? "Cerca utente..." : "Cerca canale..."
-				}
-				value={searchTerm}
-				onChange={handleSearchChange}
-			/>
-			<div className="my-2">
-				{recipientType === "user" &&
-					filteredUsers.map((user) => (
-						<Badge
-							key={user._id}
-							pill
-							variant="secondary"
-							className="mr-2"
-						>
-							{user.username}
-							<Button
-								size="sm"
-								onClick={() => handleUserSelect(user)}
-							>
-								+
-							</Button>
-						</Badge>
-					))}
-				{recipientType === "channel" &&
-					filteredChannels.map((channel) => (
-						<Badge
-							key={channel._id}
-							pill
-							variant="secondary"
-							className="mr-2"
-						>
-							{channel.name}
-							<Button
-								size="sm"
-								onClick={() => handleChannelSelect(channel)}
-							>
-								+
-							</Button>
-						</Badge>
-					))}
-			</div>
-			<div>
-				<h5>Utenti Selezionati:</h5>
-				<div className="d-flex flex-wrap">
-					{selectedUsers.map((user) => (
-						<Badge
-							key={user._id}
-							pill
-							variant="primary"
-							className="mr-2"
-						>
-							{user.username}
-							<Button
-								size="sm"
-								variant="light"
-								onClick={() => handleRemoveUser(user._id)}
-							>
-								X
-							</Button>
-						</Badge>
-					))}
-				</div>
+  const isUserSelected = selectedUsers.length > 0;
+  const isChannelSelected = selectedChannels.length > 0;
 
-				<h5>Canali Selezionati:</h5>
-				<div className="d-flex flex-wrap">
-					{selectedChannels.map((channel) => (
-						<Badge
-							key={channel._id}
-							pill
-							variant="secondary"
-							className="mr-2"
-						>
-							{channel.name}
-							<Button
-								size="sm"
-								variant="light"
-								onClick={() => handleRemoveChannel(channel._id)}
-							>
-								X
-							</Button>
-						</Badge>
-					))}
-				</div>
-			</div>
-		</div>
-	);
+  return (
+    <div>
+      <Form.Group>
+        <Form.Label>
+          <h5 style={{ marginBottom: "0" }}>Seleziona il Destinatario:</h5>
+        </Form.Label>
+        <div>
+          <Form.Check
+            inline
+            label="Utente Singolo"
+            type="radio"
+            name="recipientType"
+            value="user"
+            checked={recipientType === "user"}
+            onChange={() => handleRecipientChange("user")}
+          />
+          <Form.Check
+            inline
+            label="Canale"
+            type="radio"
+            name="recipientType"
+            value="channel"
+            checked={recipientType === "channel"}
+            onChange={() => handleRecipientChange("channel")}
+          />
+        </div>
+      </Form.Group>
+      <Form.Control
+        type="text"
+        placeholder={
+          recipientType === "user" ? "Cerca utente..." : "Cerca canale..."
+        }
+        value={searchTerm}
+        onChange={handleSearchChange}
+      />
+      <div className="my-2">
+        {recipientType === "user" &&
+          filteredUsers
+            .filter((user) => !selectedUsers.includes(user))
+            .map((user) => (
+              <span key={user._id}>
+                <Badge
+                  pill
+                  variant={
+                    selectedUsers.includes(user) ? "primary" : "secondary"
+                  }
+                  className="mr-2 clickable"
+                  onClick={() => handleUserSelect(user)}
+                >
+                  {user.username}
+                </Badge>
+                {!selectedUsers.includes(user) && (
+                  <span style={{ marginRight: "8px" }}></span>
+                )}
+              </span>
+            ))}
+
+        {recipientType === "channel" &&
+          filteredChannels
+            .filter((channel) => !selectedChannels.includes(channel))
+            .map((channel, index) => (
+              <span key={channel._id}>
+                <Badge
+                  pill
+                  variant={
+                    selectedChannels.includes(channel) ? "primary" : "secondary"
+                  }
+                  className="mr-2 clickable"
+                  onClick={() =>
+                    selectedChannels.includes(channel)
+                      ? handleRemoveChannel(channel._id)
+                      : handleChannelSelect(channel)
+                  }
+                >
+                  {channel.name}
+                </Badge>
+                {!selectedChannels.includes(channel) &&
+                  index < filteredChannels.length - 1 && (
+                    <span style={{ marginRight: "8px" }}></span>
+                  )}
+              </span>
+            ))}
+      </div>
+      <div className="my-3">
+        {isUserSelected && (
+          <div>
+            <h5>Utenti Selezionati:</h5>
+            <div className="d-flex flex-wrap">
+              {selectedUsers.map((user, index) => (
+                <span key={user._id}>
+                  <Badge
+                    pill
+                    variant="primary"
+                    className="mr-2 mb-2 clickable"
+                    onClick={() => handleUserSelect(user)}
+                  >
+                    {user.username}
+                    <span
+                      className="ml-2 clickable"
+                      onClick={() => handleRemoveUser(user._id)}
+                      style={{ color: "red" }}
+                    >
+                      &#x2716;
+                    </span>
+                  </Badge>
+                  <span style={{ marginRight: "8px" }}></span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+        {isChannelSelected && (
+          <div>
+            <h5>Canali Selezionati:</h5>
+            <div className="d-flex flex-wrap">
+              {selectedChannels.map((channel, index) => (
+                <span key={channel._id}>
+                  <Badge
+                    pill
+                    variant="primary"
+                    className="mr-2 mb-2 clickable"
+                    onClick={() => handleRemoveChannel(channel._id)}
+                  >
+                    {channel.name}
+                    <span
+                      className="ml-2 clickable"
+                      onClick={() => handleRemoveChannel(channel._id)}
+                      style={{ color: "red" }}
+                    >
+                      &#x2716;
+                    </span>
+                  </Badge>
+                  <span style={{ marginRight: "8px" }}></span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {!isUserSelected && !isChannelSelected && (
+        <Alert variant="info">
+          Seleziona utenti o canali dalla lista sopra.
+        </Alert>
+      )}
+    </div>
+  );
 };
 
 export default RecipientSelector;

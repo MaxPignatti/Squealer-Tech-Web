@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 	checkLoginStatus();
 	validateUserAndFetchMessages();
+	applyResponsiveTableStyles();
 });
 
 let allMessages = [];
@@ -65,12 +66,38 @@ function fetchAllMessages() {
 		});
 }
 
+function applyResponsiveTableStyles() {
+	const tableContainer = document.querySelector(".table-responsive");
+	if (!tableContainer) return;
+
+	// Controlla se la viewport è più piccola di 768px (ad esempio, schermi di smartphone)
+	if (window.innerWidth < 768) {
+		// Applica stili per dispositivi mobili
+		tableContainer.style.maxWidth = "100%";
+		tableContainer.style.overflowX = "auto";
+	} else {
+		// Rimuovi stili specifici per dispositivi mobili per schermi più grandi
+		tableContainer.style.maxWidth = "none";
+		tableContainer.style.overflowX = "visible";
+	}
+}
+
 function renderMessages(messages) {
 	const messageListContainer = document.getElementById("messageList");
+	const responsiveTableContainer = document.createElement("div");
+	responsiveTableContainer.className = "table-responsive";
+
 	const table = document.createElement("table");
 	table.className = "table";
 	table.style.width = "100%";
 	table.style.textAlign = "center";
+
+	// Assegna uno stile specifico quando la larghezza della viewport supera i 768px
+	if (window.matchMedia("(min-width: 768px)").matches) {
+		// Qui puoi definire gli stili specifici per dispositivi più grandi
+		// Ad esempio, rimuovere il comportamento scorrevole della table-responsive
+		responsiveTableContainer.style.overflowX = "visible";
+	}
 
 	const thead = document.createElement("thead");
 	thead.innerHTML = `
@@ -134,8 +161,9 @@ function renderMessages(messages) {
 	});
 	table.appendChild(tbody);
 
+	responsiveTableContainer.appendChild(table);
 	messageListContainer.innerHTML = "";
-	messageListContainer.appendChild(table);
+	messageListContainer.appendChild(responsiveTableContainer);
 }
 
 function formatDate(date) {
@@ -163,7 +191,7 @@ function isTemporizzato(message) {
 // Funzione per eliminare un messaggio
 function deleteMessage(messageId) {
 	if (confirm("Sei sicuro di voler eliminare questo messaggio?")) {
-		fetch(`http://localhost:3500/api/deleteMessage/${messageId}`, {
+		fetch(`http://localhost:3500/squeals/delete/${messageId}`, {
 			method: "DELETE",
 		})
 			.then(() => {
@@ -273,3 +301,5 @@ function checkLoginStatus() {
 		window.location.href = "../loginPage/login.html";
 	}
 }
+
+window.addEventListener("resize", applyResponsiveTableStyles);

@@ -113,18 +113,28 @@ function fetchAllMessages() {
 }
 
 function renderMessagesForChannel(channelName, channelId) {
-	// Usa channelId per selezionare il div del canale
 	const channelDiv = document.getElementById(`channel-${channelId}`);
 	if (!channelDiv) {
 		console.error(`Div del canale non trovato per ID: channel-${channelId}`);
 		return;
 	}
 
-	// Crea la tabella con le classi di Bootstrap
+	// Filtra i messaggi per il canale corrente
+	const messagesForChannel = allMessages.filter((message) =>
+		message.channel.includes(channelName)
+	);
+	if (messagesForChannel.length === 0) {
+		console.log(`Nessun messaggio disponibile per il canale: ${channelName}`);
+		// Qui puoi decidere di mostrare o meno un messaggio nel DOM per indicare che non ci sono messaggi
+		const noMessagesDiv = document.createElement("div");
+		noMessagesDiv.textContent =
+			"Nessun messaggio disponibile per questo canale.";
+		channelDiv.querySelector(".messagesContainer").appendChild(noMessagesDiv);
+		return;
+	}
+
 	const table = document.createElement("table");
 	table.className = "table table-hover";
-
-	// Intestazione della tabella
 	const thead = document.createElement("thead");
 	thead.innerHTML = `
         <tr>
@@ -137,16 +147,11 @@ function renderMessagesForChannel(channelName, channelId) {
 
 	const tbody = document.createElement("tbody");
 
-	// Filtra e aggiungi i messaggi alla tabella
-	const messagesForChannel = allMessages.filter((message) =>
-		message.channel.includes(channelName)
-	);
-
 	messagesForChannel.forEach((message) => {
 		const tr = document.createElement("tr");
 		tr.innerHTML = `
             <td>${message.user}</td>
-            <td id="messageText-${message._id}-${channelId}">${
+            <td id="messageText-${message._id}-${channelName}">${
 			message.text
 		}</td>
             <td>${new Date(message.createdAt).toLocaleDateString()}</td>
@@ -179,7 +184,7 @@ function deleteMessage(messageId) {
 			if (!response.ok) {
 				throw new Error("Errore nella risposta del server ");
 			}
-			fetchChannels();
+			window.location.reload();
 		})
 		.catch((error) => {
 			console.error("Errore nell'eliminazione del messaggio:", error);
@@ -235,6 +240,7 @@ function saveMessage(messageId, channelName) {
 		.then((response) => response.json())
 		.then((data) => {
 			fetchChannels();
+			window.location.reload();
 		})
 		.catch((error) => console.error("Errore:", error));
 }

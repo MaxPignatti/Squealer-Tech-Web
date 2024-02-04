@@ -8,15 +8,21 @@ const consts = require("../consts");
 // Register a new user
 exports.register = async (req, res) => {
 	try {
-		const { firstName, lastName, username, password, confirmPassword, email } =
-			req.body;
+		let query = {
+			firstName: req.query.firstName.toString(),
+			lastName: req.query.lastName.toString(),
+			username: req.query.username.toString(),
+			password: req.query.password.toString(),
+			confirmPassword: req.query.confirmPassword.toString(),
+			email: req.query.email.toString(),
+		};
 
 		// Check if the user already exists in the database
-		const existingUser = await User.findOne({ username });
+		const existingUser = await User.find(query.username);
 		if (existingUser) {
 			return res.status(400).json({ error: "Username already exists" });
 		}
-		const existingMail = await User.findOne({ email });
+		const existingMail = await User.findOne(query.email);
 		if (existingMail) {
 			return res.status(400).json({ error: "Email already exists" });
 		}
@@ -28,10 +34,10 @@ exports.register = async (req, res) => {
 
 		// Crea un nuovo utente
 		const newUser = new User({
-			firstName,
-			lastName,
-			username,
-			email,
+			firstName: query.firstName,
+			lastName: query.lastName,
+			username: query.username,
+			email: query.email,
 			password: hashedPassword,
 			dailyChars: consts.dailyCharacters,
 			weeklyChars: consts.weeklyCharacters,
@@ -39,7 +45,7 @@ exports.register = async (req, res) => {
 			debChar: 0,
 			accountType: 0,
 			smm: false,
-			channels: ["PUBLIC"], // Aggiungi il canale "PUBLIC" all'array dei canali
+			channels: ["PUBLIC"],
 		});
 		await newUser.save();
 

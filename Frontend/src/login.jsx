@@ -43,6 +43,7 @@ const LoginPage = () => {
             access_token: accessToken,
           };
 
+          
           Cookies.set("user_data", JSON.stringify(userData), { expires: 1 });
 
           login();

@@ -279,7 +279,7 @@ const fetchLatestNews = async () => {
 
 const translateRecipeToMessage = async (recipe) => {
 	try {
-		const response = await fetch(recipe.strMealThumb);
+		await fetch(recipe.strMealThumb);
 	} catch (error) {
 		console.error(
 			"Errore durante il recupero e la conversione dell'immagine:",

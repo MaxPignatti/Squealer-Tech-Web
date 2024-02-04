@@ -21,6 +21,8 @@ import {
 	handleTextSelect,
 	handleInsertLink,
 } from "./InputSquealComponents/commonFunction";
+import PropTypes from "prop-types";
+
 const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 	//USE STATE DA ORDINARE
 	const [message, setMessage] = useState("");
@@ -256,6 +258,12 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 			</Row>
 		</Container>
 	);
+};
+
+ReplySqueal.propTypes = {
+	originalMessage: PropTypes.object.isRequired,
+	onStartReplying: PropTypes.func.isRequired,
+	onEndReplying: PropTypes.func.isRequired,
 };
 
 export default ReplySqueal;

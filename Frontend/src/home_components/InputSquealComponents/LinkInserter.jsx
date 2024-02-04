@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const LinkInserter = ({ handleInsertLink, selection }) => {
 	const handleButtonClick = () => {
@@ -17,6 +18,11 @@ const LinkInserter = ({ handleInsertLink, selection }) => {
 			</Button>
 		</div>
 	);
+};
+
+LinkInserter.propTypes = {
+	handleInsertLink: PropTypes.func.isRequired,
+	selection: PropTypes.object.isRequired,
 };
 
 export default LinkInserter;

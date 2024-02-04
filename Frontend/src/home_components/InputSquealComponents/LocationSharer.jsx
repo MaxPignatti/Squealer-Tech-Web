@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Alert } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const LocationSharer = ({ showMap, toggleMap }) => (
 	<>
@@ -26,5 +27,10 @@ const LocationSharer = ({ showMap, toggleMap }) => (
 		)}
 	</>
 );
+
+LocationSharer.propTypes = {
+	showMap: PropTypes.bool.isRequired,
+	toggleMap: PropTypes.func.isRequired,
+};
 
 export default LocationSharer;

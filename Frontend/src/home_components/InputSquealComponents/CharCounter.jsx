@@ -1,4 +1,6 @@
 import { Card } from "react-bootstrap";
+import PropTypes from "prop-types";
+
 const CharCounter = ({
 	dailyCharacters,
 	weeklyCharacters,
@@ -15,5 +17,11 @@ const CharCounter = ({
 		</Card.Body>
 	</Card>
 );
+
+CharCounter.propTypes = {
+	dailyCharacters: PropTypes.number.isRequired,
+	weeklyCharacters: PropTypes.number.isRequired,
+	monthlyCharacters: PropTypes.number.isRequired,
+};
 
 export default CharCounter;

@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Image } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const ImageUploader = ({
 	image,
@@ -44,6 +45,13 @@ const ImageUploader = ({
 			)}
 		</div>
 	);
+};
+
+ImageUploader.propTypes = {
+	image: PropTypes.string,
+	imagePreview: PropTypes.string,
+	handleImageChange: PropTypes.func.isRequired,
+	handleRemoveImage: PropTypes.func.isRequired,
 };
 
 export default ImageUploader;

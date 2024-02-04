@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Cookies from "js-cookie";
 import { Button, Alert, Form } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
 	const [showForm, setShowForm] = useState(false);
@@ -106,6 +107,11 @@ const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
 			)}
 		</div>
 	);
+};
+
+CreateChannel.propTypes = {
+	setSubscribedChannels: PropTypes.func.isRequired,
+	setYourChannels: PropTypes.func.isRequired,
 };
 
 export default CreateChannel;

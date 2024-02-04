@@ -2,6 +2,7 @@ import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
+import PropTypes from "prop-types";
 
 const Maps = ({ position }) => {
 	const customIcon = new Icon({
@@ -27,6 +28,10 @@ const Maps = ({ position }) => {
 			</Marker>
 		</MapContainer>
 	);
+};
+
+Maps.propTypes = {
+	position: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default Maps;

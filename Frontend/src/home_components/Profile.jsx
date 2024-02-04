@@ -8,6 +8,7 @@ import { Navigate } from "react-router-dom";
 import "./Profile_style.css";
 import Navbar from "./Navbar";
 import LogoutButton from "./LogoutButton";
+
 const Profile = () => {
 	const { isAuthenticated } = useAuth();
 	const [userData, setUserData] = useState({});

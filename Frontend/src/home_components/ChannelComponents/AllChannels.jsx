@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { Form, Card, ListGroup, Button } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const AllChannels = ({
 	setSubscribedChannels,
@@ -9,10 +10,10 @@ const AllChannels = ({
 }) => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [filteredChannels, setFilteredChannels] = useState([]);
-	
+
 	const listGroupStyle = {
-		maxHeight: '142px',
-		overflowY: 'auto',
+		maxHeight: "142px",
+		overflowY: "auto",
 	};
 
 	useEffect(() => {
@@ -85,7 +86,10 @@ const AllChannels = ({
 				/>
 			</Form.Group>
 			<Card>
-				<ListGroup variant="flush"style={listGroupStyle}>
+				<ListGroup
+					variant="flush"
+					style={listGroupStyle}
+				>
 					{filteredChannels.map((channel, index) => (
 						<ListGroup.Item key={channel._id + index}>
 							{channel.name}
@@ -106,6 +110,18 @@ const AllChannels = ({
 			</Card>
 		</div>
 	);
+};
+
+AllChannels.propTypes = {
+	setSubscribedChannels: PropTypes.func.isRequired,
+	allChannels: PropTypes.arrayOf(
+		PropTypes.shape({
+			_id: PropTypes.string.isRequired,
+			name: PropTypes.string.isRequired,
+			members: PropTypes.arrayOf(PropTypes.string),
+		})
+	).isRequired,
+	setAllChannels: PropTypes.func.isRequired,
 };
 
 export default AllChannels;

@@ -3,6 +3,7 @@ import { Col, Container, Row, Button, ButtonGroup } from "react-bootstrap";
 import Cookies from "js-cookie";
 import Message from "./Message";
 import { useMessageRefs } from "../MessageRefsContext";
+import PropTypes from "prop-types";
 
 const Squeals = ({ searchType, searchText }) => {
 	const [messages, setMessages] = useState([]);
@@ -14,7 +15,6 @@ const Squeals = ({ searchType, searchText }) => {
 	const [customPublicMessage, setCustomPublicMessage] = useState("");
 	const [customPrivateMessage, setCustomPrivateMessage] = useState("");
 
-
 	useEffect(() => {
 		const fetchMessages = async () => {
 			const userDataCookie = Cookies.get("user_data");
@@ -22,27 +22,27 @@ const Squeals = ({ searchType, searchText }) => {
 				const userData = JSON.parse(userDataCookie);
 				const username = userData.username;
 				setCurrentUser(username);
-	
+
 				let baseUrl =
 					viewMode === "public"
 						? `http://localhost:3500/squeals/${username}`
 						: `http://localhost:3500/privateMessages/${username}`;
-	
+
 				if (searchType && searchText) {
 					const encodedSearchText = encodeURIComponent(searchText);
-	
+
 					switch (searchType) {
 						case "hashtag":
 							baseUrl =
 								viewMode === "public"
-								? `http://localhost:3500/squeals/hashtag/${username}/${encodedSearchText}`
-								: `http://localhost:3500/privateMessages/hashtag/${username}/${encodedSearchText}`;
+									? `http://localhost:3500/squeals/hashtag/${username}/${encodedSearchText}`
+									: `http://localhost:3500/privateMessages/hashtag/${username}/${encodedSearchText}`;
 							break;
 						case "channel":
 							baseUrl =
 								viewMode === "public"
-								? `http://localhost:3500/squeals/channel/${username}/${encodedSearchText}`
-								: `http://localhost:3500/privateMessages/channel/${username}/${encodedSearchText}`;
+									? `http://localhost:3500/squeals/channel/${username}/${encodedSearchText}`
+									: `http://localhost:3500/privateMessages/channel/${username}/${encodedSearchText}`;
 							break;
 						case "text":
 							baseUrl =
@@ -52,15 +52,15 @@ const Squeals = ({ searchType, searchText }) => {
 							break;
 						case "user":
 							baseUrl =
-							viewMode === "public"
-								? `http://localhost:3500/squeals/targetUsername/${username}/${encodedSearchText}`
-								: `http://localhost:3500/privateMessages/targetUsername/${username}/${encodedSearchText}`;
+								viewMode === "public"
+									? `http://localhost:3500/squeals/targetUsername/${username}/${encodedSearchText}`
+									: `http://localhost:3500/privateMessages/targetUsername/${username}/${encodedSearchText}`;
 							break;
 						default:
 							break;
 					}
 				}
-	
+
 				try {
 					const response = await fetch(baseUrl);
 					const data = await response.json();
@@ -78,7 +78,6 @@ const Squeals = ({ searchType, searchText }) => {
 			return () => clearInterval(pollingInterval);
 		}
 	}, [viewMode, isEditing, isReplying, searchType, searchText]);
-	
 
 	const handleReaction = async (messageId, isPositiveReaction) => {
 		const userDataCookie = Cookies.get("user_data");
@@ -226,10 +225,10 @@ const Squeals = ({ searchType, searchText }) => {
 					) : (
 						<div className="text-center mt-4">
 							<p className="lead">
-								{viewMode === "public" ? 
-									(customPublicMessage || "Al momento non ci sono Squeals pubblici da mostrare.") :
-									(customPrivateMessage || "Non hai messaggi privati.")
-								}
+								{viewMode === "public"
+									? customPublicMessage ||
+									  "Al momento non ci sono Squeals pubblici da mostrare."
+									: customPrivateMessage || "Non hai messaggi privati."}
 							</p>
 							{viewMode === "public" && !customPublicMessage && (
 								<p>
@@ -243,6 +242,11 @@ const Squeals = ({ searchType, searchText }) => {
 			</Row>
 		</Container>
 	);
+};
+
+Squeals.propTypes = {
+	searchType: PropTypes.string,
+	searchText: PropTypes.string,
 };
 
 export default Squeals;

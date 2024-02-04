@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Form } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const TemporaryMessageOptions = ({
 	isTemp,
@@ -41,5 +42,16 @@ const TemporaryMessageOptions = ({
 		)}
 	</div>
 );
+
+TemporaryMessageOptions.propTypes = {
+	isTemp: PropTypes.bool.isRequired,
+	toggleTemp: PropTypes.func.isRequired,
+	updateInterval: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+		.isRequired,
+	handleUpdateIntervalChange: PropTypes.func.isRequired,
+	maxSendCount: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+		.isRequired,
+	handleMaxSendCountChange: PropTypes.func.isRequired,
+};
 
 export default TemporaryMessageOptions;

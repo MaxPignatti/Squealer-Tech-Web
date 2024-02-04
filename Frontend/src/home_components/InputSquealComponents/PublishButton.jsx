@@ -12,4 +12,8 @@ const PublishButton = ({ handlePublish }) => (
 	</Button>
 );
 
+PublishButton.propTypes = {
+	handlePublish: PropTypes.func.isRequired,
+};
+
 export default PublishButton;

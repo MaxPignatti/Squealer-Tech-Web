@@ -9,7 +9,6 @@ import PublishButton from "./PublishButton";
 import RecipientSelector from "./RecipientSelector";
 import TemporaryMessageOptions from "./TemporaryMessageOptions";
 import LinkInserter from "./LinkInserter";
-import PropTypes from "prop-types";
 import {
 	handleMessageChange,
 	handleImageChange,

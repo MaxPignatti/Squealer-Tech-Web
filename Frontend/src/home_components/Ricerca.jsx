@@ -10,13 +10,12 @@ const Ricerca = () => {
 	const [searchCriteria, setSearchCriteria] = useState("user");
 	const [tempSearchText, setTempSearchText] = useState("");
 	const [searchType, setSearchType] = useState("user");
-    const [searchText, setSearchText] = useState("");
-
-	if (!isAuthenticated) {
-		return <Navigate to="/login" />;
-	}
+	const [searchText, setSearchText] = useState("");
 
 	useEffect(() => {
+		if (!isAuthenticated) {
+			return <Navigate to="/login" />;
+		}
 		const query = new URLSearchParams(location.search);
 		const hashtagParam = query.get("getHashtag");
 		const userParam = query.get("user");
@@ -40,14 +39,14 @@ const Ricerca = () => {
 		}
 	}, [location]);
 
-    const handleSearchClick = () => {
-        setSearchType(searchCriteria);
-        setSearchText(tempSearchText);
-    };
+	const handleSearchClick = () => {
+		setSearchType(searchCriteria);
+		setSearchText(tempSearchText);
+	};
 	const handleReset = () => {
-        setTempSearchText("");
-        setSearchText("");
-    };
+		setTempSearchText("");
+		setSearchText("");
+	};
 
 	return (
 		<Container>

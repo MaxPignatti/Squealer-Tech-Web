@@ -6,13 +6,12 @@ import Cookies from "js-cookie";
 
 const ShopPage = () => {
 	const { isAuthenticated } = useAuth();
+	const [selectedQuantity, setSelectedQuantity] = useState(null);
+	const [username, setUsername] = useState(null);
 
 	if (!isAuthenticated) {
 		return <Navigate to="/login" />;
 	}
-
-	const [selectedQuantity, setSelectedQuantity] = useState(null);
-	const [username, setUsername] = useState(null);
 
 	useEffect(() => {
 		const userDataCookie = Cookies.get("user_data");

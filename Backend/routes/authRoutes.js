@@ -14,7 +14,13 @@ const validate = (req, res, next) => {
 
 router.post(
 	"/loginSMM",
-	[body("email").isEmail().normalizeEmail(), body("password").trim().escape()],
+	[
+		body("email")
+			.isEmail()
+			.withMessage("Deve essere un'email valida.")
+			.normalizeEmail(),
+		body("password").trim().escape(),
+	],
 	validate,
 	authController.loginSMM
 );

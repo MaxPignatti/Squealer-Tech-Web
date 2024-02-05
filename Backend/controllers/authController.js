@@ -6,38 +6,50 @@ const authenticateWithToken = require("../middlewares/authenticationMiddlewares"
 const consts = require("../consts");
 
 // Register a new user
+const bcrypt = require("bcrypt");
+const User = require("path_to_your_user_model"); // Assicurati di sostituire con il percorso corretto
+const Channel = require("path_to_your_channel_model"); // Assicurati di sostituire con il percorso corretto
+const consts = require("path_to_your_constants"); // Assicurati di sostituire con il percorso corretto
+
 exports.register = async (req, res) => {
 	try {
-		let query = {
-			firstName: req.query.firstName.toString(),
-			lastName: req.query.lastName.toString(),
-			username: req.query.username.toString(),
-			password: req.query.password.toString(),
-			confirmPassword: req.query.confirmPassword.toString(),
-			email: req.query.email.toString(),
-		};
+		// È importante validare i dati in ingresso prima di procedere
+		const { firstName, lastName, username, password, confirmPassword, email } =
+			req.query;
+		if (
+			!firstName ||
+			!lastName ||
+			!username ||
+			!password ||
+			!confirmPassword ||
+			!email
+		) {
+			return res.status(400).json({ error: "All fields are required" });
+		}
+		if (password !== confirmPassword) {
+			return res.status(400).json({ error: "Passwords do not match" });
+		}
+		// Validazione ulteriore, come la verifica della forza della password, può essere aggiunta qui
 
 		// Check if the user already exists in the database
-		const existingUser = await User.find(query.username);
+		const existingUser = await User.findOne({ username: username });
 		if (existingUser) {
 			return res.status(400).json({ error: "Username already exists" });
 		}
-		const existingMail = await User.findOne(query.email);
+		const existingMail = await User.findOne({ email: email });
 		if (existingMail) {
 			return res.status(400).json({ error: "Email already exists" });
 		}
-		if (password != confirmPassword) {
-			return res.status(400).json({ error: "Passwords do not match" });
-		}
+
 		// Hash the password
 		const hashedPassword = await bcrypt.hash(password, 10);
 
 		// Crea un nuovo utente
 		const newUser = new User({
-			firstName: query.firstName,
-			lastName: query.lastName,
-			username: query.username,
-			email: query.email,
+			firstName,
+			lastName,
+			username,
+			email,
 			password: hashedPassword,
 			dailyChars: consts.dailyCharacters,
 			weeklyChars: consts.weeklyCharacters,
@@ -67,6 +79,12 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
 	const { username, password } = req.body;
+	if (!username || !password) {
+		return res
+			.status(400)
+			.json({ error: "Username and password are required" });
+	}
+
 	try {
 		const user = await User.findOne({ username });
 
@@ -117,6 +135,9 @@ exports.protectedEndpoint = async (req, res) => {
 
 exports.loginSMM = async (req, res) => {
 	const { email, password } = req.body;
+	if (!email || !password) {
+		return res.status(400).json({ error: "Email and password are required" });
+	}
 	try {
 		const smm = await User.findOne({ email });
 
@@ -196,6 +217,11 @@ exports.verifyTokenSMM = async (req, res) => {
 
 exports.loginMod = async (req, res) => {
 	const { username, password } = req.body;
+	if (!username || !password) {
+		return res
+			.status(400)
+			.json({ error: "Username and password are required" });
+	}
 	try {
 		const user = await User.findOne({ username });
 

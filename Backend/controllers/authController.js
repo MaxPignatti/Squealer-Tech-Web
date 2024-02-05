@@ -191,6 +191,10 @@ exports.verifyTokenSMM = async (req, res) => {
 	try {
 		const decoded = jwt.verify(token, process.env.SECRET_KEY);
 		const email = decoded.email;
+		if (!email) {
+			return res.status(400).json({ error: "Email is required" });
+		}
+
 		const smm = await User.findOne({ email });
 
 		if (!smm) {

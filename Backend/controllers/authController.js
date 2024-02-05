@@ -8,7 +8,6 @@ const consts = require("../consts");
 // Register a new user
 exports.register = async (req, res) => {
 	try {
-		// È importante validare i dati in ingresso prima di procedere
 		const { firstName, lastName, username, password, confirmPassword, email } =
 			req.query;
 		if (
@@ -24,7 +23,6 @@ exports.register = async (req, res) => {
 		if (password !== confirmPassword) {
 			return res.status(400).json({ error: "Passwords do not match" });
 		}
-		// Validazione ulteriore, come la verifica della forza della password, può essere aggiunta qui
 
 		// Check if the user already exists in the database
 		const existingUser = await User.findOne({ username: username });

@@ -18,8 +18,9 @@ router.post(
 		body("email")
 			.isEmail()
 			.withMessage("Deve essere un'email valida.")
-			.normalizeEmail(),
-		body("password").trim().escape(),
+			.normalizeEmail()
+			.toString(),
+		body("password").trim().escape().toString(),
 	],
 	validate,
 	authController.loginSMM
@@ -28,11 +29,15 @@ router.post(
 router.post(
 	"/register",
 	[
-		body("username").isString().trim().escape(),
-		body("password").isLength({ min: 5 }).trim().escape(),
-		body("email").isEmail().normalizeEmail(),
-		body("firstName").optional().trim().escape(),
-		body("lastName").optional().trim().escape(),
+		body("username").isString().trim().escape().toString(),
+
+		body("password").isLength({ min: 5 }).trim().escape().toString(),
+
+		body("email").isEmail().normalizeEmail().toString(),
+
+		body("firstName").optional().trim().escape().toString(),
+
+		body("lastName").optional().trim().escape().toString(),
 	],
 	validate,
 	authController.register
@@ -42,7 +47,8 @@ router.post(
 	"/login",
 	[
 		body("username").isString().trim().escape(),
-		body("password").trim().escape(),
+
+		body("password").trim().escape().toString(),
 	],
 	validate,
 	authController.login
@@ -56,7 +62,8 @@ router.post(
 	"/loginMod",
 	[
 		body("username").isString().trim().escape(),
-		body("password").trim().escape(),
+
+		body("password").trim().escape().toString(),
 	],
 	validate,
 	authController.loginMod

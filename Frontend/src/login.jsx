@@ -43,7 +43,6 @@ const LoginPage = () => {
             access_token: accessToken,
           };
 
-          
           Cookies.set("user_data", JSON.stringify(userData), { expires: 1 });
 
           login();
@@ -174,15 +173,21 @@ const LoginPage = () => {
           >
             TRENDING MESSAGES
           </h3>
-          {trendingMessages.map((channelInfo, index) => (
-            <div key={channelInfo.channelName}>
-              {index !== 0 && <hr style={{ margin: "20px 0" }} />}
-              <h4 style={{ color: "black" }}>{channelInfo.channelName}</h4>
-              {channelInfo.messages.map((message) => (
-                <Message key={message._id} message={message} />
-              ))}
-            </div>
-          ))}
+          {trendingMessages
+            .filter((channelInfo) =>
+              channelInfo.messages.some((message) => message.replyTo === null)
+            )
+            .map((channelInfo, index) => (
+              <div key={channelInfo.channelName}>
+                {index !== 0 && <hr style={{ margin: "20px 0" }} />}
+                <h4 style={{ color: "black" }}>{channelInfo.channelName}</h4>
+                {channelInfo.messages
+                  .filter((message) => message.replyTo === null)
+                  .map((message) => (
+                    <Message key={message._id} message={message} />
+                  ))}
+              </div>
+            ))}
         </Col>
       </Row>
     </Container>

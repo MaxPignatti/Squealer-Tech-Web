@@ -6,11 +6,6 @@ const authenticateWithToken = require("../middlewares/authenticationMiddlewares"
 const consts = require("../consts");
 
 // Register a new user
-const bcrypt = require("bcrypt");
-const User = require("path_to_your_user_model"); // Assicurati di sostituire con il percorso corretto
-const Channel = require("path_to_your_channel_model"); // Assicurati di sostituire con il percorso corretto
-const consts = require("path_to_your_constants"); // Assicurati di sostituire con il percorso corretto
-
 exports.register = async (req, res) => {
 	try {
 		// È importante validare i dati in ingresso prima di procedere

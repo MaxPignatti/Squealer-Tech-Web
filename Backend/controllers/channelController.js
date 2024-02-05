@@ -7,6 +7,12 @@ exports.createChannel = async (req, res) => {
 	try {
 		const { name, description, creator, isMod } = req.body;
 
+		if (!name || !creator) {
+			return res
+				.status(400)
+				.json({ error: "Nome del canale e creatore sono campi obbligatori." });
+		}
+
 		// Verifica se esiste già un canale con lo stesso nome
 		const existingChannel = await Channel.findOne({ name });
 		if (existingChannel) {
@@ -61,6 +67,11 @@ exports.deleteChannel = async (req, res) => {
 	try {
 		const channelId = req.params.channelId;
 		const { username } = req.body;
+		if (!username) {
+			return res
+				.status(400)
+				.json({ error: "Username è un campo obbligatorio." });
+		}
 		const channel = await Channel.findById(channelId);
 
 		if (!channel) {
@@ -135,6 +146,11 @@ exports.subscribe = async (req, res) => {
 	try {
 		const { channelId } = req.params;
 		const { username } = req.body;
+		if (!username) {
+			return res
+				.status(400)
+				.json({ error: "Username è un campo obbligatorio." });
+		}
 		const channel = await Channel.findById(channelId);
 		if (!channel) {
 			return res.status(404).json({ message: "Canale non trovato" });
@@ -259,7 +275,14 @@ exports.updateChannel = async (req, res) => {
 	try {
 		const { channelId } = req.params;
 		const { name, description } = req.body;
-
+		if (!name && !description) {
+			return res
+				.status(400)
+				.json({
+					error:
+						"Fornire almeno un campo tra nome e descrizione per aggiornare il canale.",
+				});
+		}
 		const channel = await Channel.findById(channelId);
 		if (!channel) {
 			return res.status(404).json({ error: "Canale non trovato" });

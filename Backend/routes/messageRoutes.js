@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const messageController = require("../controllers/messageController");
+const { body, validationResult } = require("express-validator");
 
 router.post("/create", messageController.createMessage);
 router.get("/squeals/:username", messageController.getAllSqueals);

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
+const { body, validationResult } = require("express-validator");
 
 // Define user-related routes
 router.get("/usr/email/:email", userController.getUserByEmail);

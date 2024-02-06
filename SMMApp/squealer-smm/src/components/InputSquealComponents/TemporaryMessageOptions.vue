@@ -4,7 +4,7 @@
       class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
       @click="$emit('toggleTemp')"
     >
-      {{ isTemp ? "Annulla Aggiornamento" : "Imposta Aggiornamento" }}
+      {{ isTemp ? "Annulla" : "Messaggio Multiplo" }}
     </button>
 
     <div v-if="isTemp" class="space-y-2">

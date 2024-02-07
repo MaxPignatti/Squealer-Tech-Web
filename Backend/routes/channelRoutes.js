@@ -77,7 +77,11 @@ router.post(
 
 router.get("/api/topMessages", validate, channelController.getTopMessages);
 
-router.get("/channels/moderator", validate, channelController.modChannels);
+router.get(
+	"/channels/moderator/:isMod",
+	validate,
+	channelController.modChannels
+);
 
 router.post(
 	"/channels/update/:channelId",

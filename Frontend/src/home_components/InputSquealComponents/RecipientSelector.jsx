@@ -79,7 +79,7 @@ const RecipientSelector = ({
 
 				{recipientType === "channel" &&
 					filteredChannels
-						.filter((channel) => !selectedChannels.includes(channel))
+						.filter((channel) => !selectedChannels.inBaccludes(channel))
 						.map((channel, index) => (
 							<span key={channel._id}>
 								<Badge

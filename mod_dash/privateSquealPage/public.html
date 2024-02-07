@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="it">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>Moderator App</title>
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		/>
+		<link
+			rel="stylesheet"
+			href="../commonStyle.css"
+		/>
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<a
+				class="navbar-brand"
+				href="#"
+				>Squealer</a
+			>
+			<button
+				class="navbar-toggler"
+				type="button"
+				data-toggle="collapse"
+				data-target="#navbarNav"
+				aria-controls="navbarNav"
+				aria-expanded="false"
+				aria-label="Toggle navigation"
+			>
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div
+				class="collapse navbar-collapse"
+				id="navbarNav"
+			>
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<a
+							class="nav-link"
+							href="../publicSquealPage/public.html"
+							>Public Squeal Page</a
+						>
+					</li>
+					<li class="nav-item">
+						<a
+							class="nav-link"
+							href="../squealPage/squeal.html"
+							>Squeal Page</a
+						>
+					</li>
+					<li class="nav-item">
+						<a
+							class="nav-link"
+							href="../userPage/user.html"
+							>User Page</a
+						>
+					</li>
+				</ul>
+				<ul class="navbar-nav ml-auto">
+					<li class="nav-item">
+						<a
+							class="nav-link"
+							id="logoutLink"
+							href="#"
+							>Logout</a
+						>
+					</li>
+				</ul>
+			</div>
+		</nav>
+
+		<div class="container mt-5">
+			<h1 class="text-center">Gestione CANALI</h1>
+			<div class="input-group mb-3">
+				<input
+					type="text"
+					id="newChannelName"
+					class="form-control"
+					placeholder="Nome del nuovo canale"
+					aria-label="Nome del nuovo canale"
+					aria-describedby="button-addon2"
+				/>
+				<input
+					type="text"
+					id="newChannelDesc"
+					class="form-control"
+					placeholder="Descrizione del nuovo canale"
+					aria-label="Descrizione del nuovo canale"
+				/>
+				<div class="input-group-append">
+					<button
+						class="btn btn-outline-secondary"
+						type="button"
+						id="button-addon2"
+						onclick="createNewChannel()"
+					>
+						Crea Nuovo Canale
+					</button>
+				</div>
+			</div>
+			<div
+				id="channelList"
+				class="mt-4"
+			></div>
+		</div>
+		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+		<script src="script.js"></script>
+	</body>
+</html>

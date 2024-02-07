@@ -56,6 +56,7 @@ mongoose
 					const publicChannel = new Channel({
 						name: "PUBLIC",
 						creator: "Squealer",
+						moderatorChannel: true,
 					});
 					publicChannel
 						.save()

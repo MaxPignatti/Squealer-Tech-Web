@@ -263,7 +263,8 @@ exports.getTopMessages = async (req, res) => {
 
 exports.modChannels = async (req, res) => {
 	try {
-		const moderatorChannels = await Channel.find({ moderatorChannel: true });
+		const { isMod } = req.params;
+		const moderatorChannels = await Channel.find({ moderatorChannel: isMod });
 		res.json(moderatorChannels);
 	} catch (error) {
 		console.error("Errore:", error);

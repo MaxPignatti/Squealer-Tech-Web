@@ -17,7 +17,7 @@ logoutLink.addEventListener("click", () => {
 
 // Fetch e mostra tutti i canali
 function fetchChannels() {
-	fetch("http://localhost:3500/channels/moderator/true")
+	fetch("http://localhost:3500/channels/moderator/false")
 		.then((response) => response.json())
 		.then((channels) => {
 			allChannels = channels;

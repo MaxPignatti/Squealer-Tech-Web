@@ -28,6 +28,7 @@ const Message = ({
   const [editedText, setEditedText] = useState(message.text);
   const [linkData, setLinkData] = useState([]);
   const [showReply, setShowReply] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
   const [originalMessageUser, setOriginalMessageUser] = useState(null);
   const [originalMessageId, setOriginalMessageId] = useState(null);
   const messageRef = useRef(null);
@@ -41,6 +42,17 @@ const Message = ({
   const [selectedChannel, setSelectedChannel] = useState([]);
 
   const navigate = useNavigate();
+
+  const handleReplyClick = () => {
+    setShowReply(!showReply);
+    if (!showReply) {
+      onStartReplying();
+      setIsReplying(true);
+    } else {
+      onEndReplying();
+      setIsReplying(false);
+    }
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -106,7 +118,6 @@ const Message = ({
   }, [message.replyTo]);
 
   const beepSoundRef = useRef(new Audio("./beep-01a.mp3"));
-  const [isReplying, setIsReplying] = useState(false);
 
   useEffect(() => {
     const checkForTimedMessages = () => {
@@ -208,16 +219,6 @@ const Message = ({
   useEffect(() => {
     setRef(message._id, messageRef);
   }, [message._id, setRef]);
-
-  const handleReplyClick = () => {
-    setIsReplying(!isReplying);
-    setShowReply(!showReply);
-    if (!isReplying) {
-      onStartReplying();
-    } else {
-      onEndReplying();
-    }
-  };
 
   const handleTextChange = (e) => {
     setEditedText(e.target.value);
@@ -437,15 +438,15 @@ const Message = ({
               <em>{message.updateInterval && " Messaggio Temporizzato"}</em>
             </small>
           </div>
+          {currentUser && currentUser === message.user && handleSaveChanges && (
+            <div className="position-absolute top-0 end-0 mt-2 me-2">
+              <Button onClick={() => seteditMessage(true)}>
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </Button>
+            </div>
+          )}
+          <hr />
           <div className="d-flex justify-content-between">
-            {currentUser &&
-              currentUser === message.user &&
-              handleSaveChanges && (
-                <Button onClick={() => seteditMessage(true)}>
-                  <FontAwesomeIcon icon={faPenToSquare} />
-                </Button>
-              )}
-
             {currentUser && handleReaction && (
               <>
                 <div>
@@ -475,10 +476,15 @@ const Message = ({
             editMessage &&
             currentUser === message.user &&
             handleSaveChanges && (
-              <div>
+              <div className="mb-3">
+                {" "}
+                {/* Aggiungiamo margine al fondo del blocco */}
                 <Form>
                   <Form.Group controlId="formBasicEditText">
-                    <Form.Label>Modifica Testo</Form.Label>
+                    <Form.Label>
+                      {" "}
+                      <b>MODIFICA TESTO</b>
+                    </Form.Label>
                     <Form.Control
                       type="text"
                       name="editedText"
@@ -487,21 +493,33 @@ const Message = ({
                     />
                   </Form.Group>
                 </Form>
-
-                <Button variant="primary" onClick={handleSaveClick}>
-                  Salva Modifiche
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => seteditMessage(false)}
-                >
-                  Annulla
-                </Button>
+                <div className="mb-3"></div>{" "}
+                {/* Aggiungiamo spazio tra il form e i bottoni */}
+                <div className="d-flex justify-content-between">
+                  {" "}
+                  {/* Utilizziamo flexbox per allineare i bottoni */}
+                  <Button variant="primary" onClick={handleSaveClick}>
+                    Salva Modifiche
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => seteditMessage(false)}
+                  >
+                    Annulla
+                  </Button>
+                </div>
+                <hr className="my-3" />{" "}
+                {/* Aggiungiamo margine sopra e sotto la linea */}
               </div>
             )}
 
-          {currentUser && handleReplyClick && (
-            <button onClick={handleReplyClick}>Rispondi</button>
+          {currentUser && (
+            <Button
+              onClick={handleReplyClick}
+              variant={isReplying ? "danger" : "outline-primary"}
+            >
+              {isReplying ? "Annulla" : "Rispondi"}
+            </Button>
           )}
           {currentUser && showReply && onStartReplying && onEndReplying && (
             <ReplySqueal

@@ -19,7 +19,7 @@ router.post(
 			.withMessage("Il nome del canale è obbligatorio")
 			.trim()
 			.escape(),
-		body("description").optional().trim().escape(), // `optional` significa che il campo può essere vuoto
+		body("description").optional().trim().escape(),
 		body("creator").trim().escape(),
 		body("isMod")
 			.isBoolean()

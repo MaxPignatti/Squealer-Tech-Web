@@ -9,7 +9,7 @@ const consts = require("../consts");
 exports.register = async (req, res) => {
 	try {
 		const { firstName, lastName, username, password, confirmPassword, email } =
-			req.query;
+			req.body;
 		if (
 			!firstName ||
 			!lastName ||

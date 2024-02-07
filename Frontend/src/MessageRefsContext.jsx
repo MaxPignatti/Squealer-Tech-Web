@@ -1,4 +1,5 @@
-import React, { createContext, useRef, useContext } from "react";
+import React, { createContext, useRef, useContext, useMemo } from "react";
+import PropTypes from "prop-types";
 
 const MessageRefsContext = createContext();
 
@@ -11,9 +12,15 @@ export const MessageRefsProvider = ({ children }) => {
 		messageRefs.current[messageId] = ref;
 	};
 
+	const value = useMemo(() => ({ messageRefs, setRef }), []);
+
 	return (
-		<MessageRefsContext.Provider value={{ messageRefs, setRef }}>
+		<MessageRefsContext.Provider value={value}>
 			{children}
 		</MessageRefsContext.Provider>
 	);
+};
+
+MessageRefsProvider.propTypes = {
+	children: PropTypes.node.isRequired,
 };

@@ -247,99 +247,130 @@ exports.getRepliesToMessage = async (req, res) => {
 	}
 };
 
+// Helper Functions
+async function findMessageAndUser(messageId, username) {
+	const message = await Message.findById(messageId);
+	if (!message) throw new Error("Message not found");
+	const user = await User.findOne({ username });
+	if (!user) throw new Error("User not found");
+	return { message, user };
+}
+
+function updateReactionArrays({ user, message, messageId, reaction }) {
+	const reactionField = reaction
+		? "positiveReactionsGiven"
+		: "negativeReactionsGiven";
+	const oppositeField = reaction
+		? "negativeReactionsGiven"
+		: "positiveReactionsGiven";
+
+	if (user[oppositeField].includes(messageId)) {
+		const index = user[oppositeField].indexOf(messageId);
+		user[oppositeField].splice(index, 1);
+		message[reaction ? "negativeReactions" : "positiveReactions"]--;
+	}
+	if (!user[reactionField].includes(messageId)) {
+		user[reactionField].push(messageId);
+		message[reaction ? "positiveReactions" : "negativeReactions"]++;
+	}
+}
+
+function adjustUserChars(user, adjustment) {
+	user.dailyChars += adjustment;
+	user.weeklyChars += adjustment;
+	user.monthlyChars += adjustment;
+}
+
+function determineMessagePopularityAndAdjustChars({
+	message,
+	user,
+	cm,
+	messageId,
+	newChar,
+}) {
+	let popularityChange = null;
+
+	if (message.positiveReactions > cm && message.negativeReactions <= cm) {
+		popularityChange = "popular";
+	} else if (
+		message.positiveReactions <= cm &&
+		message.negativeReactions > cm
+	) {
+		popularityChange = "unpopular";
+	}
+
+	if (
+		popularityChange === "popular" &&
+		!user.positiveMessages.includes(messageId)
+	) {
+		message.popularity = "popular";
+		if (!user.positiveMessages.includes(messageId)) {
+			user.positiveMessages.push(messageId);
+		}
+		adjustUserChars(user, newChar);
+	} else if (
+		popularityChange === "unpopular" &&
+		!user.negativeMessages.includes(messageId)
+	) {
+		message.popularity = "unpopular";
+		if (!user.negativeMessages.includes(messageId)) {
+			user.negativeMessages.push(messageId);
+		}
+		adjustUserChars(user, -newChar);
+	}
+
+	if (
+		(popularityChange === "popular" &&
+			user.negativeMessages.includes(messageId)) ||
+		(popularityChange === "unpopular" &&
+			user.positiveMessages.includes(messageId))
+	) {
+		message.popularity = "controversial";
+		if (!user.controversialMessages.includes(messageId)) {
+			user.controversialMessages.push(messageId);
+		}
+	}
+}
+
 exports.addReaction = async (req, res) => {
 	try {
 		const { messageId } = req.params;
 		const { reaction, username } = req.body;
 
-		const message = await Message.findById(messageId);
+		const { message, user } = await findMessageAndUser(messageId, username);
+		updateReactionArrays({
+			user,
+			message,
+			messageId,
+			reaction: reaction === "positive",
+		});
 
-		if (!message) {
-			return res.status(404).json({ error: "Message not found" });
-		}
+		const cm = consts.CMParameter * message.impressions.length;
+		const newChar = 10; // Assume this is the char adjustment value
 
-		const user = await User.findOne({ username });
+		determineMessagePopularityAndAdjustChars({
+			message,
+			user,
+			cm,
+			messageId,
+			newChar,
+		});
 
-		if (!user) {
-			return res.status(404).json({ error: "User not found" });
-		}
-
-		if (
-			(reaction && user.positiveReactionsGiven.includes(messageId)) ||
-			(!reaction && user.negativeReactionsGiven.includes(messageId))
-		) {
-			return res
-				.status(400)
-				.json({ error: "User has already reacted to this message" });
-		}
-
-		if (reaction) {
-			if (user.negativeReactionsGiven.includes(messageId)) {
-				message.negativeReactions -= 1;
-				user.negativeReactionsGiven.pop(messageId);
-			}
-			message.positiveReactions += 1;
-			user.positiveReactionsGiven.push(messageId);
-		} else {
-			if (user.positiveReactionsGiven.includes(messageId)) {
-				message.positiveReactions -= 1;
-				user.positiveReactionsGiven.pop(messageId);
-			}
-			message.negativeReactions += 1;
-			user.negativeReactionsGiven.push(messageId);
-		}
-
-		const cm = consts.CMParameter * message.impressions.length; //massa critica
-		const newChar = 10; // caratteri da aggiungere o togliere
-
-		if (message.positiveReactions > cm && message.negativeReactions <= cm) {
-			//il messaggio è popolare
-			message.popularity = "popular";
-			if (user.negativeMessages.includes(messageId)) {
-				// il messaggio è controverso
-				message.popularity = "controversial";
-				if (!user.controversialMessages.includes(messageId)) {
-					user.controversialMessages.push(messageId);
-				}
-			}
-
-			if (!user.positiveMessages.includes(messageId)) {
-				user.positiveMessages.push(messageId);
-				user.dailyChars += charForReaction(user, newChar); //modifico caratteri
-				user.weeklyChars += charForReaction(user, newChar);
-				user.monthlyChars += charForReaction(user, newChar);
-			}
-		} else if (
-			message.positiveReactions <= cm &&
-			message.negativeReactions > cm
-		) {
-			//il messaggio è impopolare
-			message.popularity = "unpopular";
-			if (user.positiveMessages.includes(messageId)) {
-				// il messaggio è controverso
-				message.popularity = "controversial";
-				if (!user.controversialMessages.includes(messageId)) {
-					user.controversialMessages.push(messageId);
-				}
-			}
-
-			if (!user.negativeMessages.includes(messageId)) {
-				user.negativeMessages.push(messageId);
-				user.dailyChars -= charForReaction(user, newChar); //modifico i caratteri
-				user.weeklyChars -= charForReaction(user, newChar);
-				user.monthlyChars -= charForReaction(user, newChar);
-			}
-		}
 		await Promise.all([message.save(), user.save()]);
 
 		res.json({
 			message: "Reaction added successfully",
-			positiveReactions: message.positiveReactions, // Invia il numero aggiornato di reazioni positive
-			negativeReactions: message.negativeReactions, // Invia il numero aggiornato di reazioni negative
+			positiveReactions: message.positiveReactions,
+			negativeReactions: message.negativeReactions,
 		});
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Internal server error" });
+		const statusCode =
+			error.message === "Message not found" ||
+			error.message === "User not found"
+				? 404
+				: 500;
+		res.status(statusCode).json({ error: error.message });
 	}
 };
 
@@ -637,7 +668,7 @@ exports.getMessageByChannel = async (req, res) => {
 
 exports.getPrivateMessByChannel = async (req, res) => {
 	try {
-		const { username, channel } = req.params;
+		const { username } = req.params;
 
 		const user = await User.findOne({ username });
 		if (!user) {

@@ -26,7 +26,7 @@ exports.createChannel = async (req, res) => {
 			name,
 			description,
 			creator,
-			moderatorChannel: isMod ? true : false,
+			moderatorChannel: isMod,
 			members: [creator],
 		});
 
@@ -276,12 +276,10 @@ exports.updateChannel = async (req, res) => {
 		const { channelId } = req.params;
 		const { name, description } = req.body;
 		if (!name && !description) {
-			return res
-				.status(400)
-				.json({
-					error:
-						"Fornire almeno un campo tra nome e descrizione per aggiornare il canale.",
-				});
+			return res.status(400).json({
+				error:
+					"Fornire almeno un campo tra nome e descrizione per aggiornare il canale.",
+			});
 		}
 		const channel = await Channel.findById(channelId);
 		if (!channel) {

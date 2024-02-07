@@ -30,11 +30,13 @@ router.post(
 	[
 		body("username").isString().trim().escape(),
 
-		body("password").isLength({ min: 5 }).trim().escape(),
+		body("password").trim().escape(),
+
+		body("confirmPassword").trim().escape(),
 
 		body("email").isEmail().normalizeEmail(),
 
-		body("firstName").optional().trim().escape(),
+		body("firstName").trim().escape(),
 
 		body("lastName").optional().trim().escape(),
 	],

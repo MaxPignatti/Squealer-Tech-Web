@@ -117,13 +117,14 @@ const RecipientSelector = ({
 										onClick={() => handleUserSelect(user)}
 									>
 										{user.username}
-										<span
-											className="ml-2 clickable"
+										<button
+											className="ml-2 btn-link p-0 border-0 bg-transparent"
 											onClick={() => handleRemoveUser(user._id)}
-											style={{ color: "red" }}
+											style={{ color: "red", cursor: "pointer" }}
+											aria-label="Remove user"
 										>
 											&#x2716;
-										</span>
+										</button>
 									</Badge>
 									<span style={{ marginRight: "8px" }}></span>
 								</span>
@@ -144,13 +145,14 @@ const RecipientSelector = ({
 										onClick={() => handleRemoveChannel(channel._id)}
 									>
 										{channel.name}
-										<span
-											className="ml-2 clickable"
+										<button
+											className="ml-2 btn-link p-0 border-0 bg-transparent"
 											onClick={() => handleRemoveChannel(channel._id)}
-											style={{ color: "red" }}
+											style={{ color: "red", cursor: "pointer" }}
+											aria-label="Remove channel"
 										>
 											&#x2716;
-										</span>
+										</button>
 									</Badge>
 									<span style={{ marginRight: "8px" }}></span>
 								</span>

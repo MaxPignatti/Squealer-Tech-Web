@@ -113,7 +113,7 @@ exports.updateUserProfile = async (req, res) => {
 
 exports.updateUserPassword = async (req, res) => {
 	try {
-		let { oldUserName, newPassword, oldPassword, username } = req.body;
+		let { newPassword, oldPassword, username } = req.body;
 
 		const user = await User.findOne({ username });
 

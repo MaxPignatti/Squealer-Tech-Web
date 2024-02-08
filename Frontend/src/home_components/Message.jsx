@@ -398,7 +398,12 @@ const Message = ({
           {message.channel && message.channel.length > 0 && (
             <div className="mb-2">
               {message.channel.map((channel, index) => (
-                <Badge key={index} pill bg="secondary" className="mr-1">
+                <Badge
+                  key={index}
+                  pill
+                  bg="secondary"
+                  style={{ marginRight: "10px" }}
+                >
                   {channel}
                 </Badge>
               ))}

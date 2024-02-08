@@ -177,12 +177,6 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
               }
               selection={selection}
             />
-            <CharCounter
-              dailyCharacters={dailyCharacters}
-              weeklyCharacters={weeklyCharacters}
-              monthlyCharacters={monthlyCharacters}
-            />
-            <div className="mt-3"></div>
             <ImageUploader
               image={image}
               imagePreview={imagePreview}
@@ -243,6 +237,11 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
                   monthlyCharacters
                 )
               }
+            />
+            <CharCounter
+              dailyCharacters={dailyCharacters}
+              weeklyCharacters={weeklyCharacters}
+              monthlyCharacters={monthlyCharacters}
             />
             <Row className="mt-3">
               <Col className="text-center">

@@ -36,6 +36,7 @@ const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
 						name: channelName,
 						description: channelDescription,
 						creator: username,
+						isMod: false,
 					}),
 				});
 

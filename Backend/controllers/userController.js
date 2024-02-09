@@ -15,27 +15,26 @@ exports.getUser = async (req, res) => {
 	}
 };
 
+// Funzione helper per determinare l'oggetto sort in base ai parametri della richiesta
+function determineSortObject(sortField, sortOrder) {
+	const sortDirection = sortOrder === "asc" ? 1 : -1;
+	switch (sortField) {
+		case "popularity":
+			return { positiveMessages: sortDirection };
+		case "accountType":
+			return { isPro: sortDirection };
+		default:
+			return { [sortField]: sortDirection };
+	}
+}
+
 exports.getAllUsers = async (req, res) => {
 	try {
 		const { sortField, sortOrder } = req.query;
-
-		let filter = {};
-		let sort = {};
-		if (sortField && sortOrder) {
-			if (sortField === "popularity") {
-				sort = {
-					positiveMessages: sortOrder === "asc" ? 1 : -1,
-				};
-			} else if (sortField === "accountType") {
-				sort = {
-					isPro: sortOrder === "asc" ? 1 : -1,
-				};
-			} else {
-				sort[sortField] = sortOrder === "asc" ? 1 : -1;
-			}
-		}
-
-		const users = await User.find(filter).sort(sort);
+		// Usa la funzione helper per costruire l'oggetto sort
+		const sort =
+			sortField && sortOrder ? determineSortObject(sortField, sortOrder) : {};
+		const users = await User.find({}).sort(sort);
 		res.json(users);
 	} catch (error) {
 		console.error(error);
@@ -142,14 +141,6 @@ exports.updateUserPassword = async (req, res) => {
 
 		// Save the updated user data to the database
 		await user.save();
-
-		// Create a new token with the updated user data
-		/*const token = jwt.sign(
-      { username: user.username, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-    */
 
 		res.json({ message: "Password updated successfully" });
 	} catch (error) {

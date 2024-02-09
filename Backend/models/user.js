@@ -98,7 +98,7 @@ const userSchema = new mongoose.Schema({
 		default: false,
 	},
 	isProRequested: {
-		type:Boolean,
+		type: Boolean,
 		default: false,
 	},
 });

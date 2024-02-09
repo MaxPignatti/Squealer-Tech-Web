@@ -1,31 +1,41 @@
 :root {
 	--forte-blu: #007bff;
 	--forte-verde: #28a745;
-	--forte-rosa: #e83e8c;
+	--forte-rosa: #ff3e96;
 	--forte-giallo: #ffc107;
 	--forte-arancione: #fd7e14;
-	--sfondo-principale: #f0f0f0;
+	--sfondo-principale: #f8f9fa;
 	--testo-principale: #212529;
+	--ombra-box: rgba(0, 0, 0, 0.15) 0px 4px 12px;
 }
 
 body {
 	background-color: var(--sfondo-principale);
 	color: var(--testo-principale);
-	font-family: "Arial", sans-serif;
+	font-family: "Segoe UI", Arial, sans-serif;
 }
 
 .navbar-light {
 	background-color: var(--forte-blu);
-	border-bottom: 3px solid var(--forte-verde);
+	border-bottom: 4px solid var(--forte-verde);
 }
 
 .nav-link {
 	color: #fff;
+	font-weight: bold;
+	transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+	color: var(--forte-arancione);
 }
 
 .container {
 	padding: 20px;
 	max-width: 680px;
+	box-shadow: var(--ombra-box);
+	background: white;
+	border-radius: 8px;
 }
 
 .form-group label {
@@ -36,6 +46,7 @@ body {
 .btn-primary {
 	background-color: var(--forte-verde);
 	border-color: var(--forte-verde);
+	transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .btn-primary:hover {
@@ -48,11 +59,12 @@ body {
 	margin-bottom: 50px;
 }
 
-/* Tabelle */
 .table {
 	border-collapse: collapse;
 	width: 100%;
 	background-color: #fff;
+	border-radius: 8px;
+	overflow: hidden;
 }
 
 .table th,
@@ -73,43 +85,53 @@ body {
 
 .table tr:hover {
 	background-color: var(--forte-arancione);
+	color: white;
 }
 
-/* Bottoni */
 .btn-outline-secondary {
-	color: #fff;
-	border: none;
+	background-color: var(--sfondo-principale);
+	color: var(--forte-giallo);
+	border: 2px solid var(--forte-giallo);
 	padding: 10px 20px;
 	cursor: pointer;
 	margin: 5px;
+	transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.btn-danger {
-	background-color: var(--forte-rosa);
-}
-
-.btn-success {
-	background-color: var(--forte-blu);
-}
-
-.btn-outline-secondary {
+.btn-outline-secondary:hover {
 	background-color: var(--forte-giallo);
 	color: var(--testo-principale);
 }
 
-/* Input e Form */
+.btn-danger {
+	background-color: var(--forte-rosa);
+	border-color: var(--forte-rosa);
+}
+
+.btn-success {
+	background-color: var(--forte-blu);
+	border-color: var(--forte-blu);
+}
+
 .form-control {
 	padding: 10px;
 	margin: 10px 0;
-	border: 1px solid var(--forte-giallo);
+	border: 2px solid var(--forte-giallo);
 	border-radius: 5px;
+	transition: border-color 0.3s ease;
 }
 
-/* Modali e Popups*/
+.form-control:focus {
+	border-color: var(--forte-arancione);
+	box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
+}
+
 .modal-content {
 	background-color: #fefefe;
 	margin: 15% auto;
 	padding: 20px;
 	border: 1px solid #888;
 	width: 80%;
+	border-radius: 8px;
+	box-shadow: var(--ombra-box);
 }

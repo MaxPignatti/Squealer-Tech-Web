@@ -12,7 +12,7 @@ import LogoutButton from "./LogoutButton";
 const Profile = () => {
 	const { isAuthenticated } = useAuth();
 	const [userData, setUserData] = useState({});
-	const [editChange, seteditChange] = useState(false);
+	const [editChange, setEditChange] = useState(false);
 	const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 
@@ -61,7 +61,7 @@ const Profile = () => {
 	};
 
 	const handleModifica = () => {
-		seteditChange(true);
+		setEditChange(true);
 	};
 
 	const handleUserChange = async () => {
@@ -88,7 +88,7 @@ const Profile = () => {
 					expires: 1,
 				});
 
-				seteditChange(false);
+				setEditChange(false);
 			} else {
 				const data = await response.json();
 				setErrorMessage(data.error);
@@ -125,7 +125,7 @@ const Profile = () => {
 	};
 
 	const handleAnnulla = () => {
-		seteditChange(false);
+		setEditChange(false);
 	};
 
 	return (
@@ -143,7 +143,7 @@ const Profile = () => {
 								<div>
 									<img
 										src={`${userData.profileImage}`}
-										alt="Profile Picture"
+										alt="Profile"
 										style={{ maxWidth: "20%" }}
 									/>
 								</div>
@@ -277,17 +277,21 @@ const Profile = () => {
 															})
 														}
 													/>
-													<span
+													<button
 														className="password-toggle"
 														onClick={() => setShowOldPassword(!showOldPassword)}
-														role="button"
+														aria-label={
+															showOldPassword
+																? "Nascondi password"
+																: "Mostra password"
+														}
 													>
 														{showOldPassword ? (
 															<FontAwesomeIcon icon={faEyeSlash} />
 														) : (
 															<FontAwesomeIcon icon={faEye} />
 														)}
-													</span>
+													</button>
 												</Form.Group>
 
 												<Form.Group controlId="formBasicPassword">
@@ -303,16 +307,21 @@ const Profile = () => {
 															})
 														}
 													/>
-													<span
+													<button
 														className="password-toggle"
 														onClick={() => setShowNewPassword(!showNewPassword)}
+														aria-label={
+															showNewPassword
+																? "Nascondi nuova password"
+																: "Mostra nuova password"
+														}
 													>
 														{showNewPassword ? (
 															<FontAwesomeIcon icon={faEyeSlash} />
 														) : (
 															<FontAwesomeIcon icon={faEye} />
 														)}
-													</span>
+													</button>
 												</Form.Group>
 
 												<Button

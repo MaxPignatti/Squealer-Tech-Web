@@ -471,17 +471,6 @@ exports.updatePosition = async (req, res) => {
 	}
 };
 
-const charForReaction = (user, newChar) => {
-	let char = 0;
-
-	if (user.positiveMessages && user.positiveMessages.length > 10) {
-		char += newChar;
-	} else if (user.negativeMessages && user.negativeMessages.length > 3) {
-		char -= newChar;
-	}
-	return char;
-};
-
 exports.incrementImpressions = async (req, res) => {
 	try {
 		const { messageId } = req.params;

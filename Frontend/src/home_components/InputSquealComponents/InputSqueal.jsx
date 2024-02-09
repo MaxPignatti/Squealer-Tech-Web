@@ -252,81 +252,105 @@ const InputSqueal = () => {
 		}
 	};
 
-	//PUBLISH
+	const validatePublishData = (message, selectedChannels, selectedUsers) => {
+		if (!message) return "Scrivi qualcosa";
+		if (selectedChannels.length === 0 && selectedUsers.length === 0)
+			return "Seleziona un destinatario";
+		return "";
+	};
+
+	const preparePublishData = ({
+		userData,
+		message,
+		image,
+		dailyCharacters,
+		weeklyCharacters,
+		monthlyCharacters,
+		updateInterval,
+		maxSendCount,
+		currentLocation,
+		selectedChannels,
+		selectedUsers,
+	}) => {
+		const currentTime = new Date();
+		const isTempMessage = updateInterval && maxSendCount;
+
+		return {
+			userName: userData.username,
+			image: image || null,
+			text: message,
+			dailyCharacters,
+			weeklyCharacters,
+			monthlyCharacters,
+			updateInterval: isTempMessage ? updateInterval : undefined,
+			maxSendCount: isTempMessage ? maxSendCount : undefined,
+			nextSendTime: isTempMessage
+				? new Date(currentTime.getTime() + updateInterval * 60000)
+				: undefined,
+			location: currentLocation
+				? { latitude: currentLocation[0], longitude: currentLocation[1] }
+				: null,
+			recipients: {
+				channels: selectedChannels.map((channel) => channel.name),
+				users: selectedUsers.map((user) => user.username),
+			},
+		};
+	};
+
+	const publishMessage = async (requestData) => {
+		const url = "http://localhost:3500/create";
+		const requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(requestData),
+		};
+
+		const response = await fetch(url, requestOptions);
+		return response;
+	};
+
 	const handlePublish = async () => {
-		const savedMessage = message;
+		const userDataCookie = Cookies.get("user_data");
+		if (!userDataCookie) {
+			console.error("User data not found in cookies");
+			return;
+		}
 
-		if (
-			savedMessage &&
-			(selectedChannels.length > 0 || selectedUsers.length > 0)
-		) {
-			const userDataCookie = Cookies.get("user_data");
-			setMessage("");
-			setImage(null);
-			setImagePreview(null);
-			setErrorMessage("");
-			if (userDataCookie) {
-				try {
-					const userData = JSON.parse(userDataCookie);
-					const currentTime = new Date();
-					const isTempMessage = updateInterval && maxSendCount;
-					if (isTempMessage && (!updateInterval || !maxSendCount)) {
-						alert(
-							"Please enter valid update interval and max send count for temporary messages."
-						);
-						return;
-					}
-					const requestData = {
-						userName: userData.username,
-						image: image !== null ? image : null,
-						text: savedMessage,
-						dailyCharacters: dailyCharacters,
-						weeklyCharacters: weeklyCharacters,
-						monthlyCharacters: monthlyCharacters,
-						updateInterval: isTempMessage ? updateInterval : undefined,
-						maxSendCount: isTempMessage ? maxSendCount : undefined,
-						nextSendTime: isTempMessage
-							? new Date(currentTime.getTime() + updateInterval * 60000)
-							: undefined,
-						location: currentLocation
-							? { latitude: currentLocation[0], longitude: currentLocation[1] }
-							: null,
-						recipients: {
-							channels: selectedChannels.map((channel) => channel.name),
-							users: selectedUsers.map((user) => user.username),
-						},
-					};
+		const errorMessage = validatePublishData(
+			message,
+			selectedChannels,
+			selectedUsers
+		);
+		if (errorMessage) {
+			setErrorMessage(errorMessage);
+			return;
+		}
 
-					const url = "http://localhost:3500/create";
+		try {
+			const userData = JSON.parse(userDataCookie);
+			const requestData = preparePublishData({
+				userData,
+				message,
+				image,
+				dailyCharacters,
+				weeklyCharacters,
+				monthlyCharacters,
+				updateInterval,
+				maxSendCount,
+				currentLocation,
+				selectedChannels,
+				selectedUsers,
+			});
 
-					const requestOptions = {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify(requestData),
-					};
-
-					const response = await fetch(url, requestOptions);
-
-					if (response.status === 201) {
-						const data = await response.json();
-						set_id(data._id);
-						window.location.reload();
-					} else {
-						const data = await response.json();
-						console.error("Errore nella creazione del messaggio:", data.error);
-					}
-				} catch (error) {
-					console.error("Errore nella creazione del messaggio:", error);
-				}
+			const response = await publishMessage(requestData);
+			if (response.status === 201) {
+				window.location.reload();
+			} else {
+				const data = await response.json();
+				console.error("Errore nella creazione del messaggio:", data.error);
 			}
-		} else {
-			let errorText = "";
-			if (!savedMessage) {
-				errorText = "Scrivi qualcosa";
-			} else if (selectedChannels.length === 0 && selectedUsers.length === 0) {
-				errorText = "Seleziona un destinatario";
-			}
-			setErrorMessage(errorText);
+		} catch (error) {
+			console.error("Errore nella creazione del messaggio:", error);
 		}
 	};
 

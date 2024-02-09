@@ -57,7 +57,7 @@ export const handleImageChange = (
 			return;
 		}
 	}
-	if (e.target.files && e.target.files[0]) {
+	if (e.target.files?.[0]) {
 		const file = e.target.files[0];
 
 		const reader = new FileReader();
@@ -201,13 +201,14 @@ export const sendLocationPeriodically = (
 ) => {
 	let intervalId;
 
-	intervalId = setInterval(async () => {
-		try {
-			handleGetLocation(setCurrentLocation);
-			sendLocationToBackend(messageId, currentLocation);
-		} catch (error) {
-			console.error("Error getting current location:", error);
-		}
+	intervalId = setInterval(() => {
+		handleGetLocation(setCurrentLocation)
+			.then(() => {
+				return sendLocationToBackend(messageId, currentLocation);
+			})
+			.catch((error) => {
+				console.error("Error getting current location:", error);
+			});
 	}, 30000);
 
 	// Interrompi l'intervallo

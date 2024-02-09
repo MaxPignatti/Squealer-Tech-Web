@@ -32,7 +32,7 @@ const UserMention = () => {
 							<div>
 								<img
 									src={`${userData.profileImage}`}
-									alt="Profile Picture"
+									alt="Profile"
 									style={{ maxWidth: "20%" }}
 								/>
 							</div>

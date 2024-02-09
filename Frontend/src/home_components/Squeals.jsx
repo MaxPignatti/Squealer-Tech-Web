@@ -6,244 +6,242 @@ import { useMessageRefs } from "../MessageRefsContext";
 import PropTypes from "prop-types";
 
 const Squeals = ({ searchType, searchText }) => {
-  const [messages, setMessages] = useState([]);
-  const [viewMode, setViewMode] = useState("public"); // 'public' o 'private'
-  const [currentUser, setCurrentUser] = useState(null);
-  const { messageRefs } = useMessageRefs();
-  const [isEditing, setIsEditing] = useState(false);
-  const [isReplying, setIsReplying] = useState(false);
-  const [customPublicMessage, setCustomPublicMessage] = useState("");
-  const [customPrivateMessage, setCustomPrivateMessage] = useState("");
+	const [messages, setMessages] = useState([]);
+	const [viewMode, setViewMode] = useState("public"); // 'public' o 'private'
+	const [currentUser, setCurrentUser] = useState(null);
+	const { messageRefs } = useMessageRefs();
+	const [isEditing, setIsEditing] = useState(false);
+	const [isReplying, setIsReplying] = useState(false);
+	const [customPublicMessage, setCustomPublicMessage] = useState("");
+	const [customPrivateMessage, setCustomPrivateMessage] = useState("");
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      const userDataCookie = Cookies.get("user_data");
-      if (userDataCookie) {
-        const userData = JSON.parse(userDataCookie);
-        const username = userData.username;
-        setCurrentUser(username);
+	// Funzione per costruire l'URL basato su vari parametri
+	const buildUrl = (viewMode, username, searchType, searchText) => {
+		let baseUrl = `http://localhost:3500/${
+			viewMode === "public" ? "squeals" : "privateMessages"
+		}/${username}`;
+		if (searchType && searchText) {
+			const encodedSearchText = encodeURIComponent(searchText);
+			const endpoints = {
+				hashtag: "hashtag",
+				channel: "channel",
+				text: "text",
+				user: "targetUsername",
+			};
+			baseUrl += `/${endpoints[searchType]}/${encodedSearchText}`;
+		}
+		return baseUrl;
+	};
 
-        let baseUrl =
-          viewMode === "public"
-            ? `http://localhost:3500/squeals/${username}`
-            : `http://localhost:3500/privateMessages/${username}`;
+	// Funzione per gestire la fetch dei messaggi
+	const fetchAndSetMessages = async (url, setMessages, setCustomMessages) => {
+		try {
+			const response = await fetch(url);
+			const data = await response.json();
+			setMessages(data.messages || []);
+			setCustomMessages(data);
+		} catch (error) {
+			console.error("Failed to fetch messages:", error);
+			setMessages([]);
+		}
+	};
 
-        if (searchType && searchText) {
-          const encodedSearchText = encodeURIComponent(searchText);
+	// Utilizzo all'interno del useEffect
+	useEffect(() => {
+		const userDataCookie = Cookies.get("user_data");
+		if (userDataCookie && !isEditing && !isReplying) {
+			const userData = JSON.parse(userDataCookie);
+			const url = buildUrl(viewMode, userData.username, searchType, searchText);
+			fetchAndSetMessages(
+				url,
+				setMessages,
+				({ privateMessage, publicMessage }) => {
+					setCustomPrivateMessage(privateMessage);
+					setCustomPublicMessage(publicMessage);
+				}
+			);
+			const pollingInterval = setInterval(() => {
+				fetchAndSetMessages(
+					url,
+					setMessages,
+					({ privateMessage, publicMessage }) => {
+						setCustomPrivateMessage(privateMessage);
+						setCustomPublicMessage(publicMessage);
+					}
+				).catch(console.error);
+			}, 1000);
+			return () => clearInterval(pollingInterval);
+		}
+	}, [viewMode, isEditing, isReplying, searchType, searchText]);
 
-          switch (searchType) {
-            case "hashtag":
-              baseUrl =
-                viewMode === "public"
-                  ? `http://localhost:3500/squeals/hashtag/${username}/${encodedSearchText}`
-                  : `http://localhost:3500/privateMessages/hashtag/${username}/${encodedSearchText}`;
-              break;
-            case "channel":
-              baseUrl =
-                viewMode === "public"
-                  ? `http://localhost:3500/squeals/channel/${username}/${encodedSearchText}`
-                  : `http://localhost:3500/privateMessages/channel/${username}/${encodedSearchText}`;
-              break;
-            case "text":
-              baseUrl =
-                viewMode === "public"
-                  ? `http://localhost:3500/squeals/text/${username}/${encodedSearchText}`
-                  : `http://localhost:3500/privateMessages/text/${username}/${encodedSearchText}`;
-              break;
-            case "user":
-              baseUrl =
-                viewMode === "public"
-                  ? `http://localhost:3500/squeals/targetUsername/${username}/${encodedSearchText}`
-                  : `http://localhost:3500/privateMessages/targetUsername/${username}/${encodedSearchText}`;
-              break;
-            default:
-              break;
-          }
-        }
+	const handleReaction = async (messageId, isPositiveReaction) => {
+		const userDataCookie = Cookies.get("user_data");
+		if (userDataCookie) {
+			const userData = JSON.parse(userDataCookie);
+			const username = userData.username;
+			try {
+				const response = await fetch(
+					`http://localhost:3500/squeals/reaction/${messageId}`,
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							reaction: isPositiveReaction,
+							username: username,
+						}),
+					}
+				);
 
-        try {
-          const response = await fetch(baseUrl);
-          const data = await response.json();
-          setMessages(data.messages);
-          setCustomPrivateMessage(data.privateMessage);
-          setCustomPublicMessage(data.publicMessage);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
-    if (!isEditing && !isReplying) {
-      fetchMessages();
-      const pollingInterval = setInterval(fetchMessages, 1000);
-      return () => clearInterval(pollingInterval);
-    }
-  }, [viewMode, isEditing, isReplying, searchType, searchText]);
+				if (response.status === 200) {
+					const updatedMessage = messages.find(
+						(message) => message._id === messageId
+					);
+					const updatedData = await response.json();
 
-  const handleReaction = async (messageId, isPositiveReaction) => {
-    const userDataCookie = Cookies.get("user_data");
-    if (userDataCookie) {
-      const userData = JSON.parse(userDataCookie);
-      const username = userData.username;
-      try {
-        const response = await fetch(
-          `http://localhost:3500/squeals/reaction/${messageId}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              reaction: isPositiveReaction,
-              username: username,
-            }),
-          }
-        );
+					updatedMessage.positiveReactions = updatedData.positiveReactions;
+					updatedMessage.negativeReactions = updatedData.negativeReactions;
 
-        if (response.status === 200) {
-          const updatedMessage = messages.find(
-            (message) => message._id === messageId
-          );
-          const updatedData = await response.json();
+					setMessages([...messages]);
+				} else {
+					console.error("Failed to update reaction:", response.status);
+				}
+			} catch (error) {
+				console.error("API call error:", error);
+			}
+		}
+	};
 
-          updatedMessage.positiveReactions = updatedData.positiveReactions;
-          updatedMessage.negativeReactions = updatedData.negativeReactions;
+	const handleEditButtonClick = (messageId) => {
+		setIsEditing((prev) => !prev);
+		setMessages((prevMessages) =>
+			prevMessages.map((message) => ({
+				...message,
+				isEditing:
+					message._id === messageId ? !message.isEditing : message.isEditing,
+			}))
+		);
+	};
 
-          setMessages([...messages]);
-        } else {
-          console.error("Failed to update reaction:", response.status);
-        }
-      } catch (error) {
-        console.error("API call error:", error);
-      }
-    }
-  };
+	const scrollToMessage = (messageId) => {
+		const ref = messageRefs.current[messageId];
+		ref?.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+	};
 
-  const handleEditButtonClick = (messageId) => {
-    setIsEditing((prev) => !prev);
-    setMessages((prevMessages) =>
-      prevMessages.map((message) => ({
-        ...message,
-        isEditing:
-          message._id === messageId ? !message.isEditing : message.isEditing,
-      }))
-    );
-  };
+	const handleSaveChanges = async (messageId, editedText) => {
+		const userDataCookie = Cookies.get("user_data");
+		if (userDataCookie) {
+			const userData = JSON.parse(userDataCookie);
+			const username = userData.username;
+			try {
+				const response = await fetch(
+					`http://localhost:3500/squeals/edit/${messageId}`,
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ text: editedText, username: username }),
+					}
+				);
 
-  const scrollToMessage = (messageId) => {
-    const ref = messageRefs.current[messageId];
-    ref?.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  };
+				if (response.status === 200) {
+					const updatedMessage = messages.find(
+						(message) => message._id === messageId
+					);
+					const updatedData = await response.json();
 
-  const handleSaveChanges = async (messageId, editedText) => {
-    const userDataCookie = Cookies.get("user_data");
-    if (userDataCookie) {
-      const userData = JSON.parse(userDataCookie);
-      const username = userData.username;
-      try {
-        const response = await fetch(
-          `http://localhost:3500/squeals/edit/${messageId}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ text: editedText, username: username }),
-          }
-        );
+					updatedMessage.text = updatedData.text;
 
-        if (response.status === 200) {
-          const updatedMessage = messages.find(
-            (message) => message._id === messageId
-          );
-          const updatedData = await response.json();
+					setMessages([...messages]);
 
-          updatedMessage.text = updatedData.text;
+					handleEditButtonClick(messageId);
+					setIsEditing(false);
+				} else {
+					console.error("Failed to save changes:", response.status);
+				}
+			} catch (error) {
+				console.error("API call error:", error);
+			}
+		}
+	};
 
-          setMessages([...messages]);
+	const onStartReplying = () => {
+		setIsReplying(true);
+	};
 
-          handleEditButtonClick(messageId);
-          setIsEditing(false);
-        } else {
-          console.error("Failed to save changes:", response.status);
-        }
-      } catch (error) {
-        console.error("API call error:", error);
-      }
-    }
-  };
+	const onEndReplying = () => {
+		setIsReplying(false);
+	};
 
-  const onStartReplying = () => {
-    setIsReplying(true);
-  };
+	const sortedMessages = [...messages].sort(
+		(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+	);
 
-  const onEndReplying = () => {
-    setIsReplying(false);
-  };
-
-  const sortedMessages = [...messages].sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
-
-  return (
-    <Container>
-      <Row className="justify-content-center my-3">
-        <ButtonGroup>
-          <Button
-            variant={viewMode === "public" ? "primary" : "secondary"}
-            onClick={() => setViewMode("public")}
-          >
-            Squeals Pubblici
-          </Button>
-          <Button
-            variant={viewMode === "private" ? "primary" : "secondary"}
-            onClick={() => setViewMode("private")}
-          >
-            Messaggi Privati
-          </Button>
-        </ButtonGroup>
-      </Row>
-      <Row className="justify-content-center">
-        <Col xs={12} md={8}>
-          {sortedMessages.length > 0 ? (
-            sortedMessages.map((message) => (
-              <Message
-                key={message._id}
-                message={message}
-                handleReaction={handleReaction}
-                editMessage={message.isEditing}
-                seteditMessage={() => handleEditButtonClick(message._id)}
-                handleSaveChanges={handleSaveChanges}
-                currentUser={currentUser}
-                scrollToMessage={scrollToMessage}
-                onStartReplying={onStartReplying}
-                onEndReplying={onEndReplying}
-              />
-            ))
-          ) : (
-            <div className="text-center mt-4">
-              <p className="lead">
-                {viewMode === "public"
-                  ? customPublicMessage ||
-                    "Al momento non ci sono Squeals pubblici da mostrare."
-                  : customPrivateMessage || "Non hai messaggi privati."}
-              </p>
-              {viewMode === "public" && !customPublicMessage && (
-                <p>
-                  Iscriviti a dei canali per iniziare a esplorare i messaggi e
-                  interagire con la community!
-                </p>
-              )}
-            </div>
-          )}
-        </Col>
-      </Row>
-    </Container>
-  );
+	return (
+		<Container>
+			<Row className="justify-content-center my-3">
+				<ButtonGroup>
+					<Button
+						variant={viewMode === "public" ? "primary" : "secondary"}
+						onClick={() => setViewMode("public")}
+					>
+						Squeals Pubblici
+					</Button>
+					<Button
+						variant={viewMode === "private" ? "primary" : "secondary"}
+						onClick={() => setViewMode("private")}
+					>
+						Messaggi Privati
+					</Button>
+				</ButtonGroup>
+			</Row>
+			<Row className="justify-content-center">
+				<Col
+					xs={12}
+					md={8}
+				>
+					{sortedMessages.length > 0 ? (
+						sortedMessages.map((message) => (
+							<Message
+								key={message._id}
+								message={message}
+								handleReaction={handleReaction}
+								editMessage={message.isEditing}
+								seteditMessage={() => handleEditButtonClick(message._id)}
+								handleSaveChanges={handleSaveChanges}
+								currentUser={currentUser}
+								scrollToMessage={scrollToMessage}
+								onStartReplying={onStartReplying}
+								onEndReplying={onEndReplying}
+							/>
+						))
+					) : (
+						<div className="text-center mt-4">
+							<p className="lead">
+								{viewMode === "public"
+									? customPublicMessage ||
+									  "Al momento non ci sono Squeals pubblici da mostrare."
+									: customPrivateMessage || "Non hai messaggi privati."}
+							</p>
+							{viewMode === "public" && !customPublicMessage && (
+								<p>
+									Iscriviti a dei canali per iniziare a esplorare i messaggi e
+									interagire con la community!
+								</p>
+							)}
+						</div>
+					)}
+				</Col>
+			</Row>
+		</Container>
+	);
 };
 
 Squeals.propTypes = {
-  searchType: PropTypes.string,
-  searchText: PropTypes.string,
+	searchType: PropTypes.string,
+	searchText: PropTypes.string,
 };
 
 export default Squeals;

@@ -342,11 +342,11 @@ exports.addReaction = async (req, res) => {
 			user,
 			message,
 			messageId,
-			reaction: reaction === "positive",
+			reaction: reaction,
 		});
 
 		const cm = consts.CMParameter * message.impressions.length;
-		const newChar = 10; // Assume this is the char adjustment value
+		const newChar = 10;
 
 		determineMessagePopularityAndAdjustChars({
 			message,
@@ -485,13 +485,12 @@ const charForReaction = (user, newChar) => {
 exports.incrementImpressions = async (req, res) => {
 	try {
 		const { messageId } = req.params;
-		const { username } = req.body; // Assumi che il nome utente venga inviato nel corpo della richiesta
+		const { username } = req.body;
 
 		const message = await Message.findById(messageId);
 		if (!message) {
 			return res.status(404).json({ error: "Messaggio non trovato" });
 		}
-
 		// Aggiungi il nome utente alle impressioni se non è già presente
 		if (!message.impressions.includes(username)) {
 			message.impressions.push(username);

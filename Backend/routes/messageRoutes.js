@@ -27,36 +27,37 @@ router.post(
 	messageController.incrementImpressions
 );
 router.get(
-	"/squeals/hashtag/:username/:hashtag",
+	"/squeals/:username/hashtag/:hashtag",
 	messageController.getMessageByHashtag
 );
 router.get(
-	"/privateMessages/hashtag/:username/:hashtag",
+	"/privateMessages/:username/hashtag/:hashtag",
 	messageController.getPrivateMessByHashtag
 );
 router.post("/messages/acknowledgeBeep/:id", messageController.acknowledgeBeep);
 
 router.get(
-	"/squeals/targetUsername/:username/:targetUsername",
+	"/squeals/:username/targetUsername/:targetUsername",
 	messageController.getMessageByUser
 );
 router.get(
-	"/privateMessages/targetUsername/:username/:targetUsername",
+	"/privateMessages/:username/targetUsername/:targetUsername",
 	messageController.getPrivateMessByUser
 );
 router.get(
-	"/squeals/channel/:username/:channel",
+	"/squeals/:username/channel/:channel",
 	messageController.getMessageByChannel
 );
 router.get(
-	"/privateMessages/channel/:username/:channel",
+	"/privateMessages/:username/channel/:channel",
 	messageController.getPrivateMessByChannel
 );
-router.get("/squeals/text/:username/:text", messageController.getMessageByText);
+router.get("/squeals/:username/text/:text", messageController.getMessageByText);
 router.get(
-	"/privateMessages/text/:username/:text",
+	"/privateMessages/:username/text/:text",
 	messageController.getPrivateMessByText
 );
 router.get("/allMessages", messageController.getAllMessages);
 
 module.exports = router;
+

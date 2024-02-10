@@ -108,7 +108,7 @@ const RecipientSelector = ({
 					<div>
 						<h5>Utenti Selezionati:</h5>
 						<div className="d-flex flex-wrap">
-							{selectedUsers.map((user, index) => (
+							{selectedUsers.map((user) => (
 								<span key={user._id}>
 									<Badge
 										pill

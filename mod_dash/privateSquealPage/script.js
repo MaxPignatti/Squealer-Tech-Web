@@ -60,7 +60,7 @@ function showEditChannelForm(channelId, name, description) {
 
 // Elimina un canale
 function deleteChannel(channelId) {
-	fetch(`http://localhost:3500/channels/delete/${channelId}`, {
+	fetch(`http://localhost:3500/channels/${channelId}`, {
 		method: "DELETE",
 	})
 		.then(() => {
@@ -79,8 +79,8 @@ function updateChannel(channelId, currentName, currentDescription) {
 	);
 
 	if (newName && newDescription) {
-		fetch(`http://localhost:3500/channels/update/${channelId}`, {
-			method: "POST",
+		fetch(`http://localhost:3500/channels/${channelId}`, {
+			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ name: newName, description: newDescription }),
 		})

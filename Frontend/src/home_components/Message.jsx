@@ -172,7 +172,7 @@ const Message = ({
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://localhost:3500/channels/all/${username}`)
+			fetch(`http://localhost:3500/channels?excludeSubscribedBy=${username}`)
 				.then((response) => response.json())
 				.then((data) => setChannel(data))
 				.catch((error) =>
@@ -259,13 +259,12 @@ const Message = ({
 				const username = userData.username;
 
 				const response = await fetch(
-					`http://localhost:3500/channels/subscribe/${channel._id}`,
+					`http://localhost:3500/channels/${channel._id}/members/${username}`,
 					{
-						method: "POST",
+						method: "PUT",
 						headers: {
 							"Content-Type": "application/json",
 						},
-						body: JSON.stringify({ username }),
 					}
 				);
 

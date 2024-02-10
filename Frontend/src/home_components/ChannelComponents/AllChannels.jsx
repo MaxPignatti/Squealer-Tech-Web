@@ -22,9 +22,11 @@ const AllChannels = ({
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://localhost:3500/channels/all/${username}`)
+			fetch(`http://localhost:3500/channels?excludeSubscribedBy=${username}`)
 				.then((response) => response.json())
-				.then((data) => setAllChannels(data))
+				.then((data) => {
+					setAllChannels(data);
+				})
 				.catch((error) =>
 					console.error("Errore durante il recupero di tutti i canali:", error)
 				);
@@ -47,19 +49,17 @@ const AllChannels = ({
 				const username = userData.username;
 
 				const response = await fetch(
-					`http://localhost:3500/channels/subscribe/${channel._id}`,
+					`http://localhost:3500/channels/${channel._id}/members/${username}`,
 					{
-						method: "POST",
+						method: "PUT",
 						headers: {
 							"Content-Type": "application/json",
 						},
-						body: JSON.stringify({ username }),
 					}
 				);
 
 				if (response.status === 200) {
 					console.log("Iscrizione avvenuta con successo.");
-					// Rimuovi il canale dalla lista di AllChannels
 					setAllChannels((prevChannels) =>
 						prevChannels.filter((chan) => chan._id !== channel._id)
 					);
@@ -90,8 +90,8 @@ const AllChannels = ({
 					variant="flush"
 					style={listGroupStyle}
 				>
-					{filteredChannels.map((channel, index) => (
-						<ListGroup.Item key={channel._id + index}>
+					{filteredChannels.map((channel) => (
+						<ListGroup.Item key={channel._id}>
 							{channel.name}
 							<span className="badge bg-primary ms-2">
 								{channel.members.length} Iscritti

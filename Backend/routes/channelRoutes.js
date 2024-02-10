@@ -29,48 +29,34 @@ router.post(
 	channelController.createChannel
 );
 
-router.get("/channels/created", validate, channelController.yourChannels);
+router.get(
+	"/users/:username/channel",
+	validate,
+	channelController.yourChannels
+);
 
 router.delete(
-	"/channels/delete/:channelId",
+	"/channels/:channelId",
 	validate,
 	channelController.deleteChannel
 );
 
 router.get(
-	"/channels/subscribed/:username",
+	"/users/:username/subscribedChannels",
 	validate,
 	channelController.getSubscribedChannels
 );
 
-router.post(
-	"/channels/subscribe/:channelId",
-	[
-		body("username")
-			.notEmpty()
-			.withMessage("Il nome utente è obbligatorio")
-			.trim()
-			.escape(),
-	],
+router.put(
+	"/channels/:channelId/members/:username",
 	validate,
 	channelController.subscribe
 );
 
-router.get(
-	"/channels/all/:username",
-	validate,
-	channelController.getAllChannels
-);
+router.get("/channels", validate, channelController.getAllChannels);
 
-router.post(
-	"/channels/removeMember/:channelId",
-	[
-		body("username")
-			.notEmpty()
-			.withMessage("Il nome utente è obbligatorio")
-			.trim()
-			.escape(),
-	],
+router.delete(
+	"/channels/:channelId/members/:username",
 	validate,
 	channelController.removeMember
 );
@@ -83,8 +69,8 @@ router.get(
 	channelController.modChannels
 );
 
-router.post(
-	"/channels/update/:channelId",
+router.patch(
+	"/channels/:channelId",
 	[
 		body("name").optional().trim().escape(),
 		body("description").optional().trim().escape(),

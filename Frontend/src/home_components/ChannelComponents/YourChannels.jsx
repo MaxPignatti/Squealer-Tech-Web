@@ -23,7 +23,7 @@ const YourChannels = ({
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://localhost:3500/channels/created?creator=${username}`)
+			fetch(`http://localhost:3500/users/${username}/channel`)
 				.then((response) => response.json())
 				.then((data) => setYourChannels(data))
 				.catch((error) =>
@@ -40,7 +40,7 @@ const YourChannels = ({
 				const username = userData.username;
 
 				const response = await fetch(
-					`http://localhost:3500/channels/delete/${channel._id}`,
+					`http://localhost:3500/channels/${channel._id}`,
 					{
 						method: "DELETE",
 						headers: {
@@ -81,9 +81,9 @@ const YourChannels = ({
 	const handleRemoveMember = async (username) => {
 		try {
 			const response = await fetch(
-				`http://localhost:3500/channels/removeMember/${selectedChannelId}`,
+				`http://localhost:3500/channels/${selectedChannelId}/members/${username}`,
 				{
-					method: "POST",
+					method: "DELETE",
 					headers: {
 						"Content-Type": "application/json",
 					},

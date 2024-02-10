@@ -62,7 +62,7 @@ const InputSqueal = () => {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://localhost:3500/channels/subscribed/${username}`)
+			fetch(`http://localhost:3500/channels?subscribedBy=${username}`)
 				.then((response) => response.json())
 				.then((data) => {
 					const nonModeratorChannels = data.filter(

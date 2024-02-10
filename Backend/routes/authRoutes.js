@@ -57,7 +57,7 @@ router.post(
 
 router.post("/protectedEndpoint", validate, authController.protectedEndpoint);
 
-router.get("/verifyTokenSMM", validate, authController.verifyTokenSMM);
+router.get("/smm/session", validate, authController.verifyTokenSMM);
 
 router.post(
 	"/loginMod",

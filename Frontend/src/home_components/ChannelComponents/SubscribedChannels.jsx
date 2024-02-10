@@ -19,9 +19,11 @@ const SubscribedChannels = ({
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://localhost:3500/channels/subscribed/${username}`)
+			fetch(`http://localhost:3500/users/${username}/subscribedChannels`)
 				.then((response) => response.json())
-				.then((data) => setSubscribedChannels(data))
+				.then((data) => {
+					setSubscribedChannels(data);
+				})
 				.catch((error) =>
 					console.error("Errore durante il recupero dei canali:", error)
 				);
@@ -36,13 +38,12 @@ const SubscribedChannels = ({
 				const username = userData.username;
 
 				const response = await fetch(
-					`http://localhost:3500/channels/unsubscribe/${channel._id}`,
+					`http://localhost:3500/channels/${channel._id}/members/${username}`,
 					{
-						method: "POST",
+						method: "DELETE",
 						headers: {
 							"Content-Type": "application/json",
 						},
-						body: JSON.stringify({ username }),
 					}
 				);
 

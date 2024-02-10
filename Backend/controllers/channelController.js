@@ -51,10 +51,11 @@ exports.createChannel = async (req, res) => {
 
 exports.yourChannels = async (req, res) => {
 	try {
-		const { creator } = req.query;
+		// Recupera lo username dall'URL
+		const { username } = req.params;
 
-		// Trova i canali in cui l'utente è il creatore
-		const userChannels = await Channel.find({ creator });
+		// Trova i canali in cui l'utente (specificato dallo username) è il creatore
+		const userChannels = await Channel.find({ creator: username });
 
 		res.json(userChannels);
 	} catch (error) {
@@ -106,11 +107,12 @@ exports.deleteChannel = async (req, res) => {
 
 exports.getSubscribedChannels = async (req, res) => {
 	try {
-		const username = req.params.username;
+		const { username } = req.params;
 		const subscribedChannels = await Channel.find({ members: username });
 		res.json(subscribedChannels);
 	} catch (error) {
-		res.status(500).json({ message: error.message });
+		console.error("Errore durante il recupero dei canali sottoscritti:", error);
+		res.status(500).json({ error: "Errore interno del server." });
 	}
 };
 
@@ -144,8 +146,7 @@ exports.unsubscribe = async (req, res) => {
 
 exports.subscribe = async (req, res) => {
 	try {
-		const { channelId } = req.params;
-		const { username } = req.body;
+		const { channelId, username } = req.params;
 		if (!username) {
 			return res
 				.status(400)
@@ -184,22 +185,23 @@ exports.subscribe = async (req, res) => {
 
 exports.getAllChannels = async (req, res) => {
 	try {
-		const { username } = req.params;
+		const filters = {};
+		if (req.query.excludeSubscribedBy) {
+			filters.members = { $nin: [req.query.excludeSubscribedBy] };
+		}
+		// Aggiungi altri filtri basati su parametri di query qui
 
-		// Trova tutti i canali eccetto quelli a cui l'utente è iscritto
-		const allChannels = await Channel.find({ members: { $nin: [username] } });
-
-		res.json(allChannels);
+		const channels = await Channel.find(filters);
+		res.json(channels);
 	} catch (error) {
-		console.error("Errore durante il recupero di tutti i canali:", error);
+		console.error("Errore durante il recupero dei canali:", error);
 		res.status(500).json({ error: "Errore interno del server." });
 	}
 };
 
 exports.removeMember = async (req, res) => {
 	try {
-		const { channelId } = req.params;
-		const { username } = req.body;
+		const { channelId, username } = req.params;
 
 		const channel = await Channel.findById(channelId);
 		const user = await User.findOne({ username });

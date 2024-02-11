@@ -99,28 +99,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	function renderUsers(users) {
 		const userListContainer = document.getElementById("userList");
-
-		// Crea la tabella e i suoi componenti
 		const table = document.createElement("table");
 		table.className = "table";
 		table.style.width = "100%";
 		table.style.textAlign = "center";
-
-		// Crea e aggiungi l'intestazione della tabella
 		const thead = document.createElement("thead");
-		thead.innerHTML = `
-			<tr>
-				<th>Name</th>
-				<th>Username</th>
-				<th>Email</th>
-				<th>Caratteri Giornalieri</th>
-				<th>Caratteri Settimanali</th>
-				<th>Caratteri Mensili</th>
-				<th>Actions</th>
-			</tr>`;
+		// ...intestazione della tabella...
 		table.appendChild(thead);
 
-		// Crea e aggiungi il corpo della tabella
 		const tbody = document.createElement("tbody");
 		users.forEach((user, index) => {
 			const tr = document.createElement("tr");
@@ -134,29 +120,27 @@ document.addEventListener("DOMContentLoaded", () => {
 					user.monthlyChars
 				}" id="monthly-${index}"></td>
 				<td>
-				<button onclick="updateChars('${
-					user.username
-				}', ${index})" class="btn btn-primary">Update</button>
-				<button onclick="deleteUser('${
-					user.username
-				}')" class="btn btn-danger">Delete</button>
-				<button onclick="toggleBlockUser('${user.username}')" id="blockUserBtn-${
+					<button onclick="updateChars('${
+						user.username
+					}', ${index})" class="btn btn-success">Aggiorna</button>
+					<button onclick="deleteUser('${
+						user.username
+					}')" class="btn btn-danger">Elimina</button>
+					<button onclick="toggleBlockUser('${user.username}')" id="blockUserBtn-${
 				user.username
 			}" class="btn ${user.isBlocked ? "btn-success" : "btn-danger"}">
-					${user.isBlocked ? "Sblocca" : "Blocca"}
-				</button>
-				<button onclick="toggleModUser('${user.username}')" id="modUserBtn-${
+						${user.isBlocked ? "Sblocca" : "Blocca"}
+					</button>
+					<button onclick="toggleModUser('${user.username}')" id="modUserBtn-${
 				user.username
 			}" class="btn ${user.isMod ? "btn-danger" : "btn-success"}">
-						${user.isMod ? "Rimuovi moderatore" : "Imposta moderatore"}
+						${user.isMod ? "Rimuovi moderatore" : "Aggiungi moderatore"}
 					</button>
 				</td>
-				`;
+			`;
 			tbody.appendChild(tr);
 		});
 		table.appendChild(tbody);
-
-		// Svuota il contenitore e aggiungi la tabella creata
 		userListContainer.innerHTML = "";
 		userListContainer.appendChild(table);
 	}

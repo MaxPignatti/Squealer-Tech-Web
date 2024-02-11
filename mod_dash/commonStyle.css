@@ -32,10 +32,11 @@ body {
 
 .container {
 	padding: 20px;
-	max-width: 680px;
+	max-width: 90%;
 	box-shadow: var(--ombra-box);
 	background: white;
 	border-radius: 8px;
+	margin: 20px auto;
 }
 
 .form-group label {
@@ -43,64 +44,28 @@ body {
 	font-weight: bold;
 }
 
-.btn-primary {
-	background-color: var(--forte-verde);
-	border-color: var(--forte-verde);
+.btn-primary,
+.btn-success,
+.btn-danger,
+.btn-outline-secondary {
 	transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.btn-primary:hover {
-	background-color: var(--forte-rosa);
-	border-color: var(--forte-rosa);
+.btn-primary,
+.btn-success {
+	background-color: var(--forte-verde);
+	border-color: var(--forte-verde);
 }
 
-.login-container {
-	margin-top: 50px;
-	margin-bottom: 50px;
-}
-
-.table {
-	border-collapse: collapse;
-	width: 100%;
-	background-color: #fff;
-	border-radius: 8px;
-	overflow: hidden;
-}
-
-.table th,
-.table td {
-	text-align: left;
-	padding: 8px;
-	border-bottom: 1px solid var(--forte-giallo);
-}
-
-.table th {
-	background-color: var(--forte-blu);
-	color: white;
-}
-
-.table td {
-	background-color: #f2f2f2;
-}
-
-.table tr:hover {
-	background-color: var(--forte-arancione);
-	color: white;
-}
-
-.btn-outline-secondary {
-	background-color: var(--sfondo-principale);
-	color: var(--forte-giallo);
-	border: 2px solid var(--forte-giallo);
-	padding: 10px 20px;
-	cursor: pointer;
-	margin: 5px;
-	transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.btn-outline-secondary:hover {
-	background-color: var(--forte-giallo);
-	color: var(--testo-principale);
+.btn-primary:hover,
+.btn-success:hover,
+.btn-primary:focus,
+.btn-success:focus,
+.btn-primary:active,
+.btn-success:active {
+	background-color: var(--forte-verde);
+	border-color: var(--forte-verde);
+	box-shadow: none;
 }
 
 .btn-danger {
@@ -108,9 +73,27 @@ body {
 	border-color: var(--forte-rosa);
 }
 
-.btn-success {
-	background-color: var(--forte-blu);
-	border-color: var(--forte-blu);
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+	background-color: var(--forte-rosa);
+	border-color: var(--forte-rosa);
+	box-shadow: none;
+}
+
+.btn-outline-secondary {
+	background-color: var(--sfondo-principale);
+	color: var(--forte-arancione);
+	border: 2px solid var(--forte-arancione);
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus,
+.btn-outline-secondary:active {
+	background-color: var(--sfondo-principale);
+	color: var(--forte-arancione);
+	border-color: var(--forte-arancione);
+	box-shadow: none;
 }
 
 .form-control {

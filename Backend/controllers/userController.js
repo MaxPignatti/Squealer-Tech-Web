@@ -183,7 +183,18 @@ exports.deleteUser = async (req, res) => {
 			return res.status(404).json({ error: "Utente non trovato" });
 		}
 
+		// Elimina l'utente
 		await User.deleteOne({ username });
+
+		// Elimina i canali creati dall'utente
+		await Channel.deleteMany({ creator: username });
+
+		// Rimuove l'utente dalla lista dei membri di tutti i canali
+		await Channel.updateMany(
+			{ members: username },
+			{ $pull: { members: username } }
+		);
+
 		res.json({ message: "Utente eliminato con successo" });
 	} catch (error) {
 		console.error(error);

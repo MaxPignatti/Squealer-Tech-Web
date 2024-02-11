@@ -50,6 +50,7 @@ router.get(
 	messageController.getPrivateMessByHashtag
 );
 router.patch("/messages/:id/acknowledge", messageController.acknowledgeMessage);
+router.get("/privateMessages/:username", messageController.getPrivateMessages);
 
 router.get(
 	"/squeals/:username/targetUsername/:targetUsername",
@@ -75,4 +76,3 @@ router.get(
 router.get("/allMessages", messageController.getAllMessages);
 
 module.exports = router;
-

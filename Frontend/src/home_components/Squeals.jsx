@@ -83,7 +83,7 @@ const Squeals = ({ searchType, searchText }) => {
 			const username = userData.username;
 			try {
 				const response = await fetch(
-					`http://localhost:3500/squeals/${messageId}/reactions/`,
+					`http://localhost:3500/messages/${messageId}/reactions/`,
 					{
 						method: "POST",
 						headers: {

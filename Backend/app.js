@@ -56,6 +56,7 @@ mongoose
 					const publicChannel = new Channel({
 						name: "PUBLIC",
 						creator: "Squealer",
+						description: "Canale Pubblico",
 						moderatorChannel: true,
 					});
 					publicChannel
@@ -82,6 +83,7 @@ Channel.findOne({ name: "CONTROVERSIAL" })
 			const controversialChannel = new Channel({
 				name: "CONTROVERSIAL",
 				creator: "Squealer",
+				description: "Canale controverso",
 				moderatorChannel: true,
 			});
 			controversialChannel
@@ -100,6 +102,7 @@ Channel.findOne({ name: "SQUEALER-UPDATES" })
 			const updatesChannel = new Channel({
 				name: "SQUEALER-UPDATES",
 				creator: "Squealer",
+				description: "Canale per vedere aggiornamenti",
 				moderatorChannel: true,
 			});
 			updatesChannel
@@ -120,6 +123,7 @@ Channel.findOne({ name: "EMERGENCY" })
 			const emergencyChannel = new Channel({
 				name: "EMERGENCY",
 				creator: "Squealer",
+				description: "Tutte le emergenze in tempo reale",
 				moderatorChannel: true,
 			});
 			emergencyChannel
@@ -138,6 +142,7 @@ Channel.findOne({ name: "DAILY-RECIPE" })
 			const dailyRecipeChannel = new Channel({
 				name: "DAILY-RECIPE",
 				creator: "Squealer",
+				description: "Iscriviti per fantastiche ricette!",
 				moderatorChannel: true,
 			});
 			dailyRecipeChannel
@@ -156,6 +161,7 @@ Channel.findOne({ name: "DAILY-NEWS" })
 			const dailyNewsChannel = new Channel({
 				name: "DAILY-NEWS",
 				creator: "Squealer",
+				description: "Notizie dell'ultima ora, solo da noi!",
 				moderatorChannel: true,
 			});
 			dailyNewsChannel

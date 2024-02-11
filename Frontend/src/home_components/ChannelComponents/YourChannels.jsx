@@ -36,9 +36,6 @@ const YourChannels = ({
 		try {
 			const userDataCookie = Cookies.get("user_data");
 			if (userDataCookie) {
-				const userData = JSON.parse(userDataCookie);
-				const username = userData.username;
-
 				const response = await fetch(
 					`http://localhost:3500/channels/${channel._id}`,
 					{
@@ -46,7 +43,6 @@ const YourChannels = ({
 						headers: {
 							"Content-Type": "application/json",
 						},
-						body: JSON.stringify({ username }),
 					}
 				);
 

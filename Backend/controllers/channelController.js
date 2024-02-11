@@ -66,41 +66,38 @@ exports.yourChannels = async (req, res) => {
 
 exports.deleteChannel = async (req, res) => {
 	try {
-		const channelId = req.params.channelId;
-		const { username } = req.body;
-		if (!username) {
-			return res
-				.status(400)
-				.json({ error: "Username è un campo obbligatorio." });
-		}
-		const channel = await Channel.findById(channelId);
+		const { channelId } = req.params;
 
+		const channel = await Channel.findById(channelId);
 		if (!channel) {
 			return res.status(404).json({ message: "Canale non trovato" });
 		}
-		let channelName = channel.name;
-		// Step 1: Elimina il canale dal database
+		const channelName = channel.name;
+
+		//Elimino il canale dal database
 		await Channel.findByIdAndDelete(channelId);
 
-		// Step 2: Elimina tutti i messaggi associati a quel canale
-		await Message.deleteMany({ channel: { $in: [channelName] } });
+		//Trovo e aggiorno i messaggi che contengono il canale, rimuovendolo dall'array `channel`
+		await Message.updateMany(
+			{ channel: channelName },
+			{ $pull: { channel: channelName } }
+		);
 
-		// Step 3: Rimuovi il canale dal campo `channels` di tutti gli utenti iscritti
+		//Elimino i messaggi che ora non appartengono a nessun canale
+		await Message.deleteMany({ channel: { $size: 0 } });
+
+		//Rimuovo il canale dal campo `channels` di tutti gli utenti iscritti
 		await User.updateMany(
 			{ channels: channelName },
 			{ $pull: { channels: channelName } }
 		);
 
-		// Step 4: Rimuovi il canale dal campo `createdChannels` del creatore
-		await User.updateOne(
-			{ username },
-			{ $pull: { createdChannels: channelName } }
-		);
-
-		// Restituisci una risposta di successo
 		res.sendStatus(200);
 	} catch (error) {
-		console.error("Errore durante l'eliminazione del canale:", error);
+		console.error(
+			"Errore durante l'eliminazione del canale e dei messaggi associati:",
+			error
+		);
 		res.status(500).json({ error: "Errore interno del server." });
 	}
 };

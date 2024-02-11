@@ -71,7 +71,6 @@ const Message = ({
 							body: JSON.stringify({ username: currentUser }),
 						})
 							.then((response) => response.json())
-							.then((data) => console.log(data.message))
 							.catch((error) =>
 								console.error(
 									"Errore durante l'incremento delle impressions:",
@@ -151,7 +150,6 @@ const Message = ({
 					}
 				})
 				.then((data) => {
-					console.log(data.channels);
 					if (data?.channels) {
 						setUserChannels(data.channels);
 					}

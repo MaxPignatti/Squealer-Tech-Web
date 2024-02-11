@@ -114,7 +114,6 @@ exports.getSubscribedChannels = async (req, res) => {
 				{ creator: username }, // Canali creati dall'utente
 			],
 		});
-		console.log(subscribedChannels);
 		res.json(subscribedChannels);
 	} catch (error) {
 		console.error("Errore durante il recupero dei canali sottoscritti:", error);

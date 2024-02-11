@@ -226,7 +226,6 @@ exports.getPublicMessagesByUser = async (req, res) => {
 exports.getRepliesToMessage = async (req, res) => {
 	try {
 		const { messageId } = req.params; // Ottiene l'ID del messaggio originale dai parametri della richiesta
-		console.log(messageId);
 		// Verifica se il messaggio originale esiste
 		const originalMessage = await Message.findById(messageId);
 		if (!originalMessage) {

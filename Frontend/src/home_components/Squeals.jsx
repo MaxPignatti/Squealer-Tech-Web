@@ -53,7 +53,6 @@ const Squeals = ({ searchType, searchText }) => {
 			const userData = JSON.parse(userDataCookie);
 			setCurrentUser(userData.username);
 			const url = buildUrl(viewMode, userData.username, searchType, searchText);
-			console.log("URL costruito per la fetch:", url);
 			fetchAndSetMessages(
 				url,
 				setMessages,

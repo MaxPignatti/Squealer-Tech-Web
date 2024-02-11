@@ -124,8 +124,6 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 						body: JSON.stringify(requestData),
 					};
 
-					console.log(originalMessage._id);
-
 					const response = await fetch(
 						`http://localhost:3500/messages/${originalMessage._id}/replies`,
 						requestOptions

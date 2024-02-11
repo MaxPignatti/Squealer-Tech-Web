@@ -108,7 +108,13 @@ exports.deleteChannel = async (req, res) => {
 exports.getSubscribedChannels = async (req, res) => {
 	try {
 		const { username } = req.params;
-		const subscribedChannels = await Channel.find({ members: username });
+		const subscribedChannels = await Channel.find({
+			$or: [
+				{ members: username }, // Canali ai quali l'utente è iscritto
+				{ creator: username }, // Canali creati dall'utente
+			],
+		});
+		console.log(subscribedChannels);
 		res.json(subscribedChannels);
 	} catch (error) {
 		console.error("Errore durante il recupero dei canali sottoscritti:", error);

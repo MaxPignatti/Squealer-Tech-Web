@@ -191,7 +191,7 @@ function isTemporizzato(message) {
 // Funzione per eliminare un messaggio
 function deleteMessage(messageId) {
 	if (confirm("Sei sicuro di voler eliminare questo messaggio?")) {
-		fetch(`http://localhost:3500/squeals/delete/${messageId}`, {
+		fetch(`http://localhost:3500/messages/${messageId}`, {
 			method: "DELETE",
 		})
 			.then(() => {
@@ -244,8 +244,8 @@ function editMessage(messageId) {
 
 // Funzione per inviare la richiesta di aggiornamento dei canali al server
 function updateMessageChannels(messageId, newChannels) {
-	fetch(`http://localhost:3500/squeals/updateChannels/${messageId}`, {
-		method: "POST",
+	fetch(`http://localhost:3500/messages/${messageId}/channels`, {
+		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ channels: newChannels }),
 	})
@@ -279,8 +279,8 @@ function updateReactions(messageId) {
 		return;
 	}
 
-	fetch(`http://localhost:3500/squeals/updateReactions/${messageId}`, {
-		method: "POST",
+	fetch(`http://localhost:3500/messages/${messageId}/reactions`, {
+		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ positiveReactions, negativeReactions }),
 	})

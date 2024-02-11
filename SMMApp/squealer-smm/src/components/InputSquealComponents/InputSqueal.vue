@@ -333,7 +333,7 @@ export default {
 							},
 						};
 
-						const url = "http://localhost:3500/create";
+						const url = "http://localhost:3500/messages";
 						const requestOptions = {
 							method: "POST",
 							headers: { "Content-Type": "application/json" },

@@ -162,17 +162,6 @@ const InputSqueal = () => {
 		}
 	}, [searchTerm, channels, users, recipientType]);
 
-	/*
-  useEffect(() => {
-    const interval = setInterval(() => {
-      
-      sendLocationPeriodically(_id);
-    }, 10000); // Aggiorna ogni 10 secondi
-
-    return () => clearInterval(interval);
-  }, []);
-  */
-
 	//FUNZIONI PER DESTINATARI
 	const handleRecipientChange = (newValue) => {
 		setRecipientType(newValue);
@@ -298,7 +287,7 @@ const InputSqueal = () => {
 	};
 
 	const publishMessage = async (requestData) => {
-		const url = "http://localhost:3500/create";
+		const url = "http://localhost:3500/messages";
 		const requestOptions = {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },

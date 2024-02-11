@@ -177,7 +177,7 @@ function renderMessagesForChannel(channelName, channelId) {
 
 // Elimina un messaggio
 function deleteMessage(messageId) {
-	fetch(`http://localhost:3500/squeals/delete/${messageId}`, {
+	fetch(`http://localhost:3500/messages/${messageId}`, {
 		method: "DELETE",
 	})
 		.then((response) => {
@@ -232,8 +232,8 @@ function saveMessage(messageId, channelName) {
 		return;
 	}
 
-	fetch(`http://localhost:3500/squeals/edit/${messageId}`, {
-		method: "POST",
+	fetch(`http://localhost:3500/messages/${messageId}`, {
+		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ username: username, text: editedText }),
 	})

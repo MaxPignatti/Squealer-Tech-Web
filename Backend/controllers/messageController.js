@@ -3,11 +3,11 @@ const User = require("../models/user");
 const Channel = require("../models/channel");
 const consts = require("../consts");
 
-exports.reply = async (req, res) => {
+exports.replyToMessage = async (req, res) => {
 	try {
+		const { messageId } = req.params;
 		const {
-			originalMessageId,
-			userName,
+			username,
 			image,
 			text,
 			dailyCharacters,
@@ -17,32 +17,32 @@ exports.reply = async (req, res) => {
 		} = req.body;
 
 		// Verifica se il messaggio originale esiste
-		const originalMessage = await Message.findById(originalMessageId);
+		const originalMessage = await Message.findById(messageId);
 		if (!originalMessage) {
 			return res
 				.status(404)
 				.json({ error: "Messaggio originale non trovato." });
 		}
 
-		const user = await User.findOne({ username: userName });
+		const user = await User.findOne({ username: username });
 		if (!user) {
 			return res.status(400).json({ error: "User not found" });
 		}
 
 		// Crea un nuovo messaggio di risposta
 		const replyMessage = new Message({
-			user: userName,
+			user: username,
 			profileImage: user.profileImage,
 			image: image ? image.toString("base64") : null,
 			text: text,
 			channel: originalMessage.channel,
-			replyTo: originalMessageId,
+			replyTo: messageId,
 			location: location ? [location.latitude, location.longitude] : null,
 		});
 
 		// Salva il messaggio di risposta
 		const savedReply = await replyMessage.save();
-		if (user.privateMessagesReceived.includes(originalMessageId)) {
+		if (user.privateMessagesReceived.includes(messageId)) {
 			const senderUser = await User.findOne({ username: originalMessage.user });
 
 			if (senderUser) {
@@ -202,8 +202,7 @@ exports.getPrivateMessages = async (req, res) => {
 
 exports.getPublicMessagesByUser = async (req, res) => {
 	try {
-		const { username } = req.params; // Ottiene lo username dai parametri della richiesta
-
+		const { username } = req.params;
 		// Trova l'utente tramite username
 		const user = await User.findOne({ username });
 		if (!user) {
@@ -215,7 +214,6 @@ exports.getPublicMessagesByUser = async (req, res) => {
 		const publicMessages = await Message.find({
 			user: username,
 			channel: { $ne: [] },
-			replyTo: null,
 		});
 
 		res.json({ messages: publicMessages }); // Invia i messaggi come risposta JSON
@@ -228,7 +226,7 @@ exports.getPublicMessagesByUser = async (req, res) => {
 exports.getRepliesToMessage = async (req, res) => {
 	try {
 		const { messageId } = req.params; // Ottiene l'ID del messaggio originale dai parametri della richiesta
-
+		console.log(messageId);
 		// Verifica se il messaggio originale esiste
 		const originalMessage = await Message.findById(messageId);
 		if (!originalMessage) {
@@ -332,7 +330,7 @@ function determineMessagePopularityAndAdjustChars({
 	}
 }
 
-exports.addReaction = async (req, res) => {
+exports.addReactionToMessage = async (req, res) => {
 	try {
 		const { messageId } = req.params;
 		const { reaction, username } = req.body;
@@ -449,7 +447,7 @@ exports.deleteMessage = async (req, res) => {
 	}
 };
 
-exports.updatePosition = async (req, res) => {
+exports.updateMessagePosition = async (req, res) => {
 	try {
 		const { messageId } = req.params;
 		const { position } = req.body;
@@ -791,7 +789,7 @@ const extractChannelMentions = async (text) => {
 	return Array.from(channelMentionsSet);
 };
 
-exports.acknowledgeBeep = async (req, res) => {
+exports.acknowledgeMessage = async (req, res) => {
 	try {
 		const messageId = req.params.id;
 

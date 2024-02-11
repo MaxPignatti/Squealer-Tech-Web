@@ -111,7 +111,7 @@ export default {
 					.then((data) => {
 						this.vipUsername = data.vip;
 						return fetch(
-							`http://localhost:3500/sentSqueals/${this.vipUsername}`
+							`http://localhost:3500/messages/public/${this.vipUsername}`
 						);
 					})
 					.then((response) => response.json())

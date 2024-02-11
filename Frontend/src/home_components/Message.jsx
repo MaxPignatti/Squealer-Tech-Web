@@ -63,16 +63,13 @@ const Message = ({
 						setHasBeenViewed(true);
 
 						// Chiamata API per incrementare le impressions
-						fetch(
-							`http://localhost:3500/message/incrementImpressions/${message._id}`,
-							{
-								method: "POST",
-								headers: {
-									"Content-Type": "application/json",
-								},
-								body: JSON.stringify({ username: currentUser }),
-							}
-						)
+						fetch(`http://localhost:3500/messages/${message._id}/impressions`, {
+							method: "PATCH",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify({ username: currentUser }),
+						})
 							.then((response) => response.json())
 							.then((data) => console.log(data.message))
 							.catch((error) =>
@@ -154,6 +151,7 @@ const Message = ({
 					}
 				})
 				.then((data) => {
+					console.log(data.channels);
 					if (data?.channels) {
 						setUserChannels(data.channels);
 					}
@@ -184,9 +182,9 @@ const Message = ({
 	const handleBeepAcknowledged = async (messageId) => {
 		try {
 			const response = await fetch(
-				`http://localhost:3500/messages/acknowledgeBeep/${messageId}`,
+				`http://localhost:3500/messages/${messageId}/acknowledge`,
 				{
-					method: "POST",
+					method: "PATCH",
 				}
 			);
 
@@ -324,7 +322,7 @@ const Message = ({
 		justifyContent: "center",
 		alignItems: "center",
 		backgroundColor: "rgba(0, 0, 0, 0.5)",
-		zIndex: 1050, // Sovraimpressione rispetto agli altri contenuti
+		zIndex: 1050,
 	};
 
 	const cardStyle = {
@@ -494,12 +492,10 @@ const Message = ({
 						currentUser === message.user &&
 						handleSaveChanges && (
 							<div className="mb-3">
-								{" "}
 								{/* Aggiungiamo margine al fondo del blocco */}
 								<Form>
 									<Form.Group controlId="formBasicEditText">
 										<Form.Label>
-											{" "}
 											<b>MODIFICA TESTO</b>
 										</Form.Label>
 										<Form.Control
@@ -513,7 +509,6 @@ const Message = ({
 								<div className="mb-3"></div>{" "}
 								{/* Aggiungiamo spazio tra il form e i bottoni */}
 								<div className="d-flex justify-content-between">
-									{" "}
 									{/* Utilizziamo flexbox per allineare i bottoni */}
 									<Button
 										variant="primary"

@@ -18,7 +18,7 @@ const Squeals = ({ searchType, searchText }) => {
 	// Funzione per costruire l'URL basato su vari parametri
 	const buildUrl = (viewMode, username, searchType, searchText) => {
 		let baseUrl = `http://localhost:3500/${
-			viewMode === "public" ? "squeals" : "privateMessages"
+			viewMode === "public" ? "messages/public" : "privateMessages"
 		}/${username}`;
 		if (searchType && searchText) {
 			const encodedSearchText = encodeURIComponent(searchText);
@@ -51,7 +51,9 @@ const Squeals = ({ searchType, searchText }) => {
 		const userDataCookie = Cookies.get("user_data");
 		if (userDataCookie && !isEditing && !isReplying) {
 			const userData = JSON.parse(userDataCookie);
+			setCurrentUser(userData.username);
 			const url = buildUrl(viewMode, userData.username, searchType, searchText);
+			console.log("URL costruito per la fetch:", url);
 			fetchAndSetMessages(
 				url,
 				setMessages,
@@ -81,7 +83,7 @@ const Squeals = ({ searchType, searchText }) => {
 			const username = userData.username;
 			try {
 				const response = await fetch(
-					`http://localhost:3500/squeals/reaction/${messageId}`,
+					`http://localhost:3500/squeals/${messageId}/reactions/`,
 					{
 						method: "POST",
 						headers: {
@@ -136,9 +138,9 @@ const Squeals = ({ searchType, searchText }) => {
 			const username = userData.username;
 			try {
 				const response = await fetch(
-					`http://localhost:3500/squeals/edit/${messageId}`,
+					`http://localhost:3500/messages/${messageId}`,
 					{
-						method: "POST",
+						method: "PATCH",
 						headers: {
 							"Content-Type": "application/json",
 						},

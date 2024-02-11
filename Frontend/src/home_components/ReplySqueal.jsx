@@ -108,8 +108,7 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 				try {
 					const userData = JSON.parse(userDataCookie);
 					const requestData = {
-						originalMessageId: originalMessage._id,
-						userName: userData.username,
+						username: userData.username,
 						image: image !== null ? image : null,
 						text: savedMessage,
 						dailyCharacters: dailyCharacters,
@@ -119,16 +118,18 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 							? { latitude: currentLocation[0], longitude: currentLocation[1] }
 							: null,
 					};
-
-					const url = "http://localhost:3500/reply";
-
 					const requestOptions = {
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify(requestData),
 					};
 
-					const response = await fetch(url, requestOptions);
+					console.log(originalMessage._id);
+
+					const response = await fetch(
+						`http://localhost:3500/messages/${originalMessage._id}/replies`,
+						requestOptions
+					);
 					onEndReplying();
 					if (response.status === 201) {
 						const data = await response.json();

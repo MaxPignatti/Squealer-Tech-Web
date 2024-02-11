@@ -282,23 +282,37 @@ exports.modChannels = async (req, res) => {
 exports.updateChannel = async (req, res) => {
 	try {
 		const { channelId } = req.params;
-		const { name, description } = req.body;
-		if (!name && !description) {
+		const { newName, description } = req.body;
+
+		if (!newName && !description) {
 			return res.status(400).json({
 				error:
 					"Fornire almeno un campo tra nome e descrizione per aggiornare il canale.",
 			});
 		}
+
 		const channel = await Channel.findById(channelId);
 		if (!channel) {
 			return res.status(404).json({ error: "Canale non trovato" });
 		}
 
-		channel.name = name;
-		channel.description = description;
+		const oldName = channel.name;
+
+		// Aggiorna il canale
+		channel.name = newName || channel.name;
+		channel.description = description || channel.description;
 		await channel.save();
 
-		return res.status(200).json({ message: "Canale aggiornato con successo" });
+		// Aggiorna il nome del canale in tutti i messaggi correlati
+		if (newName && oldName !== newName) {
+			await Message.updateMany(
+				{ channel: oldName },
+				{ $set: { "channel.$": newName } }
+			);
+		}
+		return res
+			.status(200)
+			.json({ message: "Canale e messaggi aggiornati con successo" });
 	} catch (error) {
 		console.error(error);
 		return res.status(500).json({ error: "Errore del server" });

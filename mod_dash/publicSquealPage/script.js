@@ -82,7 +82,7 @@ function updateChannel(channelId, currentName, currentDescription) {
 		fetch(`http://localhost:3500/channels/${channelId}`, {
 			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ name: newName, description: newDescription }),
+			body: JSON.stringify({ newName: newName, description: newDescription }),
 		})
 			.then((response) => {
 				if (!response.ok) {
@@ -91,6 +91,7 @@ function updateChannel(channelId, currentName, currentDescription) {
 				return response.json();
 			})
 			.then((data) => {
+				fetchAllMessages();
 				fetchChannels();
 			})
 			.catch((error) =>

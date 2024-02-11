@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	document.getElementById("publicPage").addEventListener("click", () => {
 		window.location.href = "../publicSquealPage/public.html";
 	});
+	document.getElementById("privatePage").addEventListener("click", () => {
+		window.location.href = "../privateSquealPage/private.html";
+	});
 	document.getElementById("squealPage").addEventListener("click", () => {
 		window.location.href = "../squealPage/squeal.html";
 	});

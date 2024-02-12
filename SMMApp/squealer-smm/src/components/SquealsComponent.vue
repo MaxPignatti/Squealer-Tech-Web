@@ -79,8 +79,8 @@
 </template>
 
 <script>
-import MessageComponent from './MessageComponent.vue';
-import Cookies from 'js-cookie';
+import MessageComponent from "./MessageComponent.vue";
+import Cookies from "js-cookie";
 
 export default {
 	components: {
@@ -91,8 +91,8 @@ export default {
 			messages: [],
 			filteredMessages: [],
 			vipUsername: null,
-			currentFilter: 'all',
-			selectedSort: 'createdAt',
+			currentFilter: "all",
+			selectedSort: "createdAt",
 		};
 	},
 	mounted() {
@@ -100,9 +100,9 @@ export default {
 	},
 	methods: {
 		verifyTokenAndFetchMessages() {
-			const authToken = Cookies.get('authToken');
+			const authToken = Cookies.get("authToken");
 			if (authToken) {
-				fetch('http://site222327.tw.cs.unibo.it/api/smm/session', {
+				fetch("http://localhost:3500/smm/session", {
 					headers: {
 						Authorization: `Bearer ${authToken}`,
 					},
@@ -111,7 +111,7 @@ export default {
 					.then((data) => {
 						this.vipUsername = data.vip;
 						return fetch(
-							`http://site222327.tw.cs.unibo.it/api/messages/public/${this.vipUsername}`
+							`http://localhost:3500/messages/public/${this.vipUsername}`
 						);
 					})
 					.then((response) => response.json())
@@ -121,15 +121,15 @@ export default {
 						this.sortMessages(false);
 					})
 					.catch((error) => {
-						console.error('Errore durante il recupero dei messaggi:', error);
+						console.error("Errore durante il recupero dei messaggi:", error);
 					});
 			} else {
-				console.error('User data not found in cookies');
+				console.error("User data not found in cookies");
 			}
 		},
 		filterMessages(filter) {
 			this.currentFilter = filter; // Aggiorna il filtro corrente
-			if (filter === 'all') {
+			if (filter === "all") {
 				this.filteredMessages = this.messages;
 			} else {
 				this.filteredMessages = this.messages.filter(
@@ -139,10 +139,10 @@ export default {
 		},
 		buttonClass(filter) {
 			return [
-				'text-white font-bold py-2 px-4 rounded mr-2',
+				"text-white font-bold py-2 px-4 rounded mr-2",
 				this.currentFilter === filter
-					? 'bg-blue-700' // Colore per il bottone selezionato
-					: 'bg-blue-500 hover:bg-blue-700', // Colore per il bottone non selezionato
+					? "bg-blue-700" // Colore per il bottone selezionato
+					: "bg-blue-500 hover:bg-blue-700", // Colore per il bottone non selezionato
 			];
 		},
 		sortMessages(ascending) {
@@ -151,7 +151,7 @@ export default {
 				let bValue = b[this.selectedSort];
 
 				// Convertire le date in timestamp per il confronto
-				if (this.selectedSort === 'createdAt') {
+				if (this.selectedSort === "createdAt") {
 					aValue = new Date(aValue).getTime();
 					bValue = new Date(bValue).getTime();
 				}

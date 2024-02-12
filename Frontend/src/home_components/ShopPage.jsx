@@ -49,7 +49,7 @@ const ShopPage = () => {
 				};
 
 				const response = await fetch(
-					'http://site222327.tw.cs.unibo.it/api/purchase/${username}',
+					'http://localhost:3500/purchase/${username}',
 					requestOptions
 				);
 

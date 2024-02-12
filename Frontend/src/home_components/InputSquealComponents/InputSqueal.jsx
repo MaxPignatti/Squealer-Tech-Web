@@ -62,7 +62,7 @@ const InputSqueal = () => {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://site222327.tw.cs.unibo.it/api/users/${username}/channel`)
+			fetch(`http://localhost:3500/users/${username}/channel`)
 				.then((response) => response.json())
 				.then((data) => {
 					const nonModeratorChannels = data.filter(
@@ -74,7 +74,7 @@ const InputSqueal = () => {
 					console.error('Errore durante il recupero dei canali:', error)
 				);
 
-			fetch(`http://site222327.tw.cs.unibo.it/api/usr`)
+			fetch(`http://localhost:3500/usr`)
 				.then((response) => response.json())
 				.then((data) => setUsers(data))
 				.catch((error) =>
@@ -89,7 +89,7 @@ const InputSqueal = () => {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://site222327.tw.cs.unibo.it/api/usr/${username}`)
+			fetch(`http://localhost:3500/usr/${username}`)
 				.then((response) => {
 					if (response.status === 200) {
 						return response.json();
@@ -287,7 +287,7 @@ const InputSqueal = () => {
 	};
 
 	const publishMessage = async (requestData) => {
-		const url = 'http://site222327.tw.cs.unibo.it/api/messages';
+		const url = 'http://localhost:3500/messages';
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },

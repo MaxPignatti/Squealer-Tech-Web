@@ -19,9 +19,7 @@ const SubscribedChannels = ({
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(
-				`http://site222327.tw.cs.unibo.it/api/users/${username}/subscribedChannels`
-			)
+			fetch(`http://localhost:3500/users/${username}/subscribedChannels`)
 				.then((response) => response.json())
 				.then((data) => {
 					setSubscribedChannels(data);
@@ -40,7 +38,7 @@ const SubscribedChannels = ({
 				const username = userData.username;
 
 				const response = await fetch(
-					`http://site222327.tw.cs.unibo.it/api/channels/${channel._id}/members/${username}`,
+					`http://localhost:3500/channels/${channel._id}/members/${username}`,
 					{
 						method: 'DELETE',
 						headers: {

@@ -29,7 +29,7 @@ const Profile = () => {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://site222327.tw.cs.unibo.it/api/usr/${username}`)
+			fetch(`http://localhost:3500/usr/${username}`)
 				.then((response) => {
 					if (response.status === 200) {
 						return response.json();
@@ -67,7 +67,7 @@ const Profile = () => {
 	const handleUserChange = async () => {
 		try {
 			const response = await fetch(
-				`http://site222327.tw.cs.unibo.it/api/usr/${userData.oldUserName}`,
+				`http://localhost:3500/usr/${userData.oldUserName}`,
 				{
 					method: 'PATCH',
 					headers: {
@@ -101,7 +101,7 @@ const Profile = () => {
 	const handleUserPsw = async () => {
 		try {
 			const responsePassword = await fetch(
-				`http://site222327.tw.cs.unibo.it/api/usr/${userData.oldUserName}/password`,
+				`http://localhost:3500/usr/${userData.oldUserName}/password`,
 				{
 					method: 'PATCH',
 					headers: {

@@ -27,21 +27,18 @@ const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 			try {
-				const response = await fetch(
-					'http://site222327.tw.cs.unibo.it/api/channels',
-					{
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({
-							name: channelName,
-							description: channelDescription,
-							creator: username,
-							isMod: false,
-						}),
-					}
-				);
+				const response = await fetch('http://localhost:3500/channels', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						name: channelName,
+						description: channelDescription,
+						creator: username,
+						isMod: false,
+					}),
+				});
 
 				if (response.status === 201) {
 					const responseData = await response.json();

@@ -23,7 +23,7 @@ const YourChannels = ({
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://site222327.tw.cs.unibo.it/api/users/${username}/channel`)
+			fetch(`http://localhost:3500/users/${username}/channel`)
 				.then((response) => response.json())
 				.then((data) => setYourChannels(data))
 				.catch((error) =>
@@ -37,7 +37,7 @@ const YourChannels = ({
 			const userDataCookie = Cookies.get('user_data');
 			if (userDataCookie) {
 				const response = await fetch(
-					`http://site222327.tw.cs.unibo.it/api/channels/${channel._id}`,
+					`http://localhost:3500/channels/${channel._id}`,
 					{
 						method: 'DELETE',
 						headers: {
@@ -77,7 +77,7 @@ const YourChannels = ({
 	const handleRemoveMember = async (username) => {
 		try {
 			const response = await fetch(
-				`http://site222327.tw.cs.unibo.it/api/channels/${selectedChannelId}/members/${username}`,
+				`http://localhost:3500/channels/${selectedChannelId}/members/${username}`,
 				{
 					method: 'DELETE',
 					headers: {

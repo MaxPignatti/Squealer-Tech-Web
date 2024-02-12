@@ -57,7 +57,7 @@
 				@click="toggleReplies"
 				class="toggle-reply-button"
 			>
-				{{ showReplies ? 'Nascondi risposte' : 'Vedi Risposte' }}
+				{{ showReplies ? "Nascondi risposte" : "Vedi Risposte" }}
 			</button>
 			<p class="text-sm text-gray-500 italic">
 				{{ formatDate(message.createdAt) }}
@@ -99,21 +99,18 @@ export default {
 	},
 	methods: {
 		loadReplies() {
-			fetch(
-				`http://site222327.tw.cs.unibo.it/api/messages/${this.message._id}/replies`,
-				{
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				}
-			)
+			fetch(`http://localhost:3500/messages/${this.message._id}/replies`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			})
 				.then((response) => response.json())
 				.then((data) => {
 					this.replies = data;
 				})
 				.catch((error) => {
-					console.error('Errore durante il recupero delle risposte:', error);
+					console.error("Errore durante il recupero delle risposte:", error);
 				});
 		},
 		toggleReplies() {
@@ -124,7 +121,7 @@ export default {
 			this.$nextTick(() => {
 				if (this.$refs.toggleButton) {
 					this.$refs.toggleButton.setAttribute(
-						'aria-expanded',
+						"aria-expanded",
 						this.showReplies
 					);
 				}
@@ -132,13 +129,13 @@ export default {
 		},
 		formatDate(dateString) {
 			const options = {
-				year: 'numeric',
-				month: 'long',
-				day: 'numeric',
-				hour: '2-digit',
-				minute: '2-digit',
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+				hour: "2-digit",
+				minute: "2-digit",
 			};
-			return new Date(dateString).toLocaleDateString('it-IT', options);
+			return new Date(dateString).toLocaleDateString("it-IT", options);
 		},
 	},
 };

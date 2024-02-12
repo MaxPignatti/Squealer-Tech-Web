@@ -69,7 +69,7 @@ const Profile = () => {
 			const response = await fetch(
 				`http://localhost:3500/usr/${userData.oldUserName}`,
 				{
-					method: 'POST',
+					method: 'PATCH',
 					headers: {
 						'Content-Type': 'application/json',
 					},
@@ -103,7 +103,7 @@ const Profile = () => {
 			const responsePassword = await fetch(
 				`http://localhost:3500/usr/${userData.oldUserName}/password`,
 				{
-					method: 'POST',
+					method: 'PATCH',
 					headers: {
 						'Content-Type': 'application/json',
 					},

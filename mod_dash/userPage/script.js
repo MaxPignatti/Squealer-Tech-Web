@@ -161,14 +161,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		// Creare un oggetto con i dati da inviare
 		const requestData = {
-			username: username,
 			dailyChars: dailyChars,
 			weeklyChars: weeklyChars,
 			monthlyChars: monthlyChars,
 		};
 
-		fetch('http://localhost:3500/api/updateUserChars', {
-			method: 'POST',
+		fetch('http://localhost:3500/usr/${username}/chars', {
+			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
 			},
@@ -199,8 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		const modButton = document.getElementById('modUserBtn-' + username);
 
 		// Invia una richiesta al backend per impostare/rimuovere il ruolo di moderatore per l'utente
-		fetch(`http://localhost:3500/api/toggleModUser/${username}`, {
-			method: 'POST',
+		fetch(`http://localhost:3500/usr/${username}/mod`, {
+			method: 'PATCH',
 		})
 			.then((response) => response.json())
 			.then((data) => {
@@ -245,8 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function toggleBlockUser(username) {
 	const blockButton = document.getElementById('blockUserBtn-' + username);
 
-	fetch(`http://localhost:3500/api/toggleBlockUser/${username}`, {
-		method: 'POST',
+	fetch(`http://localhost:3500/usr/${username}/block`, {
+		method: 'PATCH',
 	})
 		.then((response) => response.json())
 		.then((data) => {

@@ -150,7 +150,8 @@ exports.updateUserPassword = async (req, res) => {
 
 exports.updateUserChars = async (req, res) => {
 	try {
-		const { username, dailyChars, weeklyChars, monthlyChars } = req.body;
+		const username = req.params.username;
+		const { dailyChars, weeklyChars, monthlyChars } = req.body;
 
 		// Trova l'utente dal database
 		const user = await User.findOne({ username });

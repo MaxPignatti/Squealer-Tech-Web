@@ -7,14 +7,14 @@ const { body, validationResult } = require('express-validator');
 router.get('/usr/email/:email', userController.getUserByEmail);
 router
 	.route('/usr/:username')
-	.post(userController.updateUserProfile)
+	.patch(userController.updateUserProfile)
 	.get(userController.getUser);
-router.post('/usr/:username/password', userController.updateUserPassword);
+router.patch('/usr/:username/password', userController.updateUserPassword);
 router.get('/usr', userController.getAllUsers);
-router.post('/api/updateUserChars', userController.updateUserChars);
+router.patch('/usr/:username/chars', userController.updateUserChars);
 router.delete('/api/deleteUser/:username', userController.deleteUser);
-router.post('/api/toggleBlockUser/:username', userController.toggleBlockUser);
-router.post('/api/toggleModUser/:username', userController.toggleModUser);
-router.post('/usr/:username/proAction', userController.handleProAction);
+router.patch('/usr/:username/block', userController.toggleBlockUser);
+router.patch('/usr/:username/mod', userController.toggleModUser);
+router.patch('/usr/:username/proStatus', userController.handleProAction);
 
 module.exports = router;

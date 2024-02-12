@@ -48,13 +48,13 @@ const Pro = () => {
 	const handleProAction = async (action) => {
 		try {
 			const response = await fetch(
-				`http://localhost:3500/usr/${userData.username}/proAction`,
+				`http://localhost:3500/usr/${userData.username}/proStatus`,
 				{
-					method: 'POST',
+					method: 'PATCH',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ action }), // "request" o "cancel"
+					body: JSON.stringify({ action }),
 				}
 			);
 

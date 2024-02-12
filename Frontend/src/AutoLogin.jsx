@@ -18,7 +18,7 @@ function AutoLogin() {
 
 			console.log('Existing Token:', existingToken);
 
-			fetch('http://localhost:3500/protectedEndpoint', {
+			fetch('http://site222327.tw.cs.unibo.it/api/protectedEndpoint', {
 				method: 'POST',
 				credentials: 'include',
 				headers: {

@@ -22,7 +22,9 @@ const AllChannels = ({
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://localhost:3500/channels?excludeSubscribedBy=${username}`)
+			fetch(
+				`http://site222327.tw.cs.unibo.it/api/channels?excludeSubscribedBy=${username}`
+			)
 				.then((response) => response.json())
 				.then((data) => {
 					setAllChannels(data);
@@ -49,7 +51,7 @@ const AllChannels = ({
 				const username = userData.username;
 
 				const response = await fetch(
-					`http://localhost:3500/channels/${channel._id}/members/${username}`,
+					`http://site222327.tw.cs.unibo.it/api/channels/${channel._id}/members/${username}`,
 					{
 						method: 'PUT',
 						headers: {

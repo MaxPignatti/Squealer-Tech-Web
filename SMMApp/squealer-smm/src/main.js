@@ -1,42 +1,45 @@
-import { createApp } from "vue";
-import App from "./App.vue";
-import router from "./router";
-import store from "./store";
-import "./assets/styles.css";
-import Cookies from "js-cookie";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faImages } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import store from './store';
+import './assets/styles.css';
+import Cookies from 'js-cookie';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faImages } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 library.add(faImages);
 
 async function verifyAuthentication() {
-	const authToken = Cookies.get("authToken");
+	const authToken = Cookies.get('authToken');
 	if (authToken) {
 		try {
 			// Sostituisci 'URL_DEL_SERVER' con l'URL effettivo del tuo server
-			const response = await fetch("http://localhost:3500/verifyTokenSMM", {
-				headers: {
-					Authorization: `Bearer ${authToken}`,
-				},
-			});
+			const response = await fetch(
+				'http://site222327.tw.cs.unibo.it/api/verifyTokenSMM',
+				{
+					headers: {
+						Authorization: `Bearer ${authToken}`,
+					},
+				}
+			);
 
 			if (response.status === 200) {
 				const userData = await response.json();
-				store.dispatch("login", userData.email);
-				store.commit("setVip", userData.vip);
+				store.dispatch('login', userData.email);
+				store.commit('setVip', userData.vip);
 			} else {
-				throw new Error("Autenticazione fallita");
+				throw new Error('Autenticazione fallita');
 			}
 		} catch (error) {
 			console.error(error.message);
-			Cookies.remove("authToken");
-			store.dispatch("logout");
-			router.push("/login");
+			Cookies.remove('authToken');
+			store.dispatch('logout');
+			router.push('/login');
 		}
 	} else {
-		store.dispatch("logout");
-		router.push("/login");
+		store.dispatch('logout');
+		router.push('/login');
 	}
 }
 
@@ -44,7 +47,7 @@ const app = createApp(App);
 
 app.use(router);
 app.use(store);
-app.component("font-awesome-icon", FontAwesomeIcon);
-app.mount("#app");
+app.component('font-awesome-icon', FontAwesomeIcon);
+app.mount('#app');
 
 verifyAuthentication();

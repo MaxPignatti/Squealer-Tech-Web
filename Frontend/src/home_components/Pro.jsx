@@ -20,7 +20,7 @@ const Pro = () => {
 			setUserData(userData);
 			setIsRequestingPro(userData.isProRequested);
 			const username = userData.username;
-			fetch(`http://localhost:3500/usr/${username}`)
+			fetch(`http://site222327.tw.cs.unibo.it/api/usr/${username}`)
 				.then((response) => {
 					if (response.status === 200) {
 						return response.json();
@@ -48,7 +48,7 @@ const Pro = () => {
 	const handleProAction = async (action) => {
 		try {
 			const response = await fetch(
-				`http://localhost:3500/usr/${userData.username}/proStatus`,
+				`http://site222327.tw.cs.unibo.it/api/usr/${userData.username}/proStatus`,
 				{
 					method: 'PATCH',
 					headers: {

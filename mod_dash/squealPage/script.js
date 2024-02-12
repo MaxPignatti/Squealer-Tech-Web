@@ -21,7 +21,7 @@ function validateUserAndFetchMessages() {
 	if (!userData) {
 		redirectToLogin();
 	} else {
-		fetch(`http://localhost:3500/usr/${userData.username}`)
+		fetch(`http://site222327.tw.cs.unibo.it/api/usr/${userData.username}`)
 			.then((response) => response.json())
 			.then((userDetails) => {
 				if (!userDetails.isMod) {
@@ -49,7 +49,7 @@ function fetchAllMessages() {
 	const messageList = document.getElementById('messageList');
 	messageList.innerHTML = 'Caricamento messaggi in corso...';
 
-	fetch('http://localhost:3500/allMessages')
+	fetch('http://site222327.tw.cs.unibo.it/api/allMessages')
 		.then((response) => {
 			if (!response.ok) {
 				throw new Error('Network response was not ok: ' + response.statusText);
@@ -191,7 +191,7 @@ function isTemporizzato(message) {
 // Funzione per eliminare un messaggio
 function deleteMessage(messageId) {
 	if (confirm('Sei sicuro di voler eliminare questo messaggio?')) {
-		fetch(`http://localhost:3500/messages/${messageId}`, {
+		fetch(`http://site222327.tw.cs.unibo.it/api/messages/${messageId}`, {
 			method: 'DELETE',
 		})
 			.then(() => {
@@ -244,7 +244,7 @@ function editMessage(messageId) {
 
 // Funzione per inviare la richiesta di aggiornamento dei canali al server
 function updateMessageChannels(messageId, newChannels) {
-	fetch(`http://localhost:3500/messages/${messageId}/channels`, {
+	fetch(`http://site222327.tw.cs.unibo.it/api/messages/${messageId}/channels`, {
 		method: 'PATCH',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ channels: newChannels }),
@@ -279,11 +279,14 @@ function updateReactions(messageId) {
 		return;
 	}
 
-	fetch(`http://localhost:3500/messages/${messageId}/reactions`, {
-		method: 'PATCH',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ positiveReactions, negativeReactions }),
-	})
+	fetch(
+		`http://site222327.tw.cs.unibo.it/api/messages/${messageId}/reactions`,
+		{
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ positiveReactions, negativeReactions }),
+		}
+	)
 		.then((response) => response.json())
 		.then((data) => {
 			fetchAllMessages();

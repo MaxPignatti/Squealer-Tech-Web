@@ -20,13 +20,16 @@ const RegistrationPage = () => {
 
 		try {
 			// Send a POST request to your backend registration endpoint
-			const response = await fetch('http://localhost:3500/register', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(formData),
-			});
+			const response = await fetch(
+				'http://site222327.tw.cs.unibo.it/api/register',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(formData),
+				}
+			);
 
 			if (response.status === 201) {
 				window.location.href = '/login'; // Redirect to the login page

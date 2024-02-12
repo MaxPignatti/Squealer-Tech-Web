@@ -9,7 +9,7 @@ const UserMention = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		fetch(`http://localhost:3500/usr/${username}`)
+		fetch(`http://site222327.tw.cs.unibo.it/api/usr/${username}`)
 			.then((response) => response.json())
 			.then((data) => setUserData(data))
 			.catch((error) => console.error('Error fetching user data:', error));

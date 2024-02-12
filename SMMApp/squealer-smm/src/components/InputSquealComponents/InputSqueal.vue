@@ -77,14 +77,14 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from "vue";
-import Cookies from "js-cookie";
-import CharCounter from "./CharCounter.vue";
-import ImageUploader from "./ImageUploader.vue";
-import LinkInserter from "./LinkInserter.vue";
-import MessageInput from "./MessageInput.vue";
-import RecipientSelector from "./RecipientSelector.vue";
-import TemporaryMessageOptions from "./TemporaryMessageOptions.vue";
+import { ref, onMounted, watch } from 'vue';
+import Cookies from 'js-cookie';
+import CharCounter from './CharCounter.vue';
+import ImageUploader from './ImageUploader.vue';
+import LinkInserter from './LinkInserter.vue';
+import MessageInput from './MessageInput.vue';
+import RecipientSelector from './RecipientSelector.vue';
+import TemporaryMessageOptions from './TemporaryMessageOptions.vue';
 
 export default {
 	components: {
@@ -96,7 +96,7 @@ export default {
 		TemporaryMessageOptions,
 	},
 	setup() {
-		const message = ref("");
+		const message = ref('');
 
 		const dailyCharacters = ref(0);
 		const weeklyCharacters = ref(0);
@@ -105,7 +105,7 @@ export default {
 		const initialWeeklyCharacters = ref(0);
 		const initialMonthlyCharacters = ref(0);
 
-		const errorMessage = ref("");
+		const errorMessage = ref('');
 
 		const selection = ref({ start: 0, end: 0 });
 
@@ -114,7 +114,7 @@ export default {
 		const maxSendCount = ref(0);
 
 		const filteredChannels = ref([]);
-		const searchTerm = ref("");
+		const searchTerm = ref('');
 		const channels = ref([]);
 		const selectedChannels = ref([]);
 
@@ -124,9 +124,9 @@ export default {
 		const vipUsername = ref(null);
 
 		onMounted(() => {
-			const authToken = Cookies.get("authToken");
+			const authToken = Cookies.get('authToken');
 			if (authToken) {
-				fetch("http://localhost:3500/smm/session", {
+				fetch('http://site222327.tw.cs.unibo.it/api/smm/session', {
 					headers: {
 						Authorization: `Bearer ${authToken}`,
 					},
@@ -137,7 +137,7 @@ export default {
 
 						// Prima chiamata API per i canali
 						return fetch(
-							`http://localhost:3500/channels?subscribedBy=${username}`
+							`http://site222327.tw.cs.unibo.it/api/channels?subscribedBy=${username}`
 						);
 					})
 					.then((response) => response.json())
@@ -148,13 +148,15 @@ export default {
 						channels.value = nonModeratorChannels;
 
 						// Seconda chiamata API per gli utenti
-						return fetch(`http://localhost:3500/usr/${vipUsername.value}`);
+						return fetch(
+							`http://site222327.tw.cs.unibo.it/api/usr/${vipUsername.value}`
+						);
 					})
 					.then((response) => {
 						if (response.status === 200) {
 							return response.json();
 						} else {
-							throw new Error("API call failed");
+							throw new Error('API call failed');
 						}
 					})
 					.then((data) => {
@@ -166,10 +168,10 @@ export default {
 						initialMonthlyCharacters.value = data.monthlyChars;
 					})
 					.catch((error) => {
-						console.error("API call error:", error);
+						console.error('API call error:', error);
 					});
 			} else {
-				console.error("User data not found in cookies");
+				console.error('User data not found in cookies');
 			}
 		});
 
@@ -229,14 +231,14 @@ export default {
 				weeklyCharacters.value < 50 ||
 				monthlyCharacters.value < 50
 			) {
-				alert("Not enough characters for an image upload.");
+				alert('Not enough characters for an image upload.');
 				return;
 			}
 
 			const file = event.target.files && event.target.files[0];
 			if (file) {
-				if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
-					alert("Please select a JPEG or PNG image.");
+				if (!file.type.match('image/jpeg') && !file.type.match('image/png')) {
+					alert('Please select a JPEG or PNG image.');
 					return;
 				}
 				const reader = new FileReader();
@@ -271,7 +273,7 @@ export default {
 				const afterText = message.value.substring(selection.value.end);
 				message.value = `${beforeText}[${linkText}](${url})${afterText}`;
 			} else {
-				alert("Per favore, seleziona il testo a cui vuoi attribuire un link.");
+				alert('Per favore, seleziona il testo a cui vuoi attribuire un link.');
 			}
 		};
 
@@ -279,8 +281,8 @@ export default {
 		const toggleTemp = () => {
 			isTemp.value = !isTemp.value;
 			if (!isTemp.value) {
-				updateInterval.value = "";
-				maxSendCount.value = "";
+				updateInterval.value = '';
+				maxSendCount.value = '';
 			}
 		};
 
@@ -297,10 +299,10 @@ export default {
 			const savedMessage = message.value;
 			const savedImage = image.value;
 			if (savedMessage && selectedChannels.value.length > 0) {
-				message.value = "";
+				message.value = '';
 				image.value = null;
 				imagePreview.value = null;
-				errorMessage.value = "";
+				errorMessage.value = '';
 				if (vipUsername.value) {
 					try {
 						const currentTime = new Date();
@@ -310,7 +312,7 @@ export default {
 							(!updateInterval.value || !maxSendCount.value)
 						) {
 							alert(
-								"Please enter valid update interval and max send count for temporary messages."
+								'Please enter valid update interval and max send count for temporary messages.'
 							);
 							return;
 						}
@@ -333,10 +335,10 @@ export default {
 							},
 						};
 
-						const url = "http://localhost:3500/messages";
+						const url = 'http://site222327.tw.cs.unibo.it/api/messages';
 						const requestOptions = {
-							method: "POST",
-							headers: { "Content-Type": "application/json" },
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
 							body: JSON.stringify(requestData),
 						};
 
@@ -347,20 +349,20 @@ export default {
 						} else {
 							const data = await response.json();
 							console.error(
-								"Errore nella creazione del messaggio:",
+								'Errore nella creazione del messaggio:',
 								data.error
 							);
 						}
 					} catch (error) {
-						console.error("Errore nella creazione del messaggio:", error);
+						console.error('Errore nella creazione del messaggio:', error);
 					}
 				}
 			} else {
-				let errorText = "";
+				let errorText = '';
 				if (!savedMessage) {
-					errorText = "Scrivi qualcosa";
+					errorText = 'Scrivi qualcosa';
 				} else if (selectedChannels.value.length === 0) {
-					errorText = "Seleziona un destinatario";
+					errorText = 'Seleziona un destinatario';
 				}
 				errorMessage.value = errorText;
 			}

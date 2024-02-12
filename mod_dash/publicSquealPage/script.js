@@ -17,7 +17,7 @@ logoutLink.addEventListener('click', () => {
 
 // Fetch e mostra tutti i canali
 function fetchChannels() {
-	fetch('http://localhost:3500/channels/moderator/true')
+	fetch('http://site222327.tw.cs.unibo.it/api/channels/moderator/true')
 		.then((response) => response.json())
 		.then((channels) => {
 			allChannels = channels;
@@ -60,7 +60,7 @@ function showEditChannelForm(channelId, name, description) {
 
 // Elimina un canale
 function deleteChannel(channelId) {
-	fetch(`http://localhost:3500/channels/${channelId}`, {
+	fetch(`http://site222327.tw.cs.unibo.it/api/channels/${channelId}`, {
 		method: 'DELETE',
 	})
 		.then(() => {
@@ -79,7 +79,7 @@ function updateChannel(channelId, currentName, currentDescription) {
 	);
 
 	if (newName && newDescription) {
-		fetch(`http://localhost:3500/channels/${channelId}`, {
+		fetch(`http://site222327.tw.cs.unibo.it/api/channels/${channelId}`, {
 			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ newName: newName, description: newDescription }),
@@ -101,7 +101,7 @@ function updateChannel(channelId, currentName, currentDescription) {
 }
 
 function fetchAllMessages() {
-	fetch('http://localhost:3500/allMessages')
+	fetch('http://site222327.tw.cs.unibo.it/api/allMessages')
 		.then((response) => response.json())
 		.then((messages) => {
 			allMessages = messages;
@@ -178,7 +178,7 @@ function renderMessagesForChannel(channelName, channelId) {
 
 // Elimina un messaggio
 function deleteMessage(messageId) {
-	fetch(`http://localhost:3500/messages/${messageId}`, {
+	fetch(`http://site222327.tw.cs.unibo.it/api/messages/${messageId}`, {
 		method: 'DELETE',
 	})
 		.then((response) => {
@@ -233,7 +233,7 @@ function saveMessage(messageId, channelName) {
 		return;
 	}
 
-	fetch(`http://localhost:3500/messages/${messageId}`, {
+	fetch(`http://site222327.tw.cs.unibo.it/api/messages/${messageId}`, {
 		method: 'PATCH',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ username: username, text: editedText }),
@@ -258,7 +258,7 @@ function createNewChannel() {
 	const userData = JSON.parse(localStorage.getItem('userData'));
 	const username = userData ? userData.username : null;
 
-	fetch('http://localhost:3500/channels', {
+	fetch('http://site222327.tw.cs.unibo.it/api/channels', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({

@@ -63,13 +63,16 @@ const Message = ({
 						setHasBeenViewed(true);
 
 						// Chiamata API per incrementare le impressions
-						fetch(`http://localhost:3500/messages/${message._id}/impressions`, {
-							method: 'PATCH',
-							headers: {
-								'Content-Type': 'application/json',
-							},
-							body: JSON.stringify({ username: currentUser }),
-						})
+						fetch(
+							`http://site222327.tw.cs.unibo.it/api/messages/${message._id}/impressions`,
+							{
+								method: 'PATCH',
+								headers: {
+									'Content-Type': 'application/json',
+								},
+								body: JSON.stringify({ username: currentUser }),
+							}
+						)
 							.then((response) => response.json())
 							.catch((error) =>
 								console.error(
@@ -98,7 +101,7 @@ const Message = ({
 		const getMessageById = async () => {
 			try {
 				const response = await fetch(
-					`http://localhost:3500/message/${message.replyTo}`
+					`http://site222327.tw.cs.unibo.it/api/message/${message.replyTo}`
 				);
 				const data = await response.json();
 				setOriginalMessageUser(data.user);
@@ -141,7 +144,7 @@ const Message = ({
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://localhost:3500/usr/${username}`)
+			fetch(`http://site222327.tw.cs.unibo.it/api/usr/${username}`)
 				.then((response) => {
 					if (response.status === 200) {
 						return response.json();
@@ -168,7 +171,9 @@ const Message = ({
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://localhost:3500/channels?excludeSubscribedBy=${username}`)
+			fetch(
+				`http://site222327.tw.cs.unibo.it/api/channels?excludeSubscribedBy=${username}`
+			)
 				.then((response) => response.json())
 				.then((data) => setChannel(data))
 				.catch((error) =>
@@ -180,7 +185,7 @@ const Message = ({
 	const handleBeepAcknowledged = async (messageId) => {
 		try {
 			const response = await fetch(
-				`http://localhost:3500/messages/${messageId}/acknowledge`,
+				`http://site222327.tw.cs.unibo.it/api/messages/${messageId}/acknowledge`,
 				{
 					method: 'PATCH',
 				}
@@ -255,7 +260,7 @@ const Message = ({
 				const username = userData.username;
 
 				const response = await fetch(
-					`http://localhost:3500/channels/${channel._id}/members/${username}`,
+					`http://site222327.tw.cs.unibo.it/api/channels/${channel._id}/members/${username}`,
 					{
 						method: 'PUT',
 						headers: {

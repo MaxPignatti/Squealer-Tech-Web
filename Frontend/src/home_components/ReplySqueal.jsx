@@ -53,7 +53,7 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 
-			fetch(`http://localhost:3500/usr/${username}`)
+			fetch(`http://site222327.tw.cs.unibo.it/api/usr/${username}`)
 				.then((response) => {
 					if (response.status === 200) {
 						return response.json();
@@ -125,7 +125,7 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 					};
 
 					const response = await fetch(
-						`http://localhost:3500/messages/${originalMessage._id}/replies`,
+						`http://site222327.tw.cs.unibo.it/api/messages/${originalMessage._id}/replies`,
 						requestOptions
 					);
 					onEndReplying();

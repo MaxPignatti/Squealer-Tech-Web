@@ -30,7 +30,7 @@ const LoginPage = () => {
 			};
 
 			const response = await fetch(
-				'http://localhost:3500/login',
+				'http://site222327.tw.cs.unibo.it/api/login',
 				requestOptions
 			);
 			if (response.status === 200) {
@@ -67,7 +67,9 @@ const LoginPage = () => {
 	useEffect(() => {
 		const fetchTrendingMessages = async () => {
 			try {
-				const response = await fetch('http://localhost:3500/api/topMessages');
+				const response = await fetch(
+					'http://site222327.tw.cs.unibo.it/api/api/topMessages'
+				);
 				if (response.ok) {
 					const data = await response.json();
 					setTrendingMessages(data);

@@ -220,7 +220,7 @@ export const sendLocationPeriodically = (
 export const sendLocationToBackend = async (messageId, position) => {
 	try {
 		const response = await fetch(
-			`http://localhost:3500/messages/${messageId}/position`,
+			`http://site222327.tw.cs.unibo.it/api/messages/${messageId}/position`,
 			{
 				method: 'POST',
 				headers: {

@@ -17,7 +17,7 @@ const Squeals = ({ searchType, searchText }) => {
 
 	// Funzione per costruire l'URL basato su vari parametri
 	const buildUrl = (viewMode, username, searchType, searchText) => {
-		let baseUrl = `http://localhost:3500/${
+		let baseUrl = `http://site222327.tw.cs.unibo.it/api/${
 			viewMode === 'public' ? 'messages/public' : 'privateMessages'
 		}/${username}`;
 		if (searchType && searchText) {
@@ -82,7 +82,7 @@ const Squeals = ({ searchType, searchText }) => {
 			const username = userData.username;
 			try {
 				const response = await fetch(
-					`http://localhost:3500/messages/${messageId}/reactions/`,
+					`http://site222327.tw.cs.unibo.it/api/messages/${messageId}/reactions/`,
 					{
 						method: 'POST',
 						headers: {
@@ -137,7 +137,7 @@ const Squeals = ({ searchType, searchText }) => {
 			const username = userData.username;
 			try {
 				const response = await fetch(
-					`http://localhost:3500/messages/${messageId}`,
+					`http://site222327.tw.cs.unibo.it/api/messages/${messageId}`,
 					{
 						method: 'PATCH',
 						headers: {

@@ -1,6 +1,6 @@
-import React from "react";
-import { Button, Image } from "react-bootstrap";
-import PropTypes from "prop-types";
+import React from 'react';
+import { Button, Image } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 const ImageUploader = ({
 	image,
@@ -13,16 +13,16 @@ const ImageUploader = ({
 			{!image ? (
 				<>
 					<input
-						type="file"
-						accept="image/*"
+						type='file'
+						accept='image/*'
 						onChange={handleImageChange}
-						className="mb-2"
+						className='mb-2'
 						hidden
-						id="imageUpload"
+						id='imageUpload'
 					/>
 					<label
-						htmlFor="imageUpload"
-						className="btn btn-primary mb-2"
+						htmlFor='imageUpload'
+						className='btn btn-primary mb-2'
 					>
 						Allega Foto
 					</label>
@@ -31,13 +31,13 @@ const ImageUploader = ({
 				<>
 					<Image
 						src={imagePreview}
-						alt="Anteprima"
-						className="img-fluid mb-2"
+						alt='Anteprima'
+						className='img-fluid mb-2'
 					/>
 					<Button
-						variant="danger"
+						variant='danger'
 						onClick={handleRemoveImage}
-						className="mb-2"
+						className='mb-2'
 					>
 						Annulla Foto
 					</Button>

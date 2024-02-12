@@ -1,12 +1,12 @@
-import React from "react";
-import { Button } from "react-bootstrap";
-import PropTypes from "prop-types";
+import React from 'react';
+import { Button } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 const PublishButton = ({ handlePublish }) => (
 	<Button
-		variant="success"
+		variant='success'
 		onClick={handlePublish}
-		className="mt-2"
+		className='mt-2'
 	>
 		Pubblica
 	</Button>

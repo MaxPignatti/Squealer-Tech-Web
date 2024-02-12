@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Container, Col, Row, Form } from "react-bootstrap";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import Cookies from "js-cookie";
-import CharCounter from "./InputSquealComponents/CharCounter";
-import ImageUploader from "./InputSquealComponents/ImageUploader";
-import LocationSharer from "./InputSquealComponents/LocationSharer";
-import MessageInput from "./InputSquealComponents/MessageInput";
-import PublishButton from "./InputSquealComponents/PublishButton";
-import LinkInserter from "./InputSquealComponents/LinkInserter";
+import React, { useState, useEffect } from 'react';
+import { Container, Col, Row, Form } from 'react-bootstrap';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import Cookies from 'js-cookie';
+import CharCounter from './InputSquealComponents/CharCounter';
+import ImageUploader from './InputSquealComponents/ImageUploader';
+import LocationSharer from './InputSquealComponents/LocationSharer';
+import MessageInput from './InputSquealComponents/MessageInput';
+import PublishButton from './InputSquealComponents/PublishButton';
+import LinkInserter from './InputSquealComponents/LinkInserter';
 import {
 	handleMessageChange,
 	handleImageChange,
@@ -20,12 +20,12 @@ import {
 	sendLocationToBackend,
 	handleTextSelect,
 	handleInsertLink,
-} from "./InputSquealComponents/commonFunction";
-import PropTypes from "prop-types";
+} from './InputSquealComponents/commonFunction';
+import PropTypes from 'prop-types';
 
 const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 	//USE STATE DA ORDINARE
-	const [message, setMessage] = useState("");
+	const [message, setMessage] = useState('');
 	const [selection, setSelection] = useState({ start: 0, end: 0 });
 	const [dailyCharacters, setDailyCharacters] = useState(0);
 	const [weeklyCharacters, setWeeklyCharacters] = useState(0);
@@ -33,7 +33,7 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 	const [initialDailyCharacters, setInitialDailyCharacters] = useState(0);
 	const [initialWeeklyCharacters, setInitialWeeklyCharacters] = useState(0);
 	const [initialMonthlyCharacters, setInitialMonthlyCharacters] = useState(0);
-	const [errorMessage, setErrorMessage] = useState("");
+	const [errorMessage, setErrorMessage] = useState('');
 
 	const [publicMessage, setPublicMessage] = useState(false);
 
@@ -48,7 +48,7 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 
 	useEffect(() => {
 		onStartReplying();
-		const userDataCookie = Cookies.get("user_data");
+		const userDataCookie = Cookies.get('user_data');
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
@@ -58,7 +58,7 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 					if (response.status === 200) {
 						return response.json();
 					} else {
-						throw new Error("API call failed");
+						throw new Error('API call failed');
 					}
 				})
 				.then((data) => {
@@ -70,10 +70,10 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 					setInitialMonthlyCharacters(data.monthlyChars);
 				})
 				.catch((error) => {
-					console.error("API call error:", error);
+					console.error('API call error:', error);
 				});
 		} else {
-			console.error("User data not found in cookies");
+			console.error('User data not found in cookies');
 		}
 		return () => {
 			onEndReplying();
@@ -99,11 +99,11 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 		const savedMessage = message;
 
 		if (savedMessage) {
-			const userDataCookie = Cookies.get("user_data");
-			setMessage("");
+			const userDataCookie = Cookies.get('user_data');
+			setMessage('');
 			setImage(null);
 			setImagePreview(null);
-			setErrorMessage(""); // Reset del messaggio di errore
+			setErrorMessage(''); // Reset del messaggio di errore
 			if (userDataCookie) {
 				try {
 					const userData = JSON.parse(userDataCookie);
@@ -119,8 +119,8 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 							: null,
 					};
 					const requestOptions = {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
 						body: JSON.stringify(requestData),
 					};
 
@@ -135,20 +135,20 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 						window.location.reload();
 					} else {
 						const data = await response.json();
-						console.error("Errore nella creazione della risposta:", data.error);
+						console.error('Errore nella creazione della risposta:', data.error);
 					}
 				} catch (error) {
-					console.error("Errore nella creazione della risposta:", error);
+					console.error('Errore nella creazione della risposta:', error);
 				}
 			}
 		} else {
-			setErrorMessage("Scrivi qualcosa");
+			setErrorMessage('Scrivi qualcosa');
 		}
 	};
 
 	return (
-		<Container className="my-4">
-			<Row className="justify-content-center">
+		<Container className='my-4'>
+			<Row className='justify-content-center'>
 				<Col
 					xs={12}
 					md={8}
@@ -216,9 +216,9 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 								center={currentLocation}
 								zoom={14}
 								scrollWheelZoom={false}
-								style={{ height: "200px", width: "100%" }}
+								style={{ height: '200px', width: '100%' }}
 							>
-								<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+								<TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
 								<Marker position={currentLocation}>
 									<Popup>You are here.</Popup>
 								</Marker>
@@ -246,12 +246,12 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 							weeklyCharacters={weeklyCharacters}
 							monthlyCharacters={monthlyCharacters}
 						/>
-						<Row className="mt-3">
-							<Col className="text-center">
+						<Row className='mt-3'>
+							<Col className='text-center'>
 								<PublishButton handlePublish={handlePublish} />
 							</Col>
 						</Row>
-						{errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+						{errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
 					</Form>
 				</Col>
 			</Row>

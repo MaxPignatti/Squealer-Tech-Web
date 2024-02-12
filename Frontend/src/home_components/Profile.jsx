@@ -1,30 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import Cookies from "js-cookie";
-import { useAuth } from "../AuthContext";
-import { Navigate } from "react-router-dom";
-import "./Profile_style.css";
-import Navbar from "./Navbar";
-import LogoutButton from "./LogoutButton";
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import Cookies from 'js-cookie';
+import { useAuth } from '../AuthContext';
+import { Navigate } from 'react-router-dom';
+import './Profile_style.css';
+import Navbar from './Navbar';
+import LogoutButton from './LogoutButton';
 
 const Profile = () => {
 	const { isAuthenticated } = useAuth();
 	const [userData, setUserData] = useState({});
 	const [editChange, setEditChange] = useState(false);
 	const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
-	const [errorMessage, setErrorMessage] = useState("");
+	const [errorMessage, setErrorMessage] = useState('');
 
 	const [showOldPassword, setShowOldPassword] = useState(false);
 	const [showNewPassword, setShowNewPassword] = useState(false);
 
 	if (!isAuthenticated) {
-		return <Navigate to="/login" />;
+		return <Navigate to='/login' />;
 	}
 
 	useEffect(() => {
-		const userDataCookie = Cookies.get("user_data");
+		const userDataCookie = Cookies.get('user_data');
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
@@ -34,7 +34,7 @@ const Profile = () => {
 					if (response.status === 200) {
 						return response.json();
 					} else {
-						throw new Error("API call failed");
+						throw new Error('API call failed');
 					}
 				})
 				.then((data) => {
@@ -45,10 +45,10 @@ const Profile = () => {
 					setUserData(newData);
 				})
 				.catch((error) => {
-					console.error("API call error:", error);
+					console.error('API call error:', error);
 				});
 		} else {
-			console.error("User data not found in cookies");
+			console.error('User data not found in cookies');
 		}
 	}, []);
 
@@ -69,9 +69,9 @@ const Profile = () => {
 			const response = await fetch(
 				`http://localhost:3500/usr/${userData.oldUserName}`,
 				{
-					method: "POST",
+					method: 'POST',
 					headers: {
-						"Content-Type": "application/json",
+						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify(userData),
 				}
@@ -84,7 +84,7 @@ const Profile = () => {
 					...userData,
 					username: userData.username || userData.oldUserName,
 				};
-				Cookies.set("user_data", JSON.stringify(updatedUserData), {
+				Cookies.set('user_data', JSON.stringify(updatedUserData), {
 					expires: 1,
 				});
 
@@ -94,7 +94,7 @@ const Profile = () => {
 				setErrorMessage(data.error);
 			}
 		} catch (error) {
-			console.error("API call error:", error);
+			console.error('API call error:', error);
 		}
 	};
 
@@ -103,9 +103,9 @@ const Profile = () => {
 			const responsePassword = await fetch(
 				`http://localhost:3500/usr/${userData.oldUserName}/password`,
 				{
-					method: "POST",
+					method: 'POST',
 					headers: {
-						"Content-Type": "application/json",
+						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify(userData),
 				}
@@ -120,7 +120,7 @@ const Profile = () => {
 				setErrorMessage(data.error);
 			}
 		} catch (error) {
-			console.error("API call error:", error);
+			console.error('API call error:', error);
 		}
 	};
 
@@ -132,7 +132,7 @@ const Profile = () => {
 		<>
 			<Navbar />
 			<Container>
-				<Row className="justify-content-center mt-5">
+				<Row className='justify-content-center mt-5'>
 					<Col
 						xs={12}
 						md={8}
@@ -143,18 +143,18 @@ const Profile = () => {
 								<div>
 									<img
 										src={`${userData.profileImage}`}
-										alt="Profile"
-										style={{ maxWidth: "20%" }}
+										alt='Profile'
+										style={{ maxWidth: '20%' }}
 									/>
 								</div>
 								{editChange ? (
 									<Form>
-										<Form.Group controlId="formBasicProfileImage">
+										<Form.Group controlId='formBasicProfileImage'>
 											<Form.Label>Profile Image</Form.Label>
 											<Form.Control
-												type="file"
-												accept="image/*"
-												name="profileImage"
+												type='file'
+												accept='image/*'
+												name='profileImage'
 												onChange={(e) => {
 													const reader = new FileReader();
 													reader.onload = () => {
@@ -168,11 +168,11 @@ const Profile = () => {
 											/>
 										</Form.Group>
 
-										<Form.Group controlId="formBasicFirstName">
+										<Form.Group controlId='formBasicFirstName'>
 											<Form.Label>First Name</Form.Label>
 											<Form.Control
-												type="text"
-												name="firstName"
+												type='text'
+												name='firstName'
 												value={userData.firstName}
 												onChange={(e) =>
 													setUserData({
@@ -184,11 +184,11 @@ const Profile = () => {
 											/>
 										</Form.Group>
 
-										<Form.Group controlId="formBasicLastName">
+										<Form.Group controlId='formBasicLastName'>
 											<Form.Label>Last Name</Form.Label>
 											<Form.Control
-												type="text"
-												name="lastName"
+												type='text'
+												name='lastName'
 												value={userData.lastName}
 												onChange={(e) =>
 													setUserData({ ...userData, lastName: e.target.value })
@@ -197,11 +197,11 @@ const Profile = () => {
 											/>
 										</Form.Group>
 
-										<Form.Group controlId="formBasicUserName">
+										<Form.Group controlId='formBasicUserName'>
 											<Form.Label>Username</Form.Label>
 											<Form.Control
-												type="text"
-												name="username"
+												type='text'
+												name='username'
 												value={userData.username}
 												onChange={(e) =>
 													setUserData({ ...userData, username: e.target.value })
@@ -210,11 +210,11 @@ const Profile = () => {
 											/>
 										</Form.Group>
 
-										<Form.Group controlId="formBasicEmail">
+										<Form.Group controlId='formBasicEmail'>
 											<Form.Label>Email</Form.Label>
 											<Form.Control
-												type="text"
-												name="email"
+												type='text'
+												name='email'
 												value={userData.email}
 												onChange={(e) =>
 													setUserData({ ...userData, email: e.target.value })
@@ -224,13 +224,13 @@ const Profile = () => {
 										</Form.Group>
 
 										<Button
-											variant="success"
+											variant='success'
 											onClick={handleUserChange}
 										>
 											Salva Modifiche
 										</Button>
 										<Button
-											variant="secondary"
+											variant='secondary'
 											onClick={handleAnnulla}
 										>
 											Annulla
@@ -238,38 +238,38 @@ const Profile = () => {
 									</Form>
 								) : (
 									<div>
-										<p className="d-flex justify-content-center">
+										<p className='d-flex justify-content-center'>
 											First Name: {userData.firstName}
 										</p>
-										<p className="d-flex justify-content-center">
+										<p className='d-flex justify-content-center'>
 											Last Name: {userData.lastName}
 										</p>
-										<p className="d-flex justify-content-center">
+										<p className='d-flex justify-content-center'>
 											Username: {userData.username}
 										</p>
-										<p className="d-flex justify-content-center">
+										<p className='d-flex justify-content-center'>
 											Email: {userData.email}
 										</p>
 										{userData.isPro && userData.socialMediaManagerEmail && (
-											<p className="d-flex justify-content-center">
+											<p className='d-flex justify-content-center'>
 												Social Media Manager: {userData.socialMediaManagerEmail}
 											</p>
 										)}
 
 										<Button
-											variant="primary"
+											variant='primary'
 											onClick={handleModifica}
 										>
 											Modifica Profilo
 										</Button>
 										{showChangePasswordForm ? (
 											<Form>
-												<Form.Group controlId="formBasicOldPassword">
+												<Form.Group controlId='formBasicOldPassword'>
 													<Form.Label>Vecchia Password</Form.Label>
 													<Form.Control
-														type={showOldPassword ? "text" : "password"}
-														name="oldPassword"
-														placeholder="Vecchia Password"
+														type={showOldPassword ? 'text' : 'password'}
+														name='oldPassword'
+														placeholder='Vecchia Password'
 														onChange={(e) =>
 															setUserData({
 																...userData,
@@ -278,12 +278,12 @@ const Profile = () => {
 														}
 													/>
 													<button
-														className="password-toggle"
+														className='password-toggle'
 														onClick={() => setShowOldPassword(!showOldPassword)}
 														aria-label={
 															showOldPassword
-																? "Nascondi password"
-																: "Mostra password"
+																? 'Nascondi password'
+																: 'Mostra password'
 														}
 													>
 														{showOldPassword ? (
@@ -294,12 +294,12 @@ const Profile = () => {
 													</button>
 												</Form.Group>
 
-												<Form.Group controlId="formBasicPassword">
+												<Form.Group controlId='formBasicPassword'>
 													<Form.Label>Nuova Password</Form.Label>
 													<Form.Control
-														type={showNewPassword ? "text" : "password"}
-														name="newPassword"
-														placeholder="Nuova Password"
+														type={showNewPassword ? 'text' : 'password'}
+														name='newPassword'
+														placeholder='Nuova Password'
 														onChange={(e) =>
 															setUserData({
 																...userData,
@@ -308,12 +308,12 @@ const Profile = () => {
 														}
 													/>
 													<button
-														className="password-toggle"
+														className='password-toggle'
 														onClick={() => setShowNewPassword(!showNewPassword)}
 														aria-label={
 															showNewPassword
-																? "Nascondi nuova password"
-																: "Mostra nuova password"
+																? 'Nascondi nuova password'
+																: 'Mostra nuova password'
 														}
 													>
 														{showNewPassword ? (
@@ -325,24 +325,24 @@ const Profile = () => {
 												</Form.Group>
 
 												<Button
-													variant="primary"
+													variant='primary'
 													onClick={handleUserPsw}
 												>
 													Salva Modifiche
 												</Button>
 												<Button
-													variant="secondary"
+													variant='secondary'
 													onClick={handleAnnullaPassword}
 												>
 													Annulla
 												</Button>
 												{errorMessage && (
-													<div className="text-danger mt-2">{errorMessage}</div>
+													<div className='text-danger mt-2'>{errorMessage}</div>
 												)}
 											</Form>
 										) : (
 											<Button
-												variant="info"
+												variant='info'
 												onClick={handleModificaPassword}
 											>
 												Modifica Password

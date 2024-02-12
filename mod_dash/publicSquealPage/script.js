@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function () {
 	checkLoginStatus();
 	fetchAllMessages();
 	fetchChannels();
@@ -7,33 +7,33 @@ document.addEventListener("DOMContentLoaded", function () {
 let allMessages = [];
 let allChannels = [];
 
-const logoutLink = document.getElementById("logoutLink");
-logoutLink.style.display = "block";
+const logoutLink = document.getElementById('logoutLink');
+logoutLink.style.display = 'block';
 
-logoutLink.addEventListener("click", () => {
-	localStorage.removeItem("userData");
-	window.location.href = "../loginPage/login.html";
+logoutLink.addEventListener('click', () => {
+	localStorage.removeItem('userData');
+	window.location.href = '../loginPage/login.html';
 });
 
 // Fetch e mostra tutti i canali
 function fetchChannels() {
-	fetch("http://localhost:3500/channels/moderator/true")
+	fetch('http://localhost:3500/channels/moderator/true')
 		.then((response) => response.json())
 		.then((channels) => {
 			allChannels = channels;
 			renderChannels(channels);
 		})
-		.catch((error) => console.error("Errore:", error));
+		.catch((error) => console.error('Errore:', error));
 }
 
 // Mostra i canali nella pagina
 function renderChannels(channels) {
-	const channelList = document.getElementById("channelList");
-	channelList.innerHTML = "";
+	const channelList = document.getElementById('channelList');
+	channelList.innerHTML = '';
 
 	channels.forEach((channel) => {
-		const card = document.createElement("div");
-		card.className = "card mb-3";
+		const card = document.createElement('div');
+		card.className = 'card mb-3';
 		card.id = `channel-${channel._id}`;
 
 		card.innerHTML = `
@@ -52,16 +52,16 @@ function renderChannels(channels) {
 }
 
 function showEditChannelForm(channelId, name, description) {
-	document.getElementById("editChannelName").value = name;
-	document.getElementById("editChannelDescription").value = description;
-	document.getElementById("editChannelId").value = channelId;
-	$("#editChannelModal").modal("show");
+	document.getElementById('editChannelName').value = name;
+	document.getElementById('editChannelDescription').value = description;
+	document.getElementById('editChannelId').value = channelId;
+	$('#editChannelModal').modal('show');
 }
 
 // Elimina un canale
 function deleteChannel(channelId) {
 	fetch(`http://localhost:3500/channels/${channelId}`, {
-		method: "DELETE",
+		method: 'DELETE',
 	})
 		.then(() => {
 			fetchChannels();
@@ -72,21 +72,21 @@ function deleteChannel(channelId) {
 }
 
 function updateChannel(channelId, currentName, currentDescription) {
-	const newName = prompt("Inserisci il nuovo nome del canale", currentName);
+	const newName = prompt('Inserisci il nuovo nome del canale', currentName);
 	const newDescription = prompt(
-		"Inserisci la nuova descrizione del canale",
+		'Inserisci la nuova descrizione del canale',
 		currentDescription
 	);
 
 	if (newName && newDescription) {
 		fetch(`http://localhost:3500/channels/${channelId}`, {
-			method: "PATCH",
-			headers: { "Content-Type": "application/json" },
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ newName: newName, description: newDescription }),
 		})
 			.then((response) => {
 				if (!response.ok) {
-					throw new Error("Errore nella risposta del server");
+					throw new Error('Errore nella risposta del server');
 				}
 				return response.json();
 			})
@@ -95,21 +95,21 @@ function updateChannel(channelId, currentName, currentDescription) {
 				fetchChannels();
 			})
 			.catch((error) =>
-				console.error("Errore nella modifica del canale:", error)
+				console.error('Errore nella modifica del canale:', error)
 			);
 	}
 }
 
 function fetchAllMessages() {
-	fetch("http://localhost:3500/allMessages")
+	fetch('http://localhost:3500/allMessages')
 		.then((response) => response.json())
 		.then((messages) => {
 			allMessages = messages;
 		})
 		.catch((error) => {
-			console.error("Errore durante il recupero dei messaggi:", error);
-			const messageList = document.getElementById("messageList");
-			messageList.innerHTML = "Impossibile caricare i messaggi.";
+			console.error('Errore durante il recupero dei messaggi:', error);
+			const messageList = document.getElementById('messageList');
+			messageList.innerHTML = 'Impossibile caricare i messaggi.';
 		});
 }
 
@@ -127,16 +127,16 @@ function renderMessagesForChannel(channelName, channelId) {
 	if (messagesForChannel.length === 0) {
 		console.log(`Nessun messaggio disponibile per il canale: ${channelName}`);
 		// Qui puoi decidere di mostrare o meno un messaggio nel DOM per indicare che non ci sono messaggi
-		const noMessagesDiv = document.createElement("div");
+		const noMessagesDiv = document.createElement('div');
 		noMessagesDiv.textContent =
-			"Nessun messaggio disponibile per questo canale.";
-		channelDiv.querySelector(".messagesContainer").appendChild(noMessagesDiv);
+			'Nessun messaggio disponibile per questo canale.';
+		channelDiv.querySelector('.messagesContainer').appendChild(noMessagesDiv);
 		return;
 	}
 
-	const table = document.createElement("table");
-	table.className = "table table-hover";
-	const thead = document.createElement("thead");
+	const table = document.createElement('table');
+	table.className = 'table table-hover';
+	const thead = document.createElement('thead');
 	thead.innerHTML = `
         <tr>
             <th scope="col">Utente</th>
@@ -146,10 +146,10 @@ function renderMessagesForChannel(channelName, channelId) {
         </tr>`;
 	table.appendChild(thead);
 
-	const tbody = document.createElement("tbody");
+	const tbody = document.createElement('tbody');
 
 	messagesForChannel.forEach((message) => {
-		const tr = document.createElement("tr");
+		const tr = document.createElement('tr');
 		tr.innerHTML = `
             <td>${message.user}</td>
             <td id="messageText-${message._id}-${channelName}">${
@@ -171,19 +171,19 @@ function renderMessagesForChannel(channelName, channelId) {
 	});
 
 	table.appendChild(tbody);
-	const messagesContainer = channelDiv.querySelector(".messagesContainer");
-	messagesContainer.innerHTML = "";
+	const messagesContainer = channelDiv.querySelector('.messagesContainer');
+	messagesContainer.innerHTML = '';
 	messagesContainer.appendChild(table);
 }
 
 // Elimina un messaggio
 function deleteMessage(messageId) {
 	fetch(`http://localhost:3500/messages/${messageId}`, {
-		method: "DELETE",
+		method: 'DELETE',
 	})
 		.then((response) => {
 			if (!response.ok) {
-				throw new Error("Errore nella risposta del server ");
+				throw new Error('Errore nella risposta del server ');
 			}
 			window.location.reload();
 		})
@@ -198,7 +198,7 @@ function editMessage(messageId, channelName) {
 	);
 	if (!messageTextElement) {
 		console.error(
-			"Elemento non trovato: ",
+			'Elemento non trovato: ',
 			`messageText-${messageId}-${channelName}`
 		);
 		return;
@@ -218,24 +218,24 @@ function saveMessage(messageId, channelName) {
 	);
 	if (!editedTextElement) {
 		console.error(
-			"Elemento non trovato: ",
+			'Elemento non trovato: ',
 			`editText-${messageId}-${channelName}`
 		);
 		return;
 	}
 
 	const editedText = editedTextElement.value;
-	const userData = JSON.parse(localStorage.getItem("userData"));
+	const userData = JSON.parse(localStorage.getItem('userData'));
 	const username = userData ? userData.username : null;
 
 	if (!username) {
-		console.error("Errore: Username non trovato");
+		console.error('Errore: Username non trovato');
 		return;
 	}
 
 	fetch(`http://localhost:3500/messages/${messageId}`, {
-		method: "PATCH",
-		headers: { "Content-Type": "application/json" },
+		method: 'PATCH',
+		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ username: username, text: editedText }),
 	})
 		.then((response) => response.json())
@@ -243,24 +243,24 @@ function saveMessage(messageId, channelName) {
 			fetchChannels();
 			window.location.reload();
 		})
-		.catch((error) => console.error("Errore:", error));
+		.catch((error) => console.error('Errore:', error));
 }
 
 function createNewChannel() {
-	const name = document.getElementById("newChannelName").value;
-	const description = document.getElementById("newChannelDesc").value;
+	const name = document.getElementById('newChannelName').value;
+	const description = document.getElementById('newChannelDesc').value;
 
 	if (!name.trim() || !description.trim()) {
-		alert("Inserisci sia il nome che la descrizione del canale.");
+		alert('Inserisci sia il nome che la descrizione del canale.');
 		return;
 	}
 
-	const userData = JSON.parse(localStorage.getItem("userData"));
+	const userData = JSON.parse(localStorage.getItem('userData'));
 	const username = userData ? userData.username : null;
 
-	fetch("http://localhost:3500/channels", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
+	fetch('http://localhost:3500/channels', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
 			name: name.toUpperCase(),
 			description,
@@ -270,25 +270,25 @@ function createNewChannel() {
 	})
 		.then((response) => {
 			if (!response.ok) {
-				throw new Error("Errore nella risposta del server");
+				throw new Error('Errore nella risposta del server');
 			}
 			return response.json();
 		})
 		.then((data) => {
-			alert("Canale creato con successo!");
+			alert('Canale creato con successo!');
 			fetchChannels();
 		})
 		.catch((error) => {
-			console.error("Errore nella creazione del canale:", error);
-			alert("Si è verificato un errore durante la creazione del canale.");
+			console.error('Errore nella creazione del canale:', error);
+			alert('Si è verificato un errore durante la creazione del canale.');
 		});
 }
 
 function checkLoginStatus() {
-	const isLoggedIn = localStorage.getItem("userData") !== null;
-	const currentPage = window.location.pathname.split("/").pop();
+	const isLoggedIn = localStorage.getItem('userData') !== null;
+	const currentPage = window.location.pathname.split('/').pop();
 
-	if (!isLoggedIn && currentPage !== "login.html") {
-		window.location.href = "../loginPage/login.html";
+	if (!isLoggedIn && currentPage !== 'login.html') {
+		window.location.href = '../loginPage/login.html';
 	}
 }

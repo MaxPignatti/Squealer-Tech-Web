@@ -1,36 +1,36 @@
-import React, { useState } from "react";
-import Cookies from "js-cookie";
-import { Button, Alert, Form } from "react-bootstrap";
-import PropTypes from "prop-types";
+import React, { useState } from 'react';
+import Cookies from 'js-cookie';
+import { Button, Alert, Form } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
 	const [showForm, setShowForm] = useState(false);
-	const [channelName, setChannelName] = useState("");
-	const [channelDescription, setChannelDescription] = useState("");
-	const [errorMessage, setErrorMessage] = useState("");
+	const [channelName, setChannelName] = useState('');
+	const [channelDescription, setChannelDescription] = useState('');
+	const [errorMessage, setErrorMessage] = useState('');
 
 	const handleChannelNameChange = (e) => {
 		const name = e.target.value;
 		if (name === name.toLowerCase()) {
 			setChannelName(name);
-			setErrorMessage(""); // Resetta il messaggio di errore se il nome è valido
+			setErrorMessage(''); // Resetta il messaggio di errore se il nome è valido
 		} else {
 			setErrorMessage(
-				"Il nome del canale non può contenere caratteri maiuscoli."
+				'Il nome del canale non può contenere caratteri maiuscoli.'
 			);
 		}
 	};
 
 	const handleCreateChannel = async () => {
-		const userDataCookie = Cookies.get("user_data");
+		const userDataCookie = Cookies.get('user_data');
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 			try {
-				const response = await fetch("http://localhost:3500/channels", {
-					method: "POST",
+				const response = await fetch('http://localhost:3500/channels', {
+					method: 'POST',
 					headers: {
-						"Content-Type": "application/json",
+						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
 						name: channelName,
@@ -53,53 +53,53 @@ const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
 					]);
 				} else {
 					console.error(
-						"Errore durante la creazione del canale:",
+						'Errore durante la creazione del canale:',
 						response.status
 					);
 				}
 			} catch (error) {
-				console.error("Errore durante la richiesta POST:", error.message);
+				console.error('Errore durante la richiesta POST:', error.message);
 			}
 		} else {
-			console.error("User data not found in cookies");
+			console.error('User data not found in cookies');
 		}
 	};
 
 	return (
-		<div className="container mt-3">
+		<div className='container mt-3'>
 			<Button
-				variant="primary"
+				variant='primary'
 				onClick={() => setShowForm(!showForm)}
 			>
-				{showForm ? "Nascondi" : "Crea nuovo canale"}
+				{showForm ? 'Nascondi' : 'Crea nuovo canale'}
 			</Button>
 
 			{showForm && (
-				<div className="mt-3">
+				<div className='mt-3'>
 					<h2>Crea un nuovo canale</h2>
-					<Form.Group className="mb-3">
-						<Form.Label htmlFor="channelName">Nome del canale</Form.Label>
+					<Form.Group className='mb-3'>
+						<Form.Label htmlFor='channelName'>Nome del canale</Form.Label>
 						<Form.Control
-							type="text"
-							id="channelName"
+							type='text'
+							id='channelName'
 							value={channelName}
 							onChange={handleChannelNameChange}
 						/>
 					</Form.Group>
-					{errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
-					<Form.Group className="mb-3">
-						<Form.Label htmlFor="channelDescription">
+					{errorMessage && <Alert variant='danger'>{errorMessage}</Alert>}
+					<Form.Group className='mb-3'>
+						<Form.Label htmlFor='channelDescription'>
 							Descrizione del canale
 						</Form.Label>
 						<Form.Control
-							type="text"
-							id="channelDescription"
+							type='text'
+							id='channelDescription'
 							value={channelDescription}
 							onChange={(e) => setChannelDescription(e.target.value)}
 						/>
 					</Form.Group>
 					<Button
-						variant="success"
+						variant='success'
 						onClick={handleCreateChannel}
 					>
 						Crea canale

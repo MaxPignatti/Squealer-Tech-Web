@@ -1,12 +1,12 @@
-import { Card } from "react-bootstrap";
-import PropTypes from "prop-types";
+import { Card } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 const CharCounter = ({
 	dailyCharacters,
 	weeklyCharacters,
 	monthlyCharacters,
 }) => (
-	<Card className="text-right mt-2">
+	<Card className='text-right mt-2'>
 		<Card.Body>
 			<b>Caratteri rimanenti</b>
 			<ul>

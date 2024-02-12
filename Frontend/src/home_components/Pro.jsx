@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { Card, Button } from "react-bootstrap";
-import { useAuth } from "../AuthContext";
-import Cookies from "js-cookie";
+import React, { useState, useEffect } from 'react';
+import { Card, Button } from 'react-bootstrap';
+import { useAuth } from '../AuthContext';
+import Cookies from 'js-cookie';
 
 const Pro = () => {
 	const { isAuthenticated } = useAuth();
 	const [userData, setUserData] = useState({});
 	const [isRequestingPro, setIsRequestingPro] = useState(false);
-	const [errorMessage, setErrorMessage] = useState("");
+	const [errorMessage, setErrorMessage] = useState('');
 
 	if (!isAuthenticated) {
-		return <Navigate to="/login" />;
+		return <Navigate to='/login' />;
 	}
 
 	useEffect(() => {
-		const userDataCookie = Cookies.get("user_data");
+		const userDataCookie = Cookies.get('user_data');
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
 			setUserData(userData);
@@ -25,7 +25,7 @@ const Pro = () => {
 					if (response.status === 200) {
 						return response.json();
 					} else {
-						throw new Error("API call failed");
+						throw new Error('API call failed');
 					}
 				})
 				.then((data) => {
@@ -33,16 +33,16 @@ const Pro = () => {
 					setIsRequestingPro(data.isProRequested); // Aggiorna lo stato in base ai dati aggiornati
 				})
 				.catch((error) => {
-					console.error("API call error:", error);
+					console.error('API call error:', error);
 				});
 		} else {
-			console.error("User data not found in cookies");
+			console.error('User data not found in cookies');
 		}
 	}, []);
 
 	const cardStyle = {
-		border: "3px solid #000", // Imposta lo spessore e il colore dei bordi
-		marginTop: "50px", // Imposta il margine superiore per posizionare la card più in alto
+		border: '3px solid #000', // Imposta lo spessore e il colore dei bordi
+		marginTop: '50px', // Imposta il margine superiore per posizionare la card più in alto
 	};
 
 	const handleProAction = async (action) => {
@@ -50,9 +50,9 @@ const Pro = () => {
 			const response = await fetch(
 				`http://localhost:3500/usr/${userData.username}/proAction`,
 				{
-					method: "POST",
+					method: 'POST',
 					headers: {
-						"Content-Type": "application/json",
+						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({ action }), // "request" o "cancel"
 				}
@@ -61,19 +61,19 @@ const Pro = () => {
 			if (response.status === 200) {
 				const updatedUserData = {
 					...userData,
-					isProRequested: action === "request",
+					isProRequested: action === 'request',
 				};
 				setUserData(updatedUserData);
-				setIsRequestingPro(action === "request");
+				setIsRequestingPro(action === 'request');
 				// Aggiorna i cookies o altre azioni necessarie
 			} else {
 				const data = await response.json();
 				setErrorMessage(data.error);
 			}
 		} catch (error) {
-			console.error("API call error:", error);
+			console.error('API call error:', error);
 			setErrorMessage(
-				"Si è verificato un errore durante la comunicazione con il server."
+				'Si è verificato un errore durante la comunicazione con il server.'
 			);
 		}
 	};
@@ -86,8 +86,8 @@ const Pro = () => {
 				<>
 					<Card.Text>Hai già effettuato la richiesta</Card.Text>
 					<Button
-						variant="danger"
-						onClick={() => handleProAction("cancel")}
+						variant='danger'
+						onClick={() => handleProAction('cancel')}
 					>
 						Annulla Richiesta
 					</Button>
@@ -100,8 +100,8 @@ const Pro = () => {
 						Con un account Pro potrai accedere a vantaggi esclusivi.
 					</Card.Text>
 					<Button
-						variant="primary"
-						onClick={() => handleProAction("request")}
+						variant='primary'
+						onClick={() => handleProAction('request')}
 					>
 						Richiedi
 					</Button>
@@ -110,11 +110,11 @@ const Pro = () => {
 		}
 	}
 	return (
-		<div className="d-flex justify-content-center align-items-center">
+		<div className='d-flex justify-content-center align-items-center'>
 			<Card style={cardStyle}>
 				<Card.Body>
 					<Card.Title>Richiedi Account Pro</Card.Title>
-					{errorMessage && <p className="text-danger">{errorMessage}</p>}
+					{errorMessage && <p className='text-danger'>{errorMessage}</p>}
 					{renderCardContent()}
 				</Card.Body>
 			</Card>

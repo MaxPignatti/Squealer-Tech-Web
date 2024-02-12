@@ -1,7 +1,7 @@
-const Message = require("../models/message");
-const User = require("../models/user");
-const Channel = require("../models/channel");
-const consts = require("../consts");
+const Message = require('../models/message');
+const User = require('../models/user');
+const Channel = require('../models/channel');
+const consts = require('../consts');
 
 exports.replyToMessage = async (req, res) => {
 	try {
@@ -21,19 +21,19 @@ exports.replyToMessage = async (req, res) => {
 		if (!originalMessage) {
 			return res
 				.status(404)
-				.json({ error: "Messaggio originale non trovato." });
+				.json({ error: 'Messaggio originale non trovato.' });
 		}
 
 		const user = await User.findOne({ username: username });
 		if (!user) {
-			return res.status(400).json({ error: "User not found" });
+			return res.status(400).json({ error: 'User not found' });
 		}
 
 		// Crea un nuovo messaggio di risposta
 		const replyMessage = new Message({
 			user: username,
 			profileImage: user.profileImage,
-			image: image ? image.toString("base64") : null,
+			image: image ? image.toString('base64') : null,
 			text: text,
 			channel: originalMessage.channel,
 			replyTo: messageId,
@@ -62,10 +62,10 @@ exports.replyToMessage = async (req, res) => {
 		// Invia una risposta di successo
 		res
 			.status(201)
-			.json({ message: "Risposta creata con successo", reply: savedReply._id });
+			.json({ message: 'Risposta creata con successo', reply: savedReply._id });
 	} catch (error) {
-		console.error("Errore durante la creazione della risposta:", error);
-		res.status(500).json({ error: "Errore interno del server." });
+		console.error('Errore durante la creazione della risposta:', error);
+		res.status(500).json({ error: 'Errore interno del server.' });
 	}
 };
 
@@ -88,7 +88,7 @@ exports.createMessage = async (req, res) => {
 
 		const user = await User.findOne({ username: userName });
 		if (!user) {
-			return res.status(400).json({ error: "User not found" });
+			return res.status(400).json({ error: 'User not found' });
 		}
 
 		// Estrai le menzioni utente e i canali
@@ -99,7 +99,7 @@ exports.createMessage = async (req, res) => {
 		const newMessage = new Message({
 			user: userName,
 			profileImage: user.profileImage,
-			image: image ? image.toString("base64") : null,
+			image: image ? image.toString('base64') : null,
 			text: text,
 			channel: recipients.channels,
 			updateInterval: updateInterval,
@@ -130,12 +130,12 @@ exports.createMessage = async (req, res) => {
 		await user.save();
 
 		return res.status(201).json({
-			message: "Message created successfully",
+			message: 'Message created successfully',
 			_id: savedMessage._id,
 		});
 	} catch (error) {
 		console.error(error);
-		return res.status(500).json({ error: "Server error" });
+		return res.status(500).json({ error: 'Server error' });
 	}
 };
 
@@ -144,12 +144,12 @@ exports.getMessageById = async (req, res) => {
 		const messageId = req.params.id;
 		const message = await Message.findById(messageId);
 		if (!message) {
-			return res.status(404).json({ error: "Messaggio non trovato" });
+			return res.status(404).json({ error: 'Messaggio non trovato' });
 		}
 		return res.status(200).json(message);
 	} catch (error) {
-		console.error("Errore durante il recupero del messaggio:", error);
-		return res.status(500).json({ error: "Errore interno del server" });
+		console.error('Errore durante il recupero del messaggio:', error);
+		return res.status(500).json({ error: 'Errore interno del server' });
 	}
 };
 
@@ -160,11 +160,11 @@ exports.getAllSqueals = async (req, res) => {
 		const user = await User.findOne({ username });
 
 		if (!user) {
-			return res.status(404).json({ error: "User not found" });
+			return res.status(404).json({ error: 'User not found' });
 		}
 
 		const userChannels = await User.findOne({ username: username }).select(
-			"channels"
+			'channels'
 		);
 
 		const messages = await Message.find({
@@ -174,7 +174,7 @@ exports.getAllSqueals = async (req, res) => {
 		res.json({ messages: messages });
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: "Internal Server Error" });
+		res.status(500).json({ message: 'Internal Server Error' });
 	}
 };
 
@@ -185,7 +185,7 @@ exports.getPrivateMessages = async (req, res) => {
 		// Trova l'utente tramite username
 		const user = await User.findOne({ username });
 		if (!user) {
-			return res.status(404).json({ message: "Utente non trovato" });
+			return res.status(404).json({ message: 'Utente non trovato' });
 		}
 
 		// Trova tutti i messaggi privati ricevuti dall'utente
@@ -195,8 +195,8 @@ exports.getPrivateMessages = async (req, res) => {
 
 		res.json({ messages: privateMessages });
 	} catch (error) {
-		console.error("Errore durante il recupero dei messaggi privati:", error);
-		res.status(500).json({ error: "Errore interno del server." });
+		console.error('Errore durante il recupero dei messaggi privati:', error);
+		res.status(500).json({ error: 'Errore interno del server.' });
 	}
 };
 
@@ -206,7 +206,7 @@ exports.getPublicMessagesByUser = async (req, res) => {
 		// Trova l'utente tramite username
 		const user = await User.findOne({ username });
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
 		// Trova tutti i messaggi pubblici inviati dall'utente
@@ -218,8 +218,8 @@ exports.getPublicMessagesByUser = async (req, res) => {
 
 		res.json({ messages: publicMessages }); // Invia i messaggi come risposta JSON
 	} catch (error) {
-		console.error("Errore durante il recupero dei messaggi pubblici:", error);
-		res.status(500).json({ error: "Errore interno del server." });
+		console.error('Errore durante il recupero dei messaggi pubblici:', error);
+		res.status(500).json({ error: 'Errore interno del server.' });
 	}
 };
 
@@ -231,7 +231,7 @@ exports.getRepliesToMessage = async (req, res) => {
 		if (!originalMessage) {
 			return res
 				.status(404)
-				.json({ error: "Messaggio originale non trovato." });
+				.json({ error: 'Messaggio originale non trovato.' });
 		}
 
 		// Trova tutte le risposte al messaggio originale
@@ -239,36 +239,36 @@ exports.getRepliesToMessage = async (req, res) => {
 
 		res.json(replies); // Invia le risposte come risposta JSON
 	} catch (error) {
-		console.error("Errore durante il recupero delle risposte:", error);
-		res.status(500).json({ error: "Errore interno del server." });
+		console.error('Errore durante il recupero delle risposte:', error);
+		res.status(500).json({ error: 'Errore interno del server.' });
 	}
 };
 
 // Helper Functions
 async function findMessageAndUser(messageId, username) {
 	const message = await Message.findById(messageId);
-	if (!message) throw new Error("Message not found");
+	if (!message) throw new Error('Message not found');
 	const user = await User.findOne({ username });
-	if (!user) throw new Error("User not found");
+	if (!user) throw new Error('User not found');
 	return { message, user };
 }
 
 function updateReactionArrays({ user, message, messageId, reaction }) {
 	const reactionField = reaction
-		? "positiveReactionsGiven"
-		: "negativeReactionsGiven";
+		? 'positiveReactionsGiven'
+		: 'negativeReactionsGiven';
 	const oppositeField = reaction
-		? "negativeReactionsGiven"
-		: "positiveReactionsGiven";
+		? 'negativeReactionsGiven'
+		: 'positiveReactionsGiven';
 
 	if (user[oppositeField].includes(messageId)) {
 		const index = user[oppositeField].indexOf(messageId);
 		user[oppositeField].splice(index, 1);
-		message[reaction ? "negativeReactions" : "positiveReactions"]--;
+		message[reaction ? 'negativeReactions' : 'positiveReactions']--;
 	}
 	if (!user[reactionField].includes(messageId)) {
 		user[reactionField].push(messageId);
-		message[reaction ? "positiveReactions" : "negativeReactions"]++;
+		message[reaction ? 'positiveReactions' : 'negativeReactions']++;
 	}
 }
 
@@ -288,28 +288,28 @@ function determineMessagePopularityAndAdjustChars({
 	let popularityChange = null;
 
 	if (message.positiveReactions > cm && message.negativeReactions <= cm) {
-		popularityChange = "popular";
+		popularityChange = 'popular';
 	} else if (
 		message.positiveReactions <= cm &&
 		message.negativeReactions > cm
 	) {
-		popularityChange = "unpopular";
+		popularityChange = 'unpopular';
 	}
 
 	if (
-		popularityChange === "popular" &&
+		popularityChange === 'popular' &&
 		!user.positiveMessages.includes(messageId)
 	) {
-		message.popularity = "popular";
+		message.popularity = 'popular';
 		if (!user.positiveMessages.includes(messageId)) {
 			user.positiveMessages.push(messageId);
 		}
 		adjustUserChars(user, newChar);
 	} else if (
-		popularityChange === "unpopular" &&
+		popularityChange === 'unpopular' &&
 		!user.negativeMessages.includes(messageId)
 	) {
-		message.popularity = "unpopular";
+		message.popularity = 'unpopular';
 		if (!user.negativeMessages.includes(messageId)) {
 			user.negativeMessages.push(messageId);
 		}
@@ -317,12 +317,12 @@ function determineMessagePopularityAndAdjustChars({
 	}
 
 	if (
-		(popularityChange === "popular" &&
+		(popularityChange === 'popular' &&
 			user.negativeMessages.includes(messageId)) ||
-		(popularityChange === "unpopular" &&
+		(popularityChange === 'unpopular' &&
 			user.positiveMessages.includes(messageId))
 	) {
-		message.popularity = "controversial";
+		message.popularity = 'controversial';
 		if (!user.controversialMessages.includes(messageId)) {
 			user.controversialMessages.push(messageId);
 		}
@@ -356,15 +356,15 @@ exports.addReactionToMessage = async (req, res) => {
 		await Promise.all([message.save(), user.save()]);
 
 		res.json({
-			message: "Reaction added successfully",
+			message: 'Reaction added successfully',
 			positiveReactions: message.positiveReactions,
 			negativeReactions: message.negativeReactions,
 		});
 	} catch (error) {
 		console.error(error);
 		const statusCode =
-			error.message === "Message not found" ||
-			error.message === "User not found"
+			error.message === 'Message not found' ||
+			error.message === 'User not found'
 				? 404
 				: 500;
 		res.status(statusCode).json({ error: error.message });
@@ -377,12 +377,12 @@ exports.getMessage = async (req, res) => {
 		const messageId = req.params.id;
 		const message = await Message.findById(messageId);
 		if (!message) {
-			return res.status(404).json({ error: "Message not found" });
+			return res.status(404).json({ error: 'Message not found' });
 		}
 		return res.status(200).json(message);
 	} catch (error) {
 		console.error(error);
-		return res.status(500).json({ error: "Server error" });
+		return res.status(500).json({ error: 'Server error' });
 	}
 };
 
@@ -393,12 +393,12 @@ exports.updateMessage = async (req, res) => {
 
 		const message = await Message.findById(messageId);
 		if (!message) {
-			return res.status(404).json({ error: "Message not found" });
+			return res.status(404).json({ error: 'Message not found' });
 		}
 		const user = await User.findOne({ username });
 
 		if (!user) {
-			return res.status(404).json({ error: "User not found" });
+			return res.status(404).json({ error: 'User not found' });
 		}
 		const userMentions = await extractUserMentions(text);
 		const channelMentions = await extractChannelMentions(text);
@@ -426,7 +426,7 @@ exports.updateMessage = async (req, res) => {
 		});
 	} catch (error) {
 		console.error(error);
-		return res.status(500).json({ error: "Server error" });
+		return res.status(500).json({ error: 'Server error' });
 	}
 };
 
@@ -437,12 +437,12 @@ exports.deleteMessage = async (req, res) => {
 
 		const result = await Message.findByIdAndRemove(messageId);
 		if (!result) {
-			return res.status(404).json({ error: "Message not found" });
+			return res.status(404).json({ error: 'Message not found' });
 		}
 		return res.status(204).send();
 	} catch (error) {
 		console.error(error);
-		return res.status(500).json({ error: "Server error" });
+		return res.status(500).json({ error: 'Server error' });
 	}
 };
 
@@ -453,7 +453,7 @@ exports.updateMessagePosition = async (req, res) => {
 		const message = await Message.findById(messageId);
 
 		if (!message) {
-			return res.status(404).json({ error: "Message not found" });
+			return res.status(404).json({ error: 'Message not found' });
 		}
 		if (position && position != message.location) {
 			message.location = position;
@@ -461,10 +461,10 @@ exports.updateMessagePosition = async (req, res) => {
 
 		await message.save();
 		res.json({
-			message: "position added successfully",
+			message: 'position added successfully',
 		});
 	} catch {
-		return res.status(500).json({ error: "Server error" });
+		return res.status(500).json({ error: 'Server error' });
 	}
 };
 
@@ -475,7 +475,7 @@ exports.incrementImpressions = async (req, res) => {
 
 		const message = await Message.findById(messageId);
 		if (!message) {
-			return res.status(404).json({ error: "Messaggio non trovato" });
+			return res.status(404).json({ error: 'Messaggio non trovato' });
 		}
 		// Aggiungi il nome utente alle impressioni se non è già presente
 		if (!message.impressions.includes(username)) {
@@ -483,10 +483,10 @@ exports.incrementImpressions = async (req, res) => {
 			await message.save();
 		}
 
-		res.status(200).json({ message: "Impressions incrementate" });
+		res.status(200).json({ message: 'Impressions incrementate' });
 	} catch (error) {
 		console.error("Errore durante l'incremento delle impressions:", error);
-		res.status(500).json({ error: "Errore interno del server" });
+		res.status(500).json({ error: 'Errore interno del server' });
 	}
 };
 
@@ -496,11 +496,11 @@ exports.getMessageByHashtag = async (req, res) => {
 
 		const user = await User.findOne({ username });
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
 		// Prendi i canali dell'utente e filtra i messaggi pubblici in base all'hashtag
-		const userChannels = await User.findOne({ username }).select("channels");
+		const userChannels = await User.findOne({ username }).select('channels');
 		const messages = await Message.find({
 			channel: { $in: userChannels.channels },
 			hashtags: hashtag,
@@ -508,7 +508,7 @@ exports.getMessageByHashtag = async (req, res) => {
 
 		let response = {
 			messages: messages,
-			publicMessage: "",
+			publicMessage: '',
 		};
 
 		if (messages.length === 0) {
@@ -518,7 +518,7 @@ exports.getMessageByHashtag = async (req, res) => {
 		res.json(response);
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: "Internal Server Error" });
+		res.status(500).json({ message: 'Internal Server Error' });
 	}
 };
 
@@ -528,7 +528,7 @@ exports.getPrivateMessByHashtag = async (req, res) => {
 
 		const user = await User.findOne({ username });
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
 		const privateMessages = await Message.find({
@@ -538,7 +538,7 @@ exports.getPrivateMessByHashtag = async (req, res) => {
 
 		let response = {
 			messages: privateMessages,
-			privateMessage: "",
+			privateMessage: '',
 		};
 
 		if (privateMessages.length === 0) {
@@ -547,8 +547,8 @@ exports.getPrivateMessByHashtag = async (req, res) => {
 
 		res.json(response);
 	} catch (error) {
-		console.error("Errore durante il recupero dei messaggi privati:", error);
-		res.status(500).json({ error: "Errore interno del server." });
+		console.error('Errore durante il recupero dei messaggi privati:', error);
+		res.status(500).json({ error: 'Errore interno del server.' });
 	}
 };
 
@@ -558,10 +558,10 @@ exports.getMessageByUser = async (req, res) => {
 
 		const user = await User.findOne({ username });
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
-		const userChannels = await User.findOne({ username }).select("channels");
+		const userChannels = await User.findOne({ username }).select('channels');
 		const messages = await Message.find({
 			channel: { $in: userChannels.channels },
 			user: targetUsername,
@@ -570,7 +570,7 @@ exports.getMessageByUser = async (req, res) => {
 
 		let response = {
 			messages: messages,
-			publicMessage: "",
+			publicMessage: '',
 		};
 
 		if (messages.length === 0) {
@@ -580,7 +580,7 @@ exports.getMessageByUser = async (req, res) => {
 		res.json(response);
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: "Internal Server Error" });
+		res.status(500).json({ message: 'Internal Server Error' });
 	}
 };
 
@@ -590,7 +590,7 @@ exports.getPrivateMessByUser = async (req, res) => {
 
 		const user = await User.findOne({ username });
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
 		// Prendi i messaggi privati dell'utente target inviati dall'utente attuale
@@ -602,7 +602,7 @@ exports.getPrivateMessByUser = async (req, res) => {
 
 		let response = {
 			messages: privateMessages,
-			privateMessage: "",
+			privateMessage: '',
 		};
 
 		if (privateMessages.length === 0) {
@@ -611,8 +611,8 @@ exports.getPrivateMessByUser = async (req, res) => {
 
 		res.json(response);
 	} catch (error) {
-		console.error("Errore durante il recupero dei messaggi privati:", error);
-		res.status(500).json({ error: "Errore interno del server." });
+		console.error('Errore durante il recupero dei messaggi privati:', error);
+		res.status(500).json({ error: 'Errore interno del server.' });
 	}
 };
 exports.getMessageByChannel = async (req, res) => {
@@ -624,20 +624,20 @@ exports.getMessageByChannel = async (req, res) => {
 		if (!user) {
 			return res
 				.status(404)
-				.json({ error: "Utente non trovato", messages: [] });
+				.json({ error: 'Utente non trovato', messages: [] });
 		}
 
 		// Verifica se il canale esiste
 		const channelExists = await Channel.findOne({ name: channel });
 		if (!channelExists) {
-			return res.json({ publicMessage: "Il canale non esiste", messages: [] });
+			return res.json({ publicMessage: 'Il canale non esiste', messages: [] });
 		}
 
 		// Verifica se l'utente è iscritto al canale
 		const isSubscribed = user.channels.includes(channel);
 		if (!isSubscribed) {
 			return res.json({
-				publicMessage: "Devi iscriverti per vedere i messaggi di questo canale",
+				publicMessage: 'Devi iscriverti per vedere i messaggi di questo canale',
 				messages: [],
 			});
 		}
@@ -646,8 +646,8 @@ exports.getMessageByChannel = async (req, res) => {
 		const messages = await Message.find({ channel: channel });
 		res.json({ messages: messages });
 	} catch (error) {
-		console.error("Errore durante il recupero dei messaggi:", error);
-		res.status(500).json({ error: "Errore interno del server.", messages: [] });
+		console.error('Errore durante il recupero dei messaggi:', error);
+		res.status(500).json({ error: 'Errore interno del server.', messages: [] });
 	}
 };
 
@@ -657,20 +657,20 @@ exports.getPrivateMessByChannel = async (req, res) => {
 
 		const user = await User.findOne({ username });
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
 		// Poiché i messaggi privati non sono associati a canali, restituisci un array vuoto e un messaggio personalizzato
 		const response = {
 			messages: [],
 			privateMessage:
-				"I messaggi privati non sono associati a canali specifici, vai nella sezione Pubblici se vuoi vedere i canali.",
+				'I messaggi privati non sono associati a canali specifici, vai nella sezione Pubblici se vuoi vedere i canali.',
 		};
 
 		res.json(response);
 	} catch (error) {
-		console.error("Errore durante il recupero dei messaggi privati:", error);
-		res.status(500).json({ error: "Errore interno del server." });
+		console.error('Errore durante il recupero dei messaggi privati:', error);
+		res.status(500).json({ error: 'Errore interno del server.' });
 	}
 };
 
@@ -680,18 +680,18 @@ exports.getMessageByText = async (req, res) => {
 
 		const user = await User.findOne({ username });
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
-		const userChannels = await User.findOne({ username }).select("channels");
+		const userChannels = await User.findOne({ username }).select('channels');
 		const messages = await Message.find({
 			channel: { $in: userChannels.channels },
-			text: { $regex: text, $options: "i" }, // La ricerca è case-insensitive
+			text: { $regex: text, $options: 'i' }, // La ricerca è case-insensitive
 		});
 
 		let response = {
 			messages: messages,
-			publicMessage: "",
+			publicMessage: '',
 		};
 
 		if (messages.length === 0) {
@@ -701,7 +701,7 @@ exports.getMessageByText = async (req, res) => {
 		res.json(response);
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: "Internal Server Error" });
+		res.status(500).json({ message: 'Internal Server Error' });
 	}
 };
 
@@ -711,18 +711,18 @@ exports.getPrivateMessByText = async (req, res) => {
 
 		const user = await User.findOne({ username });
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
 		// Prendi i messaggi privati dell'utente che contengono il testo specificato
 		const privateMessages = await Message.find({
 			_id: { $in: user.privateMessagesReceived },
-			text: { $regex: text, $options: "i" }, // La ricerca è case-insensitive
+			text: { $regex: text, $options: 'i' }, // La ricerca è case-insensitive
 		});
 
 		let response = {
 			messages: privateMessages,
-			privateMessage: "",
+			privateMessage: '',
 		};
 
 		if (privateMessages.length === 0) {
@@ -731,8 +731,8 @@ exports.getPrivateMessByText = async (req, res) => {
 
 		res.json(response);
 	} catch (error) {
-		console.error("Errore durante il recupero dei messaggi privati:", error);
-		res.status(500).json({ error: "Errore interno del server." });
+		console.error('Errore durante il recupero dei messaggi privati:', error);
+		res.status(500).json({ error: 'Errore interno del server.' });
 	}
 };
 
@@ -741,8 +741,8 @@ exports.getAllMessages = async (req, res) => {
 		const messages = await Message.find({});
 		res.json(messages);
 	} catch (error) {
-		console.error("Errore durante il recupero di tutti i messaggi:", error);
-		res.status(500).json({ error: "Errore interno del server" });
+		console.error('Errore durante il recupero di tutti i messaggi:', error);
+		res.status(500).json({ error: 'Errore interno del server' });
 	}
 };
 
@@ -800,16 +800,16 @@ exports.acknowledgeMessage = async (req, res) => {
 		);
 
 		if (!message) {
-			return res.status(404).json({ error: "Message not found" });
+			return res.status(404).json({ error: 'Message not found' });
 		}
 
 		return res.status(200).json({
-			message: "Beep acknowledged",
+			message: 'Beep acknowledged',
 			beepRequested: message.beepRequested,
 		});
 	} catch (error) {
 		console.error(error);
-		return res.status(500).json({ error: "Server error" });
+		return res.status(500).json({ error: 'Server error' });
 	}
 };
 
@@ -820,7 +820,7 @@ exports.updateMessageChannels = async (req, res) => {
 
 		const message = await Message.findById(messageId);
 		if (!message) {
-			return res.status(404).json({ error: "Messaggio non trovato" });
+			return res.status(404).json({ error: 'Messaggio non trovato' });
 		}
 
 		// Aggiorna i canali del messaggio
@@ -828,7 +828,7 @@ exports.updateMessageChannels = async (req, res) => {
 		await message.save();
 
 		res.status(200).json({
-			message: "Canali aggiornati con successo",
+			message: 'Canali aggiornati con successo',
 			updatedChannels: message.channel,
 		});
 	} catch (error) {
@@ -836,7 +836,7 @@ exports.updateMessageChannels = async (req, res) => {
 			"Errore durante l'aggiornamento dei canali del messaggio:",
 			error
 		);
-		res.status(500).json({ error: "Errore interno del server" });
+		res.status(500).json({ error: 'Errore interno del server' });
 	}
 };
 
@@ -847,7 +847,7 @@ exports.updateReactions = async (req, res) => {
 
 		const message = await Message.findById(messageId);
 		if (!message) {
-			return res.status(404).json({ error: "Message not found" });
+			return res.status(404).json({ error: 'Message not found' });
 		}
 
 		// Aggiorna le reazioni positive e negative
@@ -856,11 +856,11 @@ exports.updateReactions = async (req, res) => {
 		await message.save();
 
 		res.status(200).json({
-			message: "Reactions updated successfully",
+			message: 'Reactions updated successfully',
 			updatedMessage: message,
 		});
 	} catch (error) {
-		console.error("Error updating reactions:", error);
-		res.status(500).json({ error: "Internal server error" });
+		console.error('Error updating reactions:', error);
+		res.status(500).json({ error: 'Internal server error' });
 	}
 };

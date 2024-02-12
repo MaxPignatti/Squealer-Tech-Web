@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card, Button, Form, Badge } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, Button, Form, Badge } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faThumbsUp,
 	faThumbsDown,
 	faPenToSquare,
-} from "@fortawesome/free-solid-svg-icons";
-import Maps from "./Maps";
-import { marked } from "marked";
-import ReplySqueal from "./ReplySqueal";
-import { useMessageRefs } from "../MessageRefsContext";
-import Cookies from "js-cookie";
-import PropTypes from "prop-types";
+} from '@fortawesome/free-solid-svg-icons';
+import Maps from './Maps';
+import { marked } from 'marked';
+import ReplySqueal from './ReplySqueal';
+import { useMessageRefs } from '../MessageRefsContext';
+import Cookies from 'js-cookie';
+import PropTypes from 'prop-types';
 
 const Message = ({
 	message,
@@ -37,7 +37,7 @@ const Message = ({
 	const [userChannels, setUserChannels] = useState([]);
 
 	const [showInviteCard, setShowInviteCard] = useState(false);
-	const [inviteChannelName, setInviteChannelName] = useState("");
+	const [inviteChannelName, setInviteChannelName] = useState('');
 	const [channel, setChannel] = useState([]);
 	const [selectedChannel, setSelectedChannel] = useState([]);
 
@@ -64,9 +64,9 @@ const Message = ({
 
 						// Chiamata API per incrementare le impressions
 						fetch(`http://localhost:3500/messages/${message._id}/impressions`, {
-							method: "PATCH",
+							method: 'PATCH',
 							headers: {
-								"Content-Type": "application/json",
+								'Content-Type': 'application/json',
 							},
 							body: JSON.stringify({ username: currentUser }),
 						})
@@ -104,7 +104,7 @@ const Message = ({
 				setOriginalMessageUser(data.user);
 				setOriginalMessageId(data._id);
 			} catch (error) {
-				console.error("Errore durante il recupero del messaggio:", error);
+				console.error('Errore durante il recupero del messaggio:', error);
 			}
 		};
 
@@ -113,7 +113,7 @@ const Message = ({
 		}
 	}, [message.replyTo]);
 
-	const beepSoundRef = useRef(new Audio("./beep-01a.mp3"));
+	const beepSoundRef = useRef(new Audio('./beep-01a.mp3'));
 
 	useEffect(() => {
 		const checkForTimedMessages = () => {
@@ -121,7 +121,7 @@ const Message = ({
 				beepSoundRef.current
 					.play()
 					.catch((error) =>
-						console.error("Errore durante la riproduzione del suono:", error)
+						console.error('Errore durante la riproduzione del suono:', error)
 					);
 				handleBeepAcknowledged(message._id);
 			}
@@ -136,7 +136,7 @@ const Message = ({
 	}, [message]);
 
 	useEffect(() => {
-		const userDataCookie = Cookies.get("user_data");
+		const userDataCookie = Cookies.get('user_data');
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
@@ -146,7 +146,7 @@ const Message = ({
 					if (response.status === 200) {
 						return response.json();
 					} else {
-						throw new Error("API call failed");
+						throw new Error('API call failed');
 					}
 				})
 				.then((data) => {
@@ -155,15 +155,15 @@ const Message = ({
 					}
 				})
 				.catch((error) => {
-					console.error("API call error:", error);
+					console.error('API call error:', error);
 				});
 		} else {
-			console.error("User data not found in cookies");
+			console.error('User data not found in cookies');
 		}
 	}, []);
 
 	useEffect(() => {
-		const userDataCookie = Cookies.get("user_data");
+		const userDataCookie = Cookies.get('user_data');
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
@@ -172,7 +172,7 @@ const Message = ({
 				.then((response) => response.json())
 				.then((data) => setChannel(data))
 				.catch((error) =>
-					console.error("Errore durante il recupero di tutti i canali:", error)
+					console.error('Errore durante il recupero di tutti i canali:', error)
 				);
 		}
 	}, []);
@@ -182,12 +182,12 @@ const Message = ({
 			const response = await fetch(
 				`http://localhost:3500/messages/${messageId}/acknowledge`,
 				{
-					method: "PATCH",
+					method: 'PATCH',
 				}
 			);
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok.");
+				throw new Error('Network response was not ok.');
 			}
 		} catch (error) {
 			console.error("Errore durante l'acknowledge del beep:", error);
@@ -203,8 +203,8 @@ const Message = ({
 				text: match[1],
 				url: match[2],
 				startText: match.index + 1,
-				endText: match.index + match[0].indexOf("]"),
-				startUrl: match.index + match[0].indexOf("(") + 1,
+				endText: match.index + match[0].indexOf(']'),
+				startUrl: match.index + match[0].indexOf('(') + 1,
 				endUrl: regex.lastIndex - 1,
 			});
 		}
@@ -249,7 +249,7 @@ const Message = ({
 
 	const subscribeToChannel = async (channel, channelName) => {
 		try {
-			const userDataCookie = Cookies.get("user_data");
+			const userDataCookie = Cookies.get('user_data');
 			if (userDataCookie) {
 				const userData = JSON.parse(userDataCookie);
 				const username = userData.username;
@@ -257,15 +257,15 @@ const Message = ({
 				const response = await fetch(
 					`http://localhost:3500/channels/${channel._id}/members/${username}`,
 					{
-						method: "PUT",
+						method: 'PUT',
 						headers: {
-							"Content-Type": "application/json",
+							'Content-Type': 'application/json',
 						},
 					}
 				);
 
 				if (response.status === 200) {
-					console.log("Iscrizione avvenuta con successo.");
+					console.log('Iscrizione avvenuta con successo.');
 					setShowInviteCard(false);
 					navigate(`/ricerca?channel=${channelName}`);
 				} else {
@@ -273,7 +273,7 @@ const Message = ({
 				}
 			}
 		} catch (error) {
-			console.error("Errore durante la richiesta di iscrizione:", error);
+			console.error('Errore durante la richiesta di iscrizione:', error);
 		}
 	};
 
@@ -303,7 +303,7 @@ const Message = ({
 		// Gestione dei link
 		formattedText = formattedText.replace(
 			/\[([^\]]+)\]\(((?!http:\/\/|https:\/\/).+)\)/g,
-			"[$1](http://$2)"
+			'[$1](http://$2)'
 		);
 
 		const rawMarkup = marked.parse(formattedText);
@@ -311,29 +311,29 @@ const Message = ({
 	};
 
 	const overlayStyle = {
-		position: "fixed",
+		position: 'fixed',
 		top: 0,
 		left: 0,
-		width: "100%",
-		height: "100%",
-		display: "flex",
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
+		width: '100%',
+		height: '100%',
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 		zIndex: 1050,
 	};
 
 	const cardStyle = {
-		maxWidth: "600px",
-		width: "90%",
-		padding: "20px",
-		margin: "20px",
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-		backgroundColor: "#fff",
-		borderRadius: "8px",
-		boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+		maxWidth: '600px',
+		width: '90%',
+		padding: '20px',
+		margin: '20px',
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		backgroundColor: '#fff',
+		borderRadius: '8px',
+		boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 	};
 
 	return (
@@ -348,15 +348,15 @@ const Message = ({
 							</Card.Title>
 							<Card.Text>Vuoi unirti al canale {inviteChannelName}?</Card.Text>
 							<Button
-								variant="primary"
+								variant='primary'
 								onClick={() =>
 									subscribeToChannel(selectedChannel, inviteChannelName)
 								}
 							>
 								Unisciti
-							</Button>{" "}
+							</Button>{' '}
 							<Button
-								variant="secondary"
+								variant='secondary'
 								onClick={() => setShowInviteCard(false)}
 							>
 								Chiudi
@@ -368,19 +368,19 @@ const Message = ({
 			<Card
 				ref={messageRef}
 				key={message._id}
-				className="mb-3"
+				className='mb-3'
 			>
 				<Card.Body>
 					{message.replyTo && (
-						<div className="reply-header">
-							Risposta a{" "}
+						<div className='reply-header'>
+							Risposta a{' '}
 							<button
 								style={{
-									background: "none",
-									border: "none",
-									color: "blue",
-									textDecoration: "underline",
-									cursor: "pointer",
+									background: 'none',
+									border: 'none',
+									color: 'blue',
+									textDecoration: 'underline',
+									cursor: 'pointer',
 									padding: 0,
 								}}
 								onClick={() => scrollToMessage(originalMessageId)}
@@ -389,12 +389,12 @@ const Message = ({
 							</button>
 						</div>
 					)}
-					<div className="d-flex align-items-center">
-						<div className="mr-3">
+					<div className='d-flex align-items-center'>
+						<div className='mr-3'>
 							<img
 								src={message.profileImage}
-								alt="Profile"
-								style={{ maxWidth: "50px", borderRadius: "50%" }}
+								alt='Profile'
+								style={{ maxWidth: '50px', borderRadius: '50%' }}
 							/>
 						</div>
 						<div>
@@ -404,13 +404,13 @@ const Message = ({
 					</div>
 
 					{message.channel && message.channel.length > 0 && (
-						<div className="mb-2">
+						<div className='mb-2'>
 							{message.channel.map((channel) => (
 								<Badge
 									key={channel}
 									pill
-									bg="secondary"
-									style={{ marginRight: "10px" }}
+									bg='secondary'
+									style={{ marginRight: '10px' }}
 								>
 									{channel}
 								</Badge>
@@ -419,11 +419,11 @@ const Message = ({
 					)}
 
 					{message.image && (
-						<div className="text-center my-3">
+						<div className='text-center my-3'>
 							<img
 								src={message.image}
-								alt="Message"
-								style={{ maxWidth: "100%" }}
+								alt='Message'
+								style={{ maxWidth: '100%' }}
 							/>
 						</div>
 					)}
@@ -432,39 +432,39 @@ const Message = ({
 						<Maps position={message.location} />
 					)}
 
-					<div className="d-flex justify-content-end">
-						<small className="text-muted">
+					<div className='d-flex justify-content-end'>
+						<small className='text-muted'>
 							<em>
-								Pubblicato il{" "}
-								{new Date(message.createdAt).toLocaleString("it-IT", {
-									year: "numeric",
-									month: "long",
-									day: "numeric",
-									hour: "2-digit",
-									minute: "2-digit",
+								Pubblicato il{' '}
+								{new Date(message.createdAt).toLocaleString('it-IT', {
+									year: 'numeric',
+									month: 'long',
+									day: 'numeric',
+									hour: '2-digit',
+									minute: '2-digit',
 								})}
 							</em>
 						</small>
 					</div>
-					<div className="d-flex justify-content-end">
-						<small className="text-muted">
-							<em>{message.updateInterval && " Messaggio Temporizzato"}</em>
+					<div className='d-flex justify-content-end'>
+						<small className='text-muted'>
+							<em>{message.updateInterval && ' Messaggio Temporizzato'}</em>
 						</small>
 					</div>
 					{currentUser && currentUser === message.user && handleSaveChanges && (
-						<div className="position-absolute top-0 end-0 mt-2 me-2">
+						<div className='position-absolute top-0 end-0 mt-2 me-2'>
 							<Button onClick={() => seteditMessage(true)}>
 								<FontAwesomeIcon icon={faPenToSquare} />
 							</Button>
 						</div>
 					)}
 					<hr />
-					<div className="d-flex justify-content-between">
+					<div className='d-flex justify-content-between'>
 						{currentUser && handleReaction && (
 							<>
 								<div>
 									<button
-										className="btn btn-link"
+										className='btn btn-link'
 										onClick={() => handleReaction(message._id, true)}
 									>
 										<FontAwesomeIcon icon={faThumbsUp} />
@@ -474,7 +474,7 @@ const Message = ({
 
 								<div>
 									<button
-										className="btn btn-link"
+										className='btn btn-link'
 										onClick={() => handleReaction(message._id, false)}
 									>
 										<FontAwesomeIcon icon={faThumbsDown} />
@@ -489,39 +489,39 @@ const Message = ({
 						editMessage &&
 						currentUser === message.user &&
 						handleSaveChanges && (
-							<div className="mb-3">
+							<div className='mb-3'>
 								{/* Aggiungiamo margine al fondo del blocco */}
 								<Form>
-									<Form.Group controlId="formBasicEditText">
+									<Form.Group controlId='formBasicEditText'>
 										<Form.Label>
 											<b>MODIFICA TESTO</b>
 										</Form.Label>
 										<Form.Control
-											type="text"
-											name="editedText"
+											type='text'
+											name='editedText'
 											value={editedText}
 											onChange={handleTextChange}
 										/>
 									</Form.Group>
 								</Form>
-								<div className="mb-3"></div>{" "}
+								<div className='mb-3'></div>{' '}
 								{/* Aggiungiamo spazio tra il form e i bottoni */}
-								<div className="d-flex justify-content-between">
+								<div className='d-flex justify-content-between'>
 									{/* Utilizziamo flexbox per allineare i bottoni */}
 									<Button
-										variant="primary"
+										variant='primary'
 										onClick={handleSaveClick}
 									>
 										Salva Modifiche
 									</Button>
 									<Button
-										variant="secondary"
+										variant='secondary'
 										onClick={() => seteditMessage(false)}
 									>
 										Annulla
 									</Button>
 								</div>
-								<hr className="my-3" />{" "}
+								<hr className='my-3' />{' '}
 								{/* Aggiungiamo margine sopra e sotto la linea */}
 							</div>
 						)}
@@ -529,9 +529,9 @@ const Message = ({
 					{currentUser && (
 						<Button
 							onClick={handleReplyClick}
-							variant={isReplying ? "danger" : "outline-primary"}
+							variant={isReplying ? 'danger' : 'outline-primary'}
 						>
-							{isReplying ? "Annulla" : "Rispondi"}
+							{isReplying ? 'Annulla' : 'Rispondi'}
 						</Button>
 					)}
 					{currentUser && showReply && onStartReplying && onEndReplying && (

@@ -1,27 +1,27 @@
-const User = require("../models/user");
-const Message = require("../models/message");
-const bcrypt = require("bcrypt");
+const User = require('../models/user');
+const Message = require('../models/message');
+const bcrypt = require('bcrypt');
 
 exports.getUser = async (req, res) => {
 	try {
 		const username = req.params.username;
 		const user = await User.findOne({ username: username });
 		if (!user) {
-			return res.status(404).json({ message: "Utente non trovato" });
+			return res.status(404).json({ message: 'Utente non trovato' });
 		}
 		res.json(user);
 	} catch (error) {
-		res.status(500).json({ message: "Errore del server" });
+		res.status(500).json({ message: 'Errore del server' });
 	}
 };
 
 // Funzione helper per determinare l'oggetto sort in base ai parametri della richiesta
 function determineSortObject(sortField, sortOrder) {
-	const sortDirection = sortOrder === "asc" ? 1 : -1;
+	const sortDirection = sortOrder === 'asc' ? 1 : -1;
 	switch (sortField) {
-		case "popularity":
+		case 'popularity':
 			return { positiveMessages: sortDirection };
-		case "accountType":
+		case 'accountType':
 			return { isPro: sortDirection };
 		default:
 			return { [sortField]: sortDirection };
@@ -38,7 +38,7 @@ exports.getAllUsers = async (req, res) => {
 		res.json(users);
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: 'Internal server error' });
 	}
 };
 
@@ -49,13 +49,13 @@ exports.getUserByEmail = async (req, res) => {
 
 		const user = await User.findOne({ email });
 		if (!user) {
-			return res.status(404).json({ error: "User not found" });
+			return res.status(404).json({ error: 'User not found' });
 		}
 
 		res.json(user);
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: 'Internal server error' });
 	}
 };
 
@@ -70,14 +70,14 @@ exports.updateUserProfile = async (req, res) => {
 		const user = await User.findOne({ username });
 
 		if (!user) {
-			return res.status(404).json({ error: "User not found" });
+			return res.status(404).json({ error: 'User not found' });
 		}
 
 		// Check if the new email is already in use
 		if (email && email !== user.email) {
 			const existingUserWithEmail = await User.findOne({ email });
 			if (existingUserWithEmail) {
-				return res.status(400).json({ error: "Email is already in use" });
+				return res.status(400).json({ error: 'Email is already in use' });
 			}
 		}
 
@@ -85,7 +85,7 @@ exports.updateUserProfile = async (req, res) => {
 		if (newUserName && newUserName !== oldUserName) {
 			const existingUserWithUsername = await User.findOne({ newUserName });
 			if (existingUserWithUsername) {
-				return res.status(400).json({ error: "Username is already in use" });
+				return res.status(400).json({ error: 'Username is already in use' });
 			}
 		}
 
@@ -102,10 +102,10 @@ exports.updateUserProfile = async (req, res) => {
 
 		// Save the updated user data to the database
 		await user.save();
-		res.json({ message: "User profile updated successfully" });
+		res.json({ message: 'User profile updated successfully' });
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: 'Internal server error' });
 	}
 };
 
@@ -116,7 +116,7 @@ exports.updateUserPassword = async (req, res) => {
 		const user = await User.findOne({ username });
 
 		if (!user) {
-			return res.status(404).json({ error: "User not found" });
+			return res.status(404).json({ error: 'User not found' });
 		}
 
 		if (oldPassword) {
@@ -127,24 +127,24 @@ exports.updateUserPassword = async (req, res) => {
 					const hashedPassword = await bcrypt.hash(newPassword, 10);
 					user.password = hashedPassword;
 				} else {
-					return res.status(401).json({ error: "new password miss" });
+					return res.status(401).json({ error: 'new password miss' });
 				}
 			} else {
 				return res
 					.status(401)
-					.json({ error: "the older password is incorrect" });
+					.json({ error: 'the older password is incorrect' });
 			}
 		} else {
-			return res.status(401).json({ error: "olser psw miss" });
+			return res.status(401).json({ error: 'olser psw miss' });
 		}
 
 		// Save the updated user data to the database
 		await user.save();
 
-		res.json({ message: "Password updated successfully" });
+		res.json({ message: 'Password updated successfully' });
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Internal server error" });
+		res.status(500).json({ error: 'Internal server error' });
 	}
 };
 
@@ -156,7 +156,7 @@ exports.updateUserChars = async (req, res) => {
 		const user = await User.findOne({ username });
 
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
 		// Aggiorna i valori dei caratteri rimanenti
@@ -170,7 +170,7 @@ exports.updateUserChars = async (req, res) => {
 		res.json({ message: "Dati dell'utente aggiornati con successo" });
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Errore interno del server" });
+		res.status(500).json({ error: 'Errore interno del server' });
 	}
 };
 
@@ -180,7 +180,7 @@ exports.deleteUser = async (req, res) => {
 		const user = await User.findOne({ username });
 
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
 		// Elimina l'utente
@@ -195,10 +195,10 @@ exports.deleteUser = async (req, res) => {
 			{ $pull: { members: username } }
 		);
 
-		res.json({ message: "Utente eliminato con successo" });
+		res.json({ message: 'Utente eliminato con successo' });
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Errore interno del server" });
+		res.status(500).json({ error: 'Errore interno del server' });
 	}
 };
 
@@ -208,7 +208,7 @@ exports.toggleBlockUser = async (req, res) => {
 		const user = await User.findOne({ username });
 
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
 		// Cambia lo stato di blocco dell'utente
@@ -219,13 +219,13 @@ exports.toggleBlockUser = async (req, res) => {
 
 		res.json({
 			message: `Utente ${
-				user.isBlocked ? "bloccato" : "sbloccato"
+				user.isBlocked ? 'bloccato' : 'sbloccato'
 			} con successo`,
 			blocked: user.isBlocked,
 		});
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Errore interno del server" });
+		res.status(500).json({ error: 'Errore interno del server' });
 	}
 };
 
@@ -235,7 +235,7 @@ exports.toggleModUser = async (req, res) => {
 		const user = await User.findOne({ username });
 
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
 		// Cambia lo stato di blocco dell'utente
@@ -246,13 +246,13 @@ exports.toggleModUser = async (req, res) => {
 
 		res.json({
 			message: `Utente ${
-				user.isMod ? "é moderatore" : "non  é piú moderatore"
+				user.isMod ? 'é moderatore' : 'non  é piú moderatore'
 			} con successo`,
 			isMod: user.isMod,
 		});
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Errore interno del server" });
+		res.status(500).json({ error: 'Errore interno del server' });
 	}
 };
 
@@ -263,27 +263,27 @@ exports.handleProAction = async (req, res) => {
 
 		const user = await User.findOne({ username });
 		if (!user) {
-			return res.status(404).json({ error: "Utente non trovato" });
+			return res.status(404).json({ error: 'Utente non trovato' });
 		}
 
-		if (action === "request") {
+		if (action === 'request') {
 			// Logica per gestire la richiesta dell'account Pro
 			user.isProRequested = true;
-		} else if (action === "cancel") {
+		} else if (action === 'cancel') {
 			// Logica per gestire l'annullamento della richiesta Pro
 			user.isProRequested = false;
 		} else {
-			return res.status(400).json({ error: "Azione non valida" });
+			return res.status(400).json({ error: 'Azione non valida' });
 		}
 
 		await user.save();
 		res.json({
 			message: `Richiesta Pro ${
-				action === "request" ? "inviata" : "annullata"
+				action === 'request' ? 'inviata' : 'annullata'
 			} con successo`,
 		});
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: "Errore interno del server" });
+		res.status(500).json({ error: 'Errore interno del server' });
 	}
 };

@@ -1,7 +1,7 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const authController = require("../controllers/authController");
-const { body, validationResult } = require("express-validator");
+const authController = require('../controllers/authController');
+const { body, validationResult } = require('express-validator');
 
 // Middleware per controllare i risultati della validazione
 const validate = (req, res, next) => {
@@ -13,58 +13,58 @@ const validate = (req, res, next) => {
 };
 
 router.post(
-	"/loginSMM",
+	'/loginSMM',
 	[
-		body("email")
+		body('email')
 			.isEmail()
 			.withMessage("Deve essere un'email valida.")
 			.normalizeEmail(),
-		body("password").trim().escape(),
+		body('password').trim().escape(),
 	],
 	validate,
 	authController.loginSMM
 );
 
 router.post(
-	"/register",
+	'/register',
 	[
-		body("username").isString().trim().escape(),
+		body('username').isString().trim().escape(),
 
-		body("password").trim().escape(),
+		body('password').trim().escape(),
 
-		body("confirmPassword").trim().escape(),
+		body('confirmPassword').trim().escape(),
 
-		body("email").isEmail().normalizeEmail(),
+		body('email').isEmail().normalizeEmail(),
 
-		body("firstName").trim().escape(),
+		body('firstName').trim().escape(),
 
-		body("lastName").optional().trim().escape(),
+		body('lastName').optional().trim().escape(),
 	],
 	validate,
 	authController.register
 );
 
 router.post(
-	"/login",
+	'/login',
 	[
-		body("username").isString().trim().escape(),
+		body('username').isString().trim().escape(),
 
-		body("password").trim().escape(),
+		body('password').trim().escape(),
 	],
 	validate,
 	authController.login
 );
 
-router.post("/protectedEndpoint", validate, authController.protectedEndpoint);
+router.post('/protectedEndpoint', validate, authController.protectedEndpoint);
 
-router.get("/smm/session", validate, authController.verifyTokenSMM);
+router.get('/smm/session', validate, authController.verifyTokenSMM);
 
 router.post(
-	"/loginMod",
+	'/loginMod',
 	[
-		body("username").isString().trim().escape(),
+		body('username').isString().trim().escape(),
 
-		body("password").trim().escape(),
+		body('password').trim().escape(),
 	],
 	validate,
 	authController.loginMod

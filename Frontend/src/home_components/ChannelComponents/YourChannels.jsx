@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import Cookies from "js-cookie";
-import { Card, ListGroup, Button } from "react-bootstrap";
-import PropTypes from "prop-types";
+import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { Card, ListGroup, Button } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 const YourChannels = ({
 	yourChannels,
@@ -13,12 +13,12 @@ const YourChannels = ({
 	const [selectedChannelId, setSelectedChannelId] = useState(null);
 
 	const listGroupStyle = {
-		maxHeight: "142px",
-		overflowY: "auto",
+		maxHeight: '142px',
+		overflowY: 'auto',
 	};
 
 	useEffect(() => {
-		const userDataCookie = Cookies.get("user_data");
+		const userDataCookie = Cookies.get('user_data');
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
@@ -27,27 +27,27 @@ const YourChannels = ({
 				.then((response) => response.json())
 				.then((data) => setYourChannels(data))
 				.catch((error) =>
-					console.error("Errore durante il recupero dei canali:", error)
+					console.error('Errore durante il recupero dei canali:', error)
 				);
 		}
 	}, []);
 
 	const handleDeleteChannel = async (channel) => {
 		try {
-			const userDataCookie = Cookies.get("user_data");
+			const userDataCookie = Cookies.get('user_data');
 			if (userDataCookie) {
 				const response = await fetch(
 					`http://localhost:3500/channels/${channel._id}`,
 					{
-						method: "DELETE",
+						method: 'DELETE',
 						headers: {
-							"Content-Type": "application/json",
+							'Content-Type': 'application/json',
 						},
 					}
 				);
 
 				if (response.status === 200) {
-					console.log("Canale eliminato con successo.");
+					console.log('Canale eliminato con successo.');
 					setSubscribedChannels((prevChannels) =>
 						prevChannels.filter((chan) => chan._id !== channel._id)
 					);
@@ -65,7 +65,7 @@ const YourChannels = ({
 				}
 			}
 		} catch (error) {
-			console.error("Errore durante la richiesta di eliminazione:", error);
+			console.error('Errore durante la richiesta di eliminazione:', error);
 		}
 	};
 
@@ -79,49 +79,49 @@ const YourChannels = ({
 			const response = await fetch(
 				`http://localhost:3500/channels/${selectedChannelId}/members/${username}`,
 				{
-					method: "DELETE",
+					method: 'DELETE',
 					headers: {
-						"Content-Type": "application/json",
+						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({ username }),
 				}
 			);
 			if (response.status === 200) {
-				console.log("Membro rimosso con successo.");
+				console.log('Membro rimosso con successo.');
 				setMembersList((prevMembers) =>
 					prevMembers.filter((member) => member !== username)
 				);
 			} else {
 				console.error(
-					"Errore durante la rimozione del membro dal canale:",
+					'Errore durante la rimozione del membro dal canale:',
 					response.status
 				);
 			}
 		} catch (error) {
 			console.error(
-				"Errore durante la richiesta di rimozione del membro dal canale:",
+				'Errore durante la richiesta di rimozione del membro dal canale:',
 				error
 			);
 		}
 	};
 
 	return (
-		<div className="container mt-3">
-			<h1 className="display-4 text-center">I TUOI CANALI</h1>
+		<div className='container mt-3'>
+			<h1 className='display-4 text-center'>I TUOI CANALI</h1>
 			<Card>
 				<ListGroup
-					variant="flush"
+					variant='flush'
 					style={listGroupStyle}
 				>
 					{yourChannels.map((channel) => (
 						<ListGroup.Item key={channel._id}>
 							{channel.name}
 							<button
-								className="badge bg-primary ms-2"
+								className='badge bg-primary ms-2'
 								style={{
-									cursor: "pointer",
-									border: "none",
-									background: "none",
+									cursor: 'pointer',
+									border: 'none',
+									background: 'none',
 								}}
 								onClick={() => {
 									if (selectedChannelId === channel._id) {
@@ -134,22 +134,22 @@ const YourChannels = ({
 								{channel.members.length} Iscritti
 							</button>
 							<Button
-								variant="danger"
-								size="sm"
-								className="float-end"
+								variant='danger'
+								size='sm'
+								className='float-end'
 								onClick={() => handleDeleteChannel(channel)}
 							>
 								Elimina
 							</Button>
 							{selectedChannelId === channel._id && (
-								<ListGroup className="mt-2">
+								<ListGroup className='mt-2'>
 									{membersList.map((member) => (
 										<ListGroup.Item key={member}>
 											{member}
 											<Button
-												variant="danger"
-												size="sm"
-												className="float-end"
+												variant='danger'
+												size='sm'
+												className='float-end'
 												onClick={() => handleRemoveMember(member)}
 											>
 												Rimuovi

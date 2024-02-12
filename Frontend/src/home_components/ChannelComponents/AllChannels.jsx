@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
-import Cookies from "js-cookie";
-import { Form, Card, ListGroup, Button } from "react-bootstrap";
-import PropTypes from "prop-types";
+import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { Form, Card, ListGroup, Button } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 const AllChannels = ({
 	setSubscribedChannels,
 	allChannels,
 	setAllChannels,
 }) => {
-	const [searchTerm, setSearchTerm] = useState("");
+	const [searchTerm, setSearchTerm] = useState('');
 	const [filteredChannels, setFilteredChannels] = useState([]);
 
 	const listGroupStyle = {
-		maxHeight: "142px",
-		overflowY: "auto",
+		maxHeight: '142px',
+		overflowY: 'auto',
 	};
 
 	useEffect(() => {
-		const userDataCookie = Cookies.get("user_data");
+		const userDataCookie = Cookies.get('user_data');
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
@@ -28,7 +28,7 @@ const AllChannels = ({
 					setAllChannels(data);
 				})
 				.catch((error) =>
-					console.error("Errore durante il recupero di tutti i canali:", error)
+					console.error('Errore durante il recupero di tutti i canali:', error)
 				);
 		}
 	}, []);
@@ -43,7 +43,7 @@ const AllChannels = ({
 
 	const handleSubscribe = async (channel) => {
 		try {
-			const userDataCookie = Cookies.get("user_data");
+			const userDataCookie = Cookies.get('user_data');
 			if (userDataCookie) {
 				const userData = JSON.parse(userDataCookie);
 				const username = userData.username;
@@ -51,15 +51,15 @@ const AllChannels = ({
 				const response = await fetch(
 					`http://localhost:3500/channels/${channel._id}/members/${username}`,
 					{
-						method: "PUT",
+						method: 'PUT',
 						headers: {
-							"Content-Type": "application/json",
+							'Content-Type': 'application/json',
 						},
 					}
 				);
 
 				if (response.status === 200) {
-					console.log("Iscrizione avvenuta con successo.");
+					console.log('Iscrizione avvenuta con successo.');
 					setAllChannels((prevChannels) =>
 						prevChannels.filter((chan) => chan._id !== channel._id)
 					);
@@ -69,37 +69,37 @@ const AllChannels = ({
 				}
 			}
 		} catch (error) {
-			console.error("Errore durante la richiesta di iscrizione:", error);
+			console.error('Errore durante la richiesta di iscrizione:', error);
 		}
 	};
 
 	return (
-		<div className="container mt-3">
-			<h1 className="display-4 text-center">TUTTI I CANALI</h1>
-			<Form.Group className="mb-3">
-				<Form.Label htmlFor="searchTerm">Cerca canale</Form.Label>
+		<div className='container mt-3'>
+			<h1 className='display-4 text-center'>TUTTI I CANALI</h1>
+			<Form.Group className='mb-3'>
+				<Form.Label htmlFor='searchTerm'>Cerca canale</Form.Label>
 				<Form.Control
-					type="text"
-					id="searchTerm"
+					type='text'
+					id='searchTerm'
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
 				/>
 			</Form.Group>
 			<Card>
 				<ListGroup
-					variant="flush"
+					variant='flush'
 					style={listGroupStyle}
 				>
 					{filteredChannels.map((channel) => (
 						<ListGroup.Item key={channel._id}>
 							{channel.name}
-							<span className="badge bg-primary ms-2">
+							<span className='badge bg-primary ms-2'>
 								{channel.members.length} Iscritti
 							</span>
 							<Button
-								variant="success"
-								size="sm"
-								className="float-end"
+								variant='success'
+								size='sm'
+								className='float-end'
 								onClick={() => handleSubscribe(channel)}
 							>
 								Iscriviti

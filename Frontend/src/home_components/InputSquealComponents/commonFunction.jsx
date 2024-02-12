@@ -53,7 +53,7 @@ export const handleImageChange = (
 			setWeeklyCharacters(weeklyCharacters - 50);
 			setMonthlyCharacters(monthlyCharacters - 50);
 		} else {
-			alert("Not enough characters for an image upload.");
+			alert('Not enough characters for an image upload.');
 			return;
 		}
 	}
@@ -149,7 +149,7 @@ export const handleOpenMap = (
 			setWeeklyCharacters(weeklyCharacters - 50);
 			setMonthlyCharacters(monthlyCharacters - 50);
 		} else {
-			alert("Not enough characters for a position upload.");
+			alert('Not enough characters for a position upload.');
 			return;
 		}
 	}
@@ -184,11 +184,11 @@ export const handleGetLocation = (setCurrentLocation) => {
 			if (latitude != null && longitude != null) {
 				setCurrentLocation([latitude, longitude]);
 			} else {
-				console.error("Invalid coordinates received");
+				console.error('Invalid coordinates received');
 			}
 		},
 		(error) => {
-			console.error("Error getting location:", error);
+			console.error('Error getting location:', error);
 		}
 	);
 };
@@ -207,7 +207,7 @@ export const sendLocationPeriodically = (
 				return sendLocationToBackend(messageId, currentLocation);
 			})
 			.catch((error) => {
-				console.error("Error getting current location:", error);
+				console.error('Error getting current location:', error);
 			});
 	}, 30000);
 
@@ -222,19 +222,19 @@ export const sendLocationToBackend = async (messageId, position) => {
 		const response = await fetch(
 			`http://localhost:3500/messages/${messageId}/position`,
 			{
-				method: "POST",
+				method: 'POST',
 				headers: {
-					"Content-Type": "application/json",
+					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({ position }),
 			}
 		);
 
 		if (!response.ok) {
-			console.error("Failed to update location on the backend");
+			console.error('Failed to update location on the backend');
 		}
 	} catch (error) {
-		console.error("Error sending location to backend:", error);
+		console.error('Error sending location to backend:', error);
 	}
 };
 
@@ -254,6 +254,6 @@ export const handleInsertLink = (url, selection, message, setMessage) => {
 		const afterText = message.substring(selection.end);
 		setMessage(`${beforeText}[${linkText}](${url})${afterText}`);
 	} else {
-		alert("Per favore, seleziona del testo nel messaggio per linkarlo.");
+		alert('Per favore, seleziona del testo nel messaggio per linkarlo.');
 	}
 };

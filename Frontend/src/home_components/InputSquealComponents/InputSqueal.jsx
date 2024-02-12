@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Container, Form } from "react-bootstrap";
-import Cookies from "js-cookie";
-import CharCounter from "./CharCounter";
-import ImageUploader from "./ImageUploader";
-import LocationSharer from "./LocationSharer";
-import MessageInput from "./MessageInput";
-import PublishButton from "./PublishButton";
-import RecipientSelector from "./RecipientSelector";
-import TemporaryMessageOptions from "./TemporaryMessageOptions";
-import LinkInserter from "./LinkInserter";
+import React, { useState, useEffect } from 'react';
+import { Container, Form } from 'react-bootstrap';
+import Cookies from 'js-cookie';
+import CharCounter from './CharCounter';
+import ImageUploader from './ImageUploader';
+import LocationSharer from './LocationSharer';
+import MessageInput from './MessageInput';
+import PublishButton from './PublishButton';
+import RecipientSelector from './RecipientSelector';
+import TemporaryMessageOptions from './TemporaryMessageOptions';
+import LinkInserter from './LinkInserter';
 import {
 	handleMessageChange,
 	handleImageChange,
@@ -21,10 +21,10 @@ import {
 	sendLocationToBackend,
 	handleTextSelect,
 	handleInsertLink,
-} from "./commonFunction";
+} from './commonFunction';
 const InputSqueal = () => {
 	//USE STATE DA ORDINARE
-	const [message, setMessage] = useState("");
+	const [message, setMessage] = useState('');
 	const [selection, setSelection] = useState({ start: 0, end: 0 });
 	const [dailyCharacters, setDailyCharacters] = useState(0);
 	const [weeklyCharacters, setWeeklyCharacters] = useState(0);
@@ -32,7 +32,7 @@ const InputSqueal = () => {
 	const [initialDailyCharacters, setInitialDailyCharacters] = useState(0);
 	const [initialWeeklyCharacters, setInitialWeeklyCharacters] = useState(0);
 	const [initialMonthlyCharacters, setInitialMonthlyCharacters] = useState(0);
-	const [errorMessage, setErrorMessage] = useState("");
+	const [errorMessage, setErrorMessage] = useState('');
 
 	const [publicMessage, setPublicMessage] = useState(false);
 	const [isTemp, setIsTemp] = useState(false);
@@ -43,9 +43,9 @@ const InputSqueal = () => {
 	const [showMap, setShowMap] = useState(false);
 	const [_id, set_id] = useState(null);
 
-	const [recipientType, setRecipientType] = useState("user");
+	const [recipientType, setRecipientType] = useState('user');
 	const [filteredChannels, setFilteredChannels] = useState([]);
-	const [searchTerm, setSearchTerm] = useState("");
+	const [searchTerm, setSearchTerm] = useState('');
 	const [channels, setChannels] = useState([]);
 	const [selectedChannels, setSelectedChannels] = useState([]);
 
@@ -57,7 +57,7 @@ const InputSqueal = () => {
 
 	//USE EFFECT
 	useEffect(() => {
-		const userDataCookie = Cookies.get("user_data");
+		const userDataCookie = Cookies.get('user_data');
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
@@ -71,20 +71,20 @@ const InputSqueal = () => {
 					setChannels(nonModeratorChannels);
 				})
 				.catch((error) =>
-					console.error("Errore durante il recupero dei canali:", error)
+					console.error('Errore durante il recupero dei canali:', error)
 				);
 
 			fetch(`http://localhost:3500/usr`)
 				.then((response) => response.json())
 				.then((data) => setUsers(data))
 				.catch((error) =>
-					console.error("Errore durante il recupero degli utenti:", error)
+					console.error('Errore durante il recupero degli utenti:', error)
 				);
 		}
 	}, []);
 
 	useEffect(() => {
-		const userDataCookie = Cookies.get("user_data");
+		const userDataCookie = Cookies.get('user_data');
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
@@ -94,7 +94,7 @@ const InputSqueal = () => {
 					if (response.status === 200) {
 						return response.json();
 					} else {
-						throw new Error("API call failed");
+						throw new Error('API call failed');
 					}
 				})
 				.then((data) => {
@@ -106,10 +106,10 @@ const InputSqueal = () => {
 					setInitialMonthlyCharacters(data.monthlyChars);
 				})
 				.catch((error) => {
-					console.error("API call error:", error);
+					console.error('API call error:', error);
 				});
 		} else {
-			console.error("User data not found in cookies");
+			console.error('User data not found in cookies');
 		}
 	}, []);
 
@@ -135,7 +135,7 @@ const InputSqueal = () => {
 				setMonthlyCharacters(initialMonthlyCharacters - charCounter);
 			} else {
 				setSelectedChannels([]);
-				alert("Not enough characters to send your message (to a channel)");
+				alert('Not enough characters to send your message (to a channel)');
 			}
 		} else {
 			setDailyCharacters(initialDailyCharacters);
@@ -145,14 +145,14 @@ const InputSqueal = () => {
 	}, [publicMessage]);
 
 	useEffect(() => {
-		if (recipientType === "channel") {
+		if (recipientType === 'channel') {
 			const filtered = channels
 				.filter((channel) =>
 					channel.name.toLowerCase().includes(searchTerm.toLowerCase())
 				)
 				.slice(0, 5); // Limita a 5 canali
 			setFilteredChannels(filtered);
-		} else if (recipientType === "user") {
+		} else if (recipientType === 'user') {
 			const filtered = users
 				.filter((user) =>
 					user.username.toLowerCase().includes(searchTerm.toLowerCase())
@@ -171,13 +171,13 @@ const InputSqueal = () => {
 		const newSearchTerm = event.target.value;
 		setSearchTerm(newSearchTerm);
 
-		if (recipientType === "user") {
+		if (recipientType === 'user') {
 			// Filtra gli utenti in base al termine di ricerca
 			const filtered = users.filter((user) =>
 				user.username.toLowerCase().includes(newSearchTerm.toLowerCase())
 			);
 			setFilteredUsers(filtered);
-		} else if (recipientType === "channel") {
+		} else if (recipientType === 'channel') {
 			// Filtra i canali in base al termine di ricerca
 			const filtered = channels.filter((channel) =>
 				channel.name.toLowerCase().includes(newSearchTerm.toLowerCase())
@@ -212,8 +212,8 @@ const InputSqueal = () => {
 	const toggleTemp = () => {
 		setIsTemp(!isTemp);
 		if (!isTemp) {
-			setUpdateInterval("");
-			setMaxSendCount("");
+			setUpdateInterval('');
+			setMaxSendCount('');
 		}
 	};
 
@@ -242,10 +242,10 @@ const InputSqueal = () => {
 	};
 
 	const validatePublishData = (message, selectedChannels, selectedUsers) => {
-		if (!message) return "Scrivi qualcosa";
+		if (!message) return 'Scrivi qualcosa';
 		if (selectedChannels.length === 0 && selectedUsers.length === 0)
-			return "Seleziona un destinatario";
-		return "";
+			return 'Seleziona un destinatario';
+		return '';
 	};
 
 	const preparePublishData = ({
@@ -287,10 +287,10 @@ const InputSqueal = () => {
 	};
 
 	const publishMessage = async (requestData) => {
-		const url = "http://localhost:3500/messages";
+		const url = 'http://localhost:3500/messages';
 		const requestOptions = {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(requestData),
 		};
 
@@ -299,9 +299,9 @@ const InputSqueal = () => {
 	};
 
 	const handlePublish = async () => {
-		const userDataCookie = Cookies.get("user_data");
+		const userDataCookie = Cookies.get('user_data');
 		if (!userDataCookie) {
-			console.error("User data not found in cookies");
+			console.error('User data not found in cookies');
 			return;
 		}
 
@@ -336,18 +336,18 @@ const InputSqueal = () => {
 				window.location.reload();
 			} else {
 				const data = await response.json();
-				console.error("Errore nella creazione del messaggio:", data.error);
+				console.error('Errore nella creazione del messaggio:', data.error);
 			}
 		} catch (error) {
-			console.error("Errore nella creazione del messaggio:", error);
+			console.error('Errore nella creazione del messaggio:', error);
 		}
 	};
 
 	return (
 		<Container>
 			<Form>
-				<div className="mb-3">
-					{" "}
+				<div className='mb-3'>
+					{' '}
 					<RecipientSelector
 						recipientType={recipientType}
 						handleRecipientChange={handleRecipientChange}
@@ -453,7 +453,7 @@ const InputSqueal = () => {
 				monthlyCharacters={monthlyCharacters}
 			/>
 			<PublishButton handlePublish={handlePublish} />
-			{errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+			{errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
 		</Container>
 	);
 };

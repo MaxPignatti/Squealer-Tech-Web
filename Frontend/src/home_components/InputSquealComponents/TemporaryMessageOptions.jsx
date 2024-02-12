@@ -1,6 +1,6 @@
-import React from "react";
-import { Button, Form } from "react-bootstrap";
-import PropTypes from "prop-types";
+import React from 'react';
+import { Button, Form } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 const TemporaryMessageOptions = ({
 	isTemp,
@@ -12,30 +12,30 @@ const TemporaryMessageOptions = ({
 }) => (
 	<div>
 		<Button
-			variant="info"
+			variant='info'
 			onClick={toggleTemp}
-			className="mb-2"
+			className='mb-2'
 		>
-			{isTemp ? "Annulla" : "Messaggio Multiplo"}
+			{isTemp ? 'Annulla' : 'Messaggio Multiplo'}
 		</Button>
 		{isTemp && (
 			<Form>
 				<Form.Group>
 					<Form.Control
-						type="number"
-						className="mb-2"
+						type='number'
+						className='mb-2'
 						value={updateInterval}
 						onChange={handleUpdateIntervalChange}
-						placeholder="Intervallo Update (minuti)"
+						placeholder='Intervallo Update (minuti)'
 					/>
 				</Form.Group>
 				<Form.Group>
 					<Form.Control
-						type="number"
-						className="mb-2"
+						type='number'
+						className='mb-2'
 						value={maxSendCount}
 						onChange={handleMaxSendCountChange}
-						placeholder="Max Send Count"
+						placeholder='Max Send Count'
 					/>
 				</Form.Group>
 			</Form>

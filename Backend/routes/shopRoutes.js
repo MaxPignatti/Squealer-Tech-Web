@@ -1,8 +1,8 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const shopController = require("../controllers/shopController");
-const { body, validationResult } = require("express-validator");
+const shopController = require('../controllers/shopController');
+const { body, validationResult } = require('express-validator');
 
-router.post("/purchase", shopController.purchaseRemChar);
+router.patch('/purchase/:username', shopController.purchaseRemChar);
 
 module.exports = router;

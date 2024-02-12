@@ -1,7 +1,7 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const channelController = require("../controllers/channelController");
-const { body, validationResult } = require("express-validator");
+const channelController = require('../controllers/channelController');
+const { body, validationResult } = require('express-validator');
 
 const validate = (req, res, next) => {
 	const errors = validationResult(req);
@@ -12,68 +12,68 @@ const validate = (req, res, next) => {
 };
 
 router.post(
-	"/channels",
+	'/channels',
 	[
-		body("name")
+		body('name')
 			.notEmpty()
-			.withMessage("Il nome del canale è obbligatorio")
+			.withMessage('Il nome del canale è obbligatorio')
 			.trim()
 			.escape(),
-		body("description").optional().trim().escape(),
-		body("creator").trim().escape(),
-		body("isMod")
+		body('description').optional().trim().escape(),
+		body('creator').trim().escape(),
+		body('isMod')
 			.isBoolean()
-			.withMessage("isMod deve essere un valore booleano"),
+			.withMessage('isMod deve essere un valore booleano'),
 	],
 	validate,
 	channelController.createChannel
 );
 
 router.get(
-	"/users/:username/channel",
+	'/users/:username/channel',
 	validate,
 	channelController.yourChannels
 );
 
 router.delete(
-	"/channels/:channelId",
+	'/channels/:channelId',
 	validate,
 	channelController.deleteChannel
 );
 
 router.get(
-	"/users/:username/subscribedChannels",
+	'/users/:username/subscribedChannels',
 	validate,
 	channelController.getSubscribedChannels
 );
 
 router.put(
-	"/channels/:channelId/members/:username",
+	'/channels/:channelId/members/:username',
 	validate,
 	channelController.subscribe
 );
 
-router.get("/channels", validate, channelController.getAllChannels);
+router.get('/channels', validate, channelController.getAllChannels);
 
 router.delete(
-	"/channels/:channelId/members/:username",
+	'/channels/:channelId/members/:username',
 	validate,
 	channelController.removeMember
 );
 
-router.get("/api/topMessages", validate, channelController.getTopMessages);
+router.get('/api/topMessages', validate, channelController.getTopMessages);
 
 router.get(
-	"/channels/moderator/:isMod",
+	'/channels/moderator/:isMod',
 	validate,
 	channelController.modChannels
 );
 
 router.patch(
-	"/channels/:channelId",
+	'/channels/:channelId',
 	[
-		body("name").optional().trim().escape(),
-		body("description").optional().trim().escape(),
+		body('name').optional().trim().escape(),
+		body('description').optional().trim().escape(),
 	],
 	validate,
 	channelController.updateChannel

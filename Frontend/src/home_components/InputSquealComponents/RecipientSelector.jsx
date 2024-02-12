@@ -1,7 +1,7 @@
-import React from "react";
-import { Form, Badge, Alert } from "react-bootstrap";
-import PropTypes from "prop-types";
-import "./RecipientSelector.css";
+import React from 'react';
+import { Form, Badge, Alert } from 'react-bootstrap';
+import PropTypes from 'prop-types';
+import './RecipientSelector.css';
 
 const RecipientSelector = ({
 	recipientType,
@@ -24,39 +24,39 @@ const RecipientSelector = ({
 		<div>
 			<Form.Group>
 				<Form.Label>
-					<h5 style={{ marginBottom: "0" }}>Seleziona il Destinatario:</h5>
+					<h5 style={{ marginBottom: '0' }}>Seleziona il Destinatario:</h5>
 				</Form.Label>
 				<div>
 					<Form.Check
 						inline
-						label="Utente Singolo"
-						type="radio"
-						name="recipientType"
-						value="user"
-						checked={recipientType === "user"}
-						onChange={() => handleRecipientChange("user")}
+						label='Utente Singolo'
+						type='radio'
+						name='recipientType'
+						value='user'
+						checked={recipientType === 'user'}
+						onChange={() => handleRecipientChange('user')}
 					/>
 					<Form.Check
 						inline
-						label="Canale"
-						type="radio"
-						name="recipientType"
-						value="channel"
-						checked={recipientType === "channel"}
-						onChange={() => handleRecipientChange("channel")}
+						label='Canale'
+						type='radio'
+						name='recipientType'
+						value='channel'
+						checked={recipientType === 'channel'}
+						onChange={() => handleRecipientChange('channel')}
 					/>
 				</div>
 			</Form.Group>
 			<Form.Control
-				type="text"
+				type='text'
 				placeholder={
-					recipientType === "user" ? "Cerca utente..." : "Cerca canale..."
+					recipientType === 'user' ? 'Cerca utente...' : 'Cerca canale...'
 				}
 				value={searchTerm}
 				onChange={handleSearchChange}
 			/>
-			<div className="my-2">
-				{recipientType === "user" &&
+			<div className='my-2'>
+				{recipientType === 'user' &&
 					filteredUsers
 						.filter((user) => !selectedUsers.includes(user))
 						.map((user) => (
@@ -64,20 +64,20 @@ const RecipientSelector = ({
 								<Badge
 									pill
 									variant={
-										selectedUsers.includes(user) ? "primary" : "secondary"
+										selectedUsers.includes(user) ? 'primary' : 'secondary'
 									}
-									className="mr-2 clickable"
+									className='mr-2 clickable'
 									onClick={() => handleUserSelect(user)}
 								>
 									{user.username}
 								</Badge>
 								{!selectedUsers.includes(user) && (
-									<span style={{ marginRight: "8px" }}></span>
+									<span style={{ marginRight: '8px' }}></span>
 								)}
 							</span>
 						))}
 
-				{recipientType === "channel" &&
+				{recipientType === 'channel' &&
 					filteredChannels
 						.filter((channel) => !selectedChannels.includes(channel))
 						.map((channel, index) => (
@@ -85,9 +85,9 @@ const RecipientSelector = ({
 								<Badge
 									pill
 									variant={
-										selectedChannels.includes(channel) ? "primary" : "secondary"
+										selectedChannels.includes(channel) ? 'primary' : 'secondary'
 									}
-									className="mr-2 clickable"
+									className='mr-2 clickable'
 									onClick={() =>
 										selectedChannels.includes(channel)
 											? handleRemoveChannel(channel._id)
@@ -98,35 +98,35 @@ const RecipientSelector = ({
 								</Badge>
 								{!selectedChannels.includes(channel) &&
 									index < filteredChannels.length - 1 && (
-										<span style={{ marginRight: "8px" }}></span>
+										<span style={{ marginRight: '8px' }}></span>
 									)}
 							</span>
 						))}
 			</div>
-			<div className="my-3">
+			<div className='my-3'>
 				{isUserSelected && (
 					<div>
 						<h5>Utenti Selezionati:</h5>
-						<div className="d-flex flex-wrap">
+						<div className='d-flex flex-wrap'>
 							{selectedUsers.map((user) => (
 								<span key={user._id}>
 									<Badge
 										pill
-										variant="primary"
-										className="mr-2 mb-2 clickable"
+										variant='primary'
+										className='mr-2 mb-2 clickable'
 										onClick={() => handleUserSelect(user)}
 									>
 										{user.username}
 										<button
-											className="ml-2 btn-link p-0 border-0 bg-transparent"
+											className='ml-2 btn-link p-0 border-0 bg-transparent'
 											onClick={() => handleRemoveUser(user._id)}
-											style={{ color: "red", cursor: "pointer" }}
-											aria-label="Remove user"
+											style={{ color: 'red', cursor: 'pointer' }}
+											aria-label='Remove user'
 										>
 											&#x2716;
 										</button>
 									</Badge>
-									<span style={{ marginRight: "8px" }}></span>
+									<span style={{ marginRight: '8px' }}></span>
 								</span>
 							))}
 						</div>
@@ -135,26 +135,26 @@ const RecipientSelector = ({
 				{isChannelSelected && (
 					<div>
 						<h5>Canali Selezionati:</h5>
-						<div className="d-flex flex-wrap">
+						<div className='d-flex flex-wrap'>
 							{selectedChannels.map((channel, index) => (
 								<span key={channel._id}>
 									<Badge
 										pill
-										variant="primary"
-										className="mr-2 mb-2 clickable"
+										variant='primary'
+										className='mr-2 mb-2 clickable'
 										onClick={() => handleRemoveChannel(channel._id)}
 									>
 										{channel.name}
 										<button
-											className="ml-2 btn-link p-0 border-0 bg-transparent"
+											className='ml-2 btn-link p-0 border-0 bg-transparent'
 											onClick={() => handleRemoveChannel(channel._id)}
-											style={{ color: "red", cursor: "pointer" }}
-											aria-label="Remove channel"
+											style={{ color: 'red', cursor: 'pointer' }}
+											aria-label='Remove channel'
 										>
 											&#x2716;
 										</button>
 									</Badge>
-									<span style={{ marginRight: "8px" }}></span>
+									<span style={{ marginRight: '8px' }}></span>
 								</span>
 							))}
 						</div>
@@ -163,7 +163,7 @@ const RecipientSelector = ({
 			</div>
 
 			{!isUserSelected && !isChannelSelected && (
-				<Alert variant="info">
+				<Alert variant='info'>
 					Seleziona utenti o canali dalla lista sopra.
 				</Alert>
 			)}

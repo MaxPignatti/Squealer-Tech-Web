@@ -9,8 +9,9 @@ const User = require('./models/user');
 const Message = require('./models/message');
 const consts = require('./consts');
 const fetch = require('node-fetch');
+const path = require('path');
 const app = express();
-const port = 3500;
+const port = 27017;
 
 // Load environment variables
 require('./config/env');
@@ -23,6 +24,7 @@ const corsOptions = {
 		'http://localhost:3002',
 		'http://localhost:8080',
 		'http://127.0.0.1:5500',
+		'http://site222327.tw.cs.unibo:8000',
 	],
 	credentials: true, // Permette l'invio di cookie e credenziali di autenticazione
 };
@@ -37,45 +39,22 @@ const messageRoutes = require('./routes/messageRoutes');
 const channelRoutes = require('./routes/channelRoutes');
 const shopRoutes = require('./routes/shopRoutes');
 
-app.use(authRoutes);
-app.use(secureRoutes);
-app.use(userRoutes);
-app.use(messageRoutes);
-app.use(channelRoutes);
-app.use(shopRoutes);
+app.use('/api', authRoutes);
+app.use('/api', secureRoutes);
+app.use('/api', userRoutes);
+app.use('/api', messageRoutes);
+app.use('/api', channelRoutes);
+app.use('/api', shopRoutes);
+app.use('/api/messages', messageRoutes);
 
 mongoose
-	.connect('mongodb://127.0.0.1:27017/test', {
+	.connect('mongodb://site222327:uo9feeGu@mongo_site222327', {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
+		serverSelectionTimeoutMS: 30000,
 	})
-	.then(() => {
-		Channel.findOne({ name: 'PUBLIC' })
-			.then((channel) => {
-				if (!channel) {
-					const publicChannel = new Channel({
-						name: 'PUBLIC',
-						creator: 'Squealer',
-						description: 'Canale Pubblico',
-						moderatorChannel: true,
-					});
-					publicChannel
-						.save()
-						.then(() => console.log('Canale "PUBLIC" creato con successo.'))
-						.catch((err) =>
-							console.error('Errore durante il salvataggio del canale:', err)
-						);
-				}
-			})
-			.catch((err) =>
-				console.error('Errore durante la ricerca del canale:', err)
-			);
-	})
-	.catch((err) => console.error('MongoDB connection error:', err));
-
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.on('connected', console.error.bind(console, 'MongoDB connected:'));
+	.then(() => console.log('Successfully connected to MongoDB.'))
+	.catch((err) => console.error('Connection error', err));
 
 Channel.findOne({ name: 'CONTROVERSIAL' })
 	.then((channel) => {
@@ -96,6 +75,24 @@ Channel.findOne({ name: 'CONTROVERSIAL' })
 	})
 	.catch((err) => console.error('Errore durante la ricerca del canale:', err));
 
+Channel.findOne({ name: 'PUBLIC' })
+	.then((channel) => {
+		if (!channel) {
+			const publicChannel = new Channel({
+				name: 'PUBLIC',
+				creator: 'Squealer',
+				description: 'Canale Pubblico',
+				moderatorChannel: true,
+			});
+			publicChannel
+				.save()
+				.then(() => console.log('Canale "PUBLIC" creato con successo.'))
+				.catch((err) =>
+					console.error('Errore durante il salvataggio del canale:', err)
+				);
+		}
+	})
+	.catch((err) => console.error('Errore durante la ricerca del canale:', err));
 Channel.findOne({ name: 'SQUEALER-UPDATES' })
 	.then((channel) => {
 		if (!channel) {
@@ -375,6 +372,32 @@ cron.schedule('0 0 * * *', async () => {
 	}
 });
 
-app.use('/messages', messageRoutes);
+//mod dash app
+app.use(
+	'/moddash',
+	express.static(path.join(__dirname, '../mod_dash/mod_dash/loginPage/'))
+);
+app.get('/moddash', (req, res) => {
+	res.sendFile(
+		path.join(__dirname, '../mod_dash/mod_dash/loginPage/', 'index.html')
+	);
+});
 
+//smm app
+app.use((req, res, next) => {
+	if (path.extname(req.path).toLowerCase() === '.js') {
+		res.type('text/javascript');
+	}
+	next();
+});
+app.use('/smm', express.static(path.join(__dirname, '../smm/dist')));
+app.use('/smm', (req, res) => {
+	res.sendFile(path.join(__dirname, '../smm/dist', 'index.html'));
+});
+
+//react app
+app.use(express.static(path.join(__dirname, '../app/build')));
+app.get('*', function (req, res) {
+	res.sendFile(path.join(__dirname, '../app/build', 'index.html'));
+});
 module.exports = app;

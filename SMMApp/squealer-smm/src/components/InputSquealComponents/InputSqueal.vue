@@ -137,7 +137,7 @@ export default {
 
 						// Prima chiamata API per i canali
 						return fetch(
-							`http://site222327.tw.cs.unibo.it/api/channels?subscribedBy=${username}`
+							`http://site222327.tw.cs.unibo.it/api/channels?subscribedBy=${vipUsername.value}`
 						);
 					})
 					.then((response) => response.json())

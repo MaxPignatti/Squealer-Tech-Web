@@ -97,14 +97,10 @@ const messageSchema = new mongoose.Schema({
 		default: false,
 	},
 	liveLocation: {
-		type: [
-			{
-				lat: { type: Number, required: true },
-				lng: { type: Number, required: true },
-			},
-		],
+		type: [[Number]], 
+		index: '2dsphere',
 		default: [],
-	},
+	  },
 });
 
 module.exports = mongoose.model('Message', messageSchema);

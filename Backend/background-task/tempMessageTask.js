@@ -28,6 +28,8 @@ const checkAndSendTempMessages = () => {
 					),
 					location: message.location,
 					beepRequested: true,
+					isLive: message.isLive,
+					liveLocation: message.liveLocation,
 				};
 
 				const newMessage = new Message(newMessageData);

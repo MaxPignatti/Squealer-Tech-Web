@@ -24,7 +24,7 @@ router.post(
 router.patch('/messages/:messageId', messageController.updateMessage);
 router.patch(
 	'/messages/:messageId/position',
-	messageController.updateMessagePosition
+	messageController.updateLivePosition
 );
 router.patch(
 	'/messages/:messageId/reactions',

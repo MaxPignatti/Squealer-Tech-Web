@@ -54,6 +54,7 @@ const InputSqueal = () => {
 	const [selectedUsers, setSelectedUsers] = useState([]);
 	const [image, setImage] = useState(null); // Stato per l'immagine in base64
 	const [imagePreview, setImagePreview] = useState(null); // Stato per l'anteprima dell'immagine
+	const [liveLocationEnabled, setLiveLocationEnabled] = useState(false);
 
 	//USE EFFECT
 	useEffect(() => {
@@ -283,6 +284,7 @@ const InputSqueal = () => {
 				channels: selectedChannels.map((channel) => channel.name),
 				users: selectedUsers.map((user) => user.username),
 			},
+			isLive: liveLocationEnabled,
 		};
 	};
 
@@ -446,6 +448,17 @@ const InputSqueal = () => {
 					maxSendCount={maxSendCount}
 					handleMaxSendCountChange={handleMaxSendCountChange}
 				/>
+				{isTemp && currentLocation && (
+					<div className="mb-3">
+						<button
+						type="button"
+						className="btn btn-primary"
+						onClick={() => setLiveLocationEnabled(!liveLocationEnabled)}
+						>
+						{liveLocationEnabled ? "Disabilita Posizione Live" : "Abilita Posizione Live"}
+						</button>
+					</div>
+				)}
 			</Form>
 			<CharCounter
 				dailyCharacters={dailyCharacters}

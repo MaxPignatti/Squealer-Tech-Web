@@ -429,7 +429,12 @@ const Message = ({
 					)}
 
 					{message.location?.[0] != null && message.location?.[1] != null && (
-						<Maps position={message.location} />
+						<Maps 
+							position={message.location}                 
+							isLive={message.isLive}
+							livePositions={message.liveLocation}
+							messageId = {message._id}
+						/>
 					)}
 
 					<div className='d-flex justify-content-end'>

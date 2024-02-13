@@ -84,6 +84,7 @@ exports.createMessage = async (req, res) => {
 			maxSendCount,
 			nextSendTime,
 			location,
+			isLive,
 		} = req.body;
 
 		const user = await User.findOne({ username: userName });
@@ -110,6 +111,7 @@ exports.createMessage = async (req, res) => {
 			hashtags: extractHashtags(text),
 			userMentions: userMentions,
 			channelMentions: channelMentions,
+			isLive: isLive,
 		});
 
 		// Salvare il messaggio
@@ -446,27 +448,31 @@ exports.deleteMessage = async (req, res) => {
 	}
 };
 
-exports.updateMessagePosition = async (req, res) => {
-	try {
-		const { messageId } = req.params;
-		const { position } = req.body;
-		const message = await Message.findById(messageId);
+exports.updateLivePosition = async (req, res) => {
+    try {
+        const { messageId } = req.params;
+        const { position } = req.body;
 
-		if (!message) {
-			return res.status(404).json({ error: 'Message not found' });
-		}
-		if (position && position != message.location) {
-			message.location = position;
-		}
+        const message = await Message.findById(messageId);
+        if (!message) {
+            return res.status(404).json({ error: "Message not found" });
+        }
 
-		await message.save();
-		res.json({
-			message: 'position added successfully',
-		});
-	} catch {
-		return res.status(500).json({ error: 'Server error' });
-	}
+        if (!position || position.length !== 2 || !position.every(Number.isFinite)) {
+            return res.status(400).json({ error: "Invalid position format" });
+        }
+
+        message.liveLocation.push(position); // Aggiunge la nuova posizione live
+
+        await message.save();
+        res.json({ message: "Live position added successfully" });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Server error" });
+    }
 };
+
+
 
 exports.incrementImpressions = async (req, res) => {
 	try {

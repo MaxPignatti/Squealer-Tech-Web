@@ -13,8 +13,10 @@ const Profile = () => {
 	const [userData, setUserData] = useState({});
 	const [editChange, setEditChange] = useState(false);
 	const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
-	const [errorMessage, setErrorMessage] = useState('');
 
+	const [profileErrorMessage, setProfileErrorMessage] = useState(''); 
+    const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
+	
 	const [showOldPassword, setShowOldPassword] = useState(false);
 	const [showNewPassword, setShowNewPassword] = useState(false);
 
@@ -53,14 +55,22 @@ const Profile = () => {
 
 	const handleModificaPassword = () => {
 		setShowChangePasswordForm(true);
+		setPasswordErrorMessage('');
 	};
 
 	const handleAnnullaPassword = () => {
 		setShowChangePasswordForm(false);
+		setPasswordErrorMessage('');
 	};
 
 	const handleModifica = () => {
 		setEditChange(true);
+		setProfileErrorMessage('');
+	};
+
+	const handleAnnulla = () => {
+		setEditChange(false);
+		setProfileErrorMessage('');
 	};
 
 	const handleUserChange = async () => {
@@ -90,7 +100,7 @@ const Profile = () => {
 				setEditChange(false);
 			} else {
 				const data = await response.json();
-				setErrorMessage(data.error);
+				setProfileErrorMessage(data.error);
 			}
 		} catch (error) {
 			console.error('API call error:', error);
@@ -114,16 +124,14 @@ const Profile = () => {
 				setShowChangePasswordForm(false);
 			} else {
 				const data = await responsePassword.json();
-				setErrorMessage(data.error);
+				setPasswordErrorMessage(data.error);
 			}
 		} catch (error) {
 			console.error('API call error:', error);
 		}
 	};
 
-	const handleAnnulla = () => {
-		setEditChange(false);
-	};
+
 
 	return (
 		<>
@@ -140,85 +148,80 @@ const Profile = () => {
 						style={{ maxWidth: '20%', borderRadius: '50%' }}
 					  />
 					</div>
-					{editChange ? (
+					{editChange || showChangePasswordForm ? (
 					  <>
-						<Form>
-						  <Form.Group controlId="formBasicProfileImage" className="mb-3">
-							<Form.Label>Profile Image</Form.Label>
-							<Form.Control
-							  type="file"
-							  accept="image/*"
-							  onChange={(e) => {
-								const file = e.target.files[0];
-								if (file) {
-								  const reader = new FileReader();
-								  reader.onload = () => {
-									setUserData({ ...userData, profileImage: reader.result });
-								  };
-								  reader.readAsDataURL(file);
-								}
-							  }}
-							/>
-						  </Form.Group>
-	
-						  <Form.Group controlId="formBasicFirstName" className="mb-3">
-							<Form.Label>First Name</Form.Label>
-							<Form.Control
-							  type="text"
-							  placeholder="Enter first name"
-							  value={userData.firstName}
-							  onChange={(e) => setUserData({ ...userData, firstName: e.target.value })}
-							/>
-						  </Form.Group>
-	
-						  <Form.Group controlId="formBasicLastName" className="mb-3">
-							<Form.Label>Last Name</Form.Label>
-							<Form.Control
-							  type="text"
-							  placeholder="Enter last name"
-							  value={userData.lastName}
-							  onChange={(e) => setUserData({ ...userData, lastName: e.target.value })}
-							/>
-						  </Form.Group>
-	
-						  <Form.Group controlId="formBasicUsername" className="mb-3">
-							<Form.Label>Username</Form.Label>
-							<Form.Control
-							  type="text"
-							  placeholder="Enter username"
-							  value={userData.username}
-							  onChange={(e) => setUserData({ ...userData, username: e.target.value })}
-							/>
-						  </Form.Group>
-	
-						  <Form.Group controlId="formBasicEmail" className="mb-3">
-							<Form.Label>Email</Form.Label>
-							<Form.Control
-							  type="email"
-							  placeholder="Enter email"
-							  value={userData.email}
-							  onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-							/>
-						  </Form.Group>
-	
-						  <div className="d-flex justify-content-between">
-							<Button variant="success" onClick={handleUserChange}>Salva Modifiche</Button>
-							<Button variant="secondary" onClick={handleAnnulla}>Annulla</Button>
-						  </div>
-						</Form>
-					  </>
-					) : (
-					  <div>
-						<p>First Name: {userData.firstName}</p>
-						<p>Last Name: {userData.lastName}</p>
-						<p>Username: {userData.username}</p>
-						<p>Email: {userData.email}</p>
-						<Button variant="primary" onClick={handleModifica} className="mt-3">Modifica Profilo</Button>
-					  </div>
-					)}
-	
-				{showChangePasswordForm && (
+					  	{editChange && (
 							<>
+                             <Form>
+							 <Form.Group controlId="formBasicProfileImage" className="mb-3">
+							   <Form.Label>Profile Image</Form.Label>
+							   <Form.Control
+								 type="file"
+								 accept="image/*"
+								 onChange={(e) => {
+								   const file = e.target.files[0];
+								   if (file) {
+									 const reader = new FileReader();
+									 reader.onload = () => {
+									   setUserData({ ...userData, profileImage: reader.result });
+									 };
+									 reader.readAsDataURL(file);
+								   }
+								 }}
+							   />
+							 </Form.Group>
+	   
+							 <Form.Group controlId="formBasicFirstName" className="mb-3">
+							   <Form.Label>First Name</Form.Label>
+							   <Form.Control
+								 type="text"
+								 placeholder="Enter first name"
+								 value={userData.firstName}
+								 onChange={(e) => setUserData({ ...userData, firstName: e.target.value })}
+							   />
+							 </Form.Group>
+	   
+							 <Form.Group controlId="formBasicLastName" className="mb-3">
+							   <Form.Label>Last Name</Form.Label>
+							   <Form.Control
+								 type="text"
+								 placeholder="Enter last name"
+								 value={userData.lastName}
+								 onChange={(e) => setUserData({ ...userData, lastName: e.target.value })}
+							   />
+							 </Form.Group>
+	   
+							 <Form.Group controlId="formBasicUsername" className="mb-3">
+							   <Form.Label>Username</Form.Label>
+							   <Form.Control
+								 type="text"
+								 placeholder="Enter username"
+								 value={userData.username}
+								 onChange={(e) => setUserData({ ...userData, username: e.target.value })}
+							   />
+							 </Form.Group>
+	   
+							 <Form.Group controlId="formBasicEmail" className="mb-3">
+							   <Form.Label>Email</Form.Label>
+							   <Form.Control
+								 type="email"
+								 placeholder="Enter email"
+								 value={userData.email}
+								 onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+							   />
+							 </Form.Group>
+						   </Form>
+						   <div className="d-flex justify-content-between">
+							   <Button variant="success" onClick={handleUserChange}>Salva Modifiche</Button>
+							   <Button variant="secondary" onClick={handleAnnulla}>Annulla</Button>
+							</div>
+						   {profileErrorMessage && <Alert variant="danger" className="mt-2">{profileErrorMessage}</Alert>}
+						   </>          
+                        )}
+						
+						{showChangePasswordForm && (
+							<>
+								<Form>
 								<Form.Group controlId="formBasicOldPassword" className="mb-3">
 								<Form.Label>Vecchia Password</Form.Label>
 								<InputGroup>
@@ -246,13 +249,27 @@ const Profile = () => {
 									</Button>
 								</InputGroup>
 								</Form.Group>
+								</Form>
 
 								<div className="d-flex justify-content-between">
 								<Button variant="primary" onClick={handleUserPsw}>Salva Modifiche</Button>
 								<Button variant="secondary" onClick={handleAnnullaPassword}>Annulla</Button>
 								</div>
+								{passwordErrorMessage && <Alert variant="danger" className="mt-2">{passwordErrorMessage}</Alert>}
 							</>
 							)}
+						
+					  </>
+					) : (
+					  <div>
+						<p>First Name: {userData.firstName}</p>
+						<p>Last Name: {userData.lastName}</p>
+						<p>Username: {userData.username}</p>
+						<p>Email: {userData.email}</p>
+						<Button variant="primary" onClick={handleModifica} className="mt-3">Modifica Profilo</Button>
+					  </div>
+					)}
+	
 	
 					{!showChangePasswordForm && !editChange && (
 					  <Button variant="info" onClick={handleModificaPassword} className="mt-4">
@@ -260,7 +277,7 @@ const Profile = () => {
 					  </Button>
 					)}
 	
-					{errorMessage && <Alert variant="danger" className="mt-2">{errorMessage}</Alert>}
+					
 				  </Card.Body>
 				</Card>
 				<div className="d-grid gap-2">

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, InputGroup, FormControl, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
 import { useAuth } from '../AuthContext';
 import { Navigate } from 'react-router-dom';
-import './Profile_style.css';
 import Navbar from './Navbar';
 import LogoutButton from './LogoutButton';
 
@@ -112,8 +111,6 @@ const Profile = () => {
 			);
 
 			if (responsePassword.status === 200) {
-				// Dopo che la modifica della password è stata completata con successo
-				// Puoi gestire ulteriori azioni qui, ad esempio, reindirizzare l'utente
 				setShowChangePasswordForm(false);
 			} else {
 				const data = await responsePassword.json();
@@ -130,234 +127,150 @@ const Profile = () => {
 
 	return (
 		<>
-			<Navbar />
-			<Container>
-				<Row className='justify-content-center mt-5'>
-					<Col
-						xs={12}
-						md={8}
-						lg={6}
-					>
-						<Card>
-							<Card.Body>
-								<div>
-									<img
-										src={`${userData.profileImage}`}
-										alt='Profile'
-										style={{ maxWidth: '20%' }}
+		  <Navbar />
+		  <Container className="mt-5">
+			<Row className="justify-content-center">
+			  <Col xs={12} md={8} lg={6}>
+				<Card className="mb-4 shadow-sm">
+				  <Card.Body>
+					<div className="text-center mb-3">
+					  <img
+						src={`${userData.profileImage}`}
+						alt="Profile"
+						style={{ maxWidth: '20%', borderRadius: '50%' }}
+					  />
+					</div>
+					{editChange ? (
+					  <>
+						<Form>
+						  <Form.Group controlId="formBasicProfileImage" className="mb-3">
+							<Form.Label>Profile Image</Form.Label>
+							<Form.Control
+							  type="file"
+							  accept="image/*"
+							  onChange={(e) => {
+								const file = e.target.files[0];
+								if (file) {
+								  const reader = new FileReader();
+								  reader.onload = () => {
+									setUserData({ ...userData, profileImage: reader.result });
+								  };
+								  reader.readAsDataURL(file);
+								}
+							  }}
+							/>
+						  </Form.Group>
+	
+						  <Form.Group controlId="formBasicFirstName" className="mb-3">
+							<Form.Label>First Name</Form.Label>
+							<Form.Control
+							  type="text"
+							  placeholder="Enter first name"
+							  value={userData.firstName}
+							  onChange={(e) => setUserData({ ...userData, firstName: e.target.value })}
+							/>
+						  </Form.Group>
+	
+						  <Form.Group controlId="formBasicLastName" className="mb-3">
+							<Form.Label>Last Name</Form.Label>
+							<Form.Control
+							  type="text"
+							  placeholder="Enter last name"
+							  value={userData.lastName}
+							  onChange={(e) => setUserData({ ...userData, lastName: e.target.value })}
+							/>
+						  </Form.Group>
+	
+						  <Form.Group controlId="formBasicUsername" className="mb-3">
+							<Form.Label>Username</Form.Label>
+							<Form.Control
+							  type="text"
+							  placeholder="Enter username"
+							  value={userData.username}
+							  onChange={(e) => setUserData({ ...userData, username: e.target.value })}
+							/>
+						  </Form.Group>
+	
+						  <Form.Group controlId="formBasicEmail" className="mb-3">
+							<Form.Label>Email</Form.Label>
+							<Form.Control
+							  type="email"
+							  placeholder="Enter email"
+							  value={userData.email}
+							  onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+							/>
+						  </Form.Group>
+	
+						  <div className="d-flex justify-content-between">
+							<Button variant="success" onClick={handleUserChange}>Salva Modifiche</Button>
+							<Button variant="secondary" onClick={handleAnnulla}>Annulla</Button>
+						  </div>
+						</Form>
+					  </>
+					) : (
+					  <div>
+						<p>First Name: {userData.firstName}</p>
+						<p>Last Name: {userData.lastName}</p>
+						<p>Username: {userData.username}</p>
+						<p>Email: {userData.email}</p>
+						<Button variant="primary" onClick={handleModifica} className="mt-3">Modifica Profilo</Button>
+					  </div>
+					)}
+	
+				{showChangePasswordForm && (
+							<>
+								<Form.Group controlId="formBasicOldPassword" className="mb-3">
+								<Form.Label>Vecchia Password</Form.Label>
+								<InputGroup>
+									<FormControl
+									type={showOldPassword ? "text" : "password"}
+									placeholder="Vecchia Password"
+									onChange={(e) => setUserData({ ...userData, oldPassword: e.target.value })}
 									/>
+									<Button variant="outline-secondary" onClick={() => setShowOldPassword(!showOldPassword)}>
+									<FontAwesomeIcon icon={showOldPassword ? faEyeSlash : faEye} />
+									</Button>
+								</InputGroup>
+								</Form.Group>
+
+								<Form.Group controlId="formBasicNewPassword" className="mb-3">
+								<Form.Label>Nuova Password</Form.Label>
+								<InputGroup>
+									<FormControl
+									type={showNewPassword ? "text" : "password"}
+									placeholder="Nuova Password"
+									onChange={(e) => setUserData({ ...userData, newPassword: e.target.value })}
+									/>
+									<Button variant="outline-secondary" onClick={() => setShowNewPassword(!showNewPassword)}>
+									<FontAwesomeIcon icon={showNewPassword ? faEyeSlash : faEye} />
+									</Button>
+								</InputGroup>
+								</Form.Group>
+
+								<div className="d-flex justify-content-between">
+								<Button variant="primary" onClick={handleUserPsw}>Salva Modifiche</Button>
+								<Button variant="secondary" onClick={handleAnnullaPassword}>Annulla</Button>
 								</div>
-								{editChange ? (
-									<Form>
-										<Form.Group controlId='formBasicProfileImage'>
-											<Form.Label>Profile Image</Form.Label>
-											<Form.Control
-												type='file'
-												accept='image/*'
-												name='profileImage'
-												onChange={(e) => {
-													const reader = new FileReader();
-													reader.onload = () => {
-														setUserData({
-															...userData,
-															profileImage: reader.result,
-														});
-													};
-													reader.readAsDataURL(e.target.files[0]);
-												}}
-											/>
-										</Form.Group>
-
-										<Form.Group controlId='formBasicFirstName'>
-											<Form.Label>First Name</Form.Label>
-											<Form.Control
-												type='text'
-												name='firstName'
-												value={userData.firstName}
-												onChange={(e) =>
-													setUserData({
-														...userData,
-														firstName: e.target.value,
-													})
-												}
-												required
-											/>
-										</Form.Group>
-
-										<Form.Group controlId='formBasicLastName'>
-											<Form.Label>Last Name</Form.Label>
-											<Form.Control
-												type='text'
-												name='lastName'
-												value={userData.lastName}
-												onChange={(e) =>
-													setUserData({ ...userData, lastName: e.target.value })
-												}
-												required
-											/>
-										</Form.Group>
-
-										<Form.Group controlId='formBasicUserName'>
-											<Form.Label>Username</Form.Label>
-											<Form.Control
-												type='text'
-												name='username'
-												value={userData.username}
-												onChange={(e) =>
-													setUserData({ ...userData, username: e.target.value })
-												}
-												required
-											/>
-										</Form.Group>
-
-										<Form.Group controlId='formBasicEmail'>
-											<Form.Label>Email</Form.Label>
-											<Form.Control
-												type='text'
-												name='email'
-												value={userData.email}
-												onChange={(e) =>
-													setUserData({ ...userData, email: e.target.value })
-												}
-												required
-											/>
-										</Form.Group>
-
-										<Button
-											variant='success'
-											onClick={handleUserChange}
-										>
-											Salva Modifiche
-										</Button>
-										<Button
-											variant='secondary'
-											onClick={handleAnnulla}
-										>
-											Annulla
-										</Button>
-									</Form>
-								) : (
-									<div>
-										<p className='d-flex justify-content-center'>
-											First Name: {userData.firstName}
-										</p>
-										<p className='d-flex justify-content-center'>
-											Last Name: {userData.lastName}
-										</p>
-										<p className='d-flex justify-content-center'>
-											Username: {userData.username}
-										</p>
-										<p className='d-flex justify-content-center'>
-											Email: {userData.email}
-										</p>
-										{userData.isPro && userData.socialMediaManagerEmail && (
-											<p className='d-flex justify-content-center'>
-												Social Media Manager: {userData.socialMediaManagerEmail}
-											</p>
-										)}
-
-										<Button
-											variant='primary'
-											onClick={handleModifica}
-										>
-											Modifica Profilo
-										</Button>
-										{showChangePasswordForm ? (
-											<Form>
-												<Form.Group controlId='formBasicOldPassword'>
-													<Form.Label>Vecchia Password</Form.Label>
-													<Form.Control
-														type={showOldPassword ? 'text' : 'password'}
-														name='oldPassword'
-														placeholder='Vecchia Password'
-														onChange={(e) =>
-															setUserData({
-																...userData,
-																oldPassword: e.target.value,
-															})
-														}
-													/>
-													<button
-														className='password-toggle'
-														onClick={() => setShowOldPassword(!showOldPassword)}
-														aria-label={
-															showOldPassword
-																? 'Nascondi password'
-																: 'Mostra password'
-														}
-													>
-														{showOldPassword ? (
-															<FontAwesomeIcon icon={faEyeSlash} />
-														) : (
-															<FontAwesomeIcon icon={faEye} />
-														)}
-													</button>
-												</Form.Group>
-
-												<Form.Group controlId='formBasicPassword'>
-													<Form.Label>Nuova Password</Form.Label>
-													<Form.Control
-														type={showNewPassword ? 'text' : 'password'}
-														name='newPassword'
-														placeholder='Nuova Password'
-														onChange={(e) =>
-															setUserData({
-																...userData,
-																newPassword: e.target.value,
-															})
-														}
-													/>
-													<button
-														className='password-toggle'
-														onClick={() => setShowNewPassword(!showNewPassword)}
-														aria-label={
-															showNewPassword
-																? 'Nascondi nuova password'
-																: 'Mostra nuova password'
-														}
-													>
-														{showNewPassword ? (
-															<FontAwesomeIcon icon={faEyeSlash} />
-														) : (
-															<FontAwesomeIcon icon={faEye} />
-														)}
-													</button>
-												</Form.Group>
-
-												<Button
-													variant='primary'
-													onClick={handleUserPsw}
-												>
-													Salva Modifiche
-												</Button>
-												<Button
-													variant='secondary'
-													onClick={handleAnnullaPassword}
-												>
-													Annulla
-												</Button>
-												{errorMessage && (
-													<div className='text-danger mt-2'>{errorMessage}</div>
-												)}
-											</Form>
-										) : (
-											<Button
-												variant='info'
-												onClick={handleModificaPassword}
-											>
-												Modifica Password
-											</Button>
-										)}
-									</div>
-								)}
-							</Card.Body>
-						</Card>
-						<LogoutButton />
-					</Col>
-				</Row>
-			</Container>
+							</>
+							)}
+	
+					{!showChangePasswordForm && !editChange && (
+					  <Button variant="info" onClick={handleModificaPassword} className="mt-4">
+						Modifica Password
+					  </Button>
+					)}
+	
+					{errorMessage && <Alert variant="danger" className="mt-2">{errorMessage}</Alert>}
+				  </Card.Body>
+				</Card>
+				<div className="d-grid gap-2">
+				  <LogoutButton />
+				</div>
+			  </Col>
+			</Row>
+		  </Container>
 		</>
-	);
-};
+	  );
+	};
 
 export default Profile;

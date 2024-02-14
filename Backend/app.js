@@ -373,15 +373,19 @@ cron.schedule('0 0 * * *', async () => {
 });
 
 //mod dash app
+console.log('andata');
 app.use(
 	'/moddash',
 	express.static(path.join(__dirname, '../mod_dash/mod_dash/loginPage/'))
 );
+console.log('andata2');
+
 app.get('/moddash', (req, res) => {
 	res.sendFile(
-		path.join(__dirname, '../mod_dash/mod_dash/loginPage/', 'index.html')
+		path.join(__dirname, '../mod_dash/mod_dash/loginPage/', 'login.html')
 	);
 });
+console.log('andata3');
 
 //smm app
 app.use((req, res, next) => {
@@ -390,10 +394,15 @@ app.use((req, res, next) => {
 	}
 	next();
 });
+console.log('andata4');
+
 app.use('/smm', express.static(path.join(__dirname, '../smm/dist')));
+console.log('andata5');
+
 app.use('/smm', (req, res) => {
 	res.sendFile(path.join(__dirname, '../smm/dist', 'index.html'));
 });
+console.log('andata6');
 
 //react app
 app.use(express.static(path.join(__dirname, '../app/build')));

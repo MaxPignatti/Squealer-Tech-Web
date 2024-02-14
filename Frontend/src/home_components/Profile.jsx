@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Card, Form, Button, InputGroup, FormControl, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
@@ -19,6 +19,9 @@ const Profile = () => {
 	
 	const [showOldPassword, setShowOldPassword] = useState(false);
 	const [showNewPassword, setShowNewPassword] = useState(false);
+
+	// Refs per gestire il focus su Alert
+    const errorRef = useRef(null);
 
 	if (!isAuthenticated) {
 		return <Navigate to='/login' />;
@@ -158,6 +161,7 @@ const Profile = () => {
 							   <Form.Control
 								 type="file"
 								 accept="image/*"
+								 aria-label="Carica una nuova immagine del profilo"
 								 onChange={(e) => {
 								   const file = e.target.files[0];
 								   if (file) {
@@ -177,6 +181,7 @@ const Profile = () => {
 								 type="text"
 								 placeholder="Enter first name"
 								 value={userData.firstName}
+								 aria-label="inserisci il nuovo nome"
 								 onChange={(e) => setUserData({ ...userData, firstName: e.target.value })}
 							   />
 							 </Form.Group>
@@ -187,6 +192,7 @@ const Profile = () => {
 								 type="text"
 								 placeholder="Enter last name"
 								 value={userData.lastName}
+								 aria-label="inserisci il nuovo cognome"
 								 onChange={(e) => setUserData({ ...userData, lastName: e.target.value })}
 							   />
 							 </Form.Group>
@@ -197,6 +203,7 @@ const Profile = () => {
 								 type="text"
 								 placeholder="Enter username"
 								 value={userData.username}
+								 aria-label="inserisci il nuovo username"
 								 onChange={(e) => setUserData({ ...userData, username: e.target.value })}
 							   />
 							 </Form.Group>
@@ -207,6 +214,7 @@ const Profile = () => {
 								 type="email"
 								 placeholder="Enter email"
 								 value={userData.email}
+								 aria-label="inserisci la nuova email"
 								 onChange={(e) => setUserData({ ...userData, email: e.target.value })}
 							   />
 							 </Form.Group>
@@ -215,7 +223,7 @@ const Profile = () => {
 							   <Button variant="success" onClick={handleUserChange}>Salva Modifiche</Button>
 							   <Button variant="secondary" onClick={handleAnnulla}>Annulla</Button>
 							</div>
-						   {profileErrorMessage && <Alert variant="danger" className="mt-2">{profileErrorMessage}</Alert>}
+						   {profileErrorMessage && <Alert variant="danger" ref={errorRef} aria-live="assertive" className="mt-2">{profileErrorMessage}</Alert>}
 						   </>          
                         )}
 						
@@ -228,6 +236,7 @@ const Profile = () => {
 									<FormControl
 									type={showOldPassword ? "text" : "password"}
 									placeholder="Vecchia Password"
+									aria-label="inserisci la vecchia password"
 									onChange={(e) => setUserData({ ...userData, oldPassword: e.target.value })}
 									/>
 									<Button variant="outline-secondary" onClick={() => setShowOldPassword(!showOldPassword)}>
@@ -242,6 +251,7 @@ const Profile = () => {
 									<FormControl
 									type={showNewPassword ? "text" : "password"}
 									placeholder="Nuova Password"
+									aria-label="inserisci la nuova password"
 									onChange={(e) => setUserData({ ...userData, newPassword: e.target.value })}
 									/>
 									<Button variant="outline-secondary" onClick={() => setShowNewPassword(!showNewPassword)}>
@@ -255,27 +265,31 @@ const Profile = () => {
 								<Button variant="primary" onClick={handleUserPsw}>Salva Modifiche</Button>
 								<Button variant="secondary" onClick={handleAnnullaPassword}>Annulla</Button>
 								</div>
-								{passwordErrorMessage && <Alert variant="danger" className="mt-2">{passwordErrorMessage}</Alert>}
+								{passwordErrorMessage && <Alert variant="danger" ref={errorRef} aria-live="assertive" className="mt-2">{passwordErrorMessage}</Alert>}
 							</>
 							)}
 						
 					  </>
 					) : (
-					  <div>
-						<p>First Name: {userData.firstName}</p>
-						<p>Last Name: {userData.lastName}</p>
-						<p>Username: {userData.username}</p>
-						<p>Email: {userData.email}</p>
-						<Button variant="primary" onClick={handleModifica} className="mt-3">Modifica Profilo</Button>
-					  </div>
+						<>
+							<div>
+								<p>First Name: {userData.firstName}</p>
+								<p>Last Name: {userData.lastName}</p>
+								<p>Username: {userData.username}</p>
+								<p>Email: {userData.email}</p>
+							</div>
+							<div className="d-flex flex-column align-items-start">
+								<Button variant="primary" onClick={handleModifica} className="mb-2">
+									Modifica Profilo
+								</Button>
+								<Button variant="info" onClick={handleModificaPassword}>
+									Modifica Password
+								</Button>
+							</div>
+						</>
+ 
 					)}
 	
-	
-					{!showChangePasswordForm && !editChange && (
-					  <Button variant="info" onClick={handleModificaPassword} className="mt-4">
-						Modifica Password
-					  </Button>
-					)}
 	
 					
 				  </Card.Body>

@@ -42,7 +42,7 @@ router.patch(
 );
 
 router.get(
-	'/squeals/:username/hashtag/:hashtag',
+	'/messages/public/:username/hashtag/:hashtag',
 	messageController.getMessageByHashtag
 );
 router.get(
@@ -53,7 +53,7 @@ router.patch('/messages/:id/acknowledge', messageController.acknowledgeMessage);
 router.get('/privateMessages/:username', messageController.getPrivateMessages);
 
 router.get(
-	'/squeals/:username/targetUsername/:targetUsername',
+	'/messages/public/:username/targetUsername/:targetUsername',
 	messageController.getMessageByUser
 );
 router.get(
@@ -61,18 +61,19 @@ router.get(
 	messageController.getPrivateMessByUser
 );
 router.get(
-	'/squeals/:username/channel/:channel',
+	'/messages/public/:username/channel/:channel',
 	messageController.getMessageByChannel
 );
 router.get(
 	'/privateMessages/:username/channel/:channel',
 	messageController.getPrivateMessByChannel
 );
-router.get('/squeals/:username/text/:text', messageController.getMessageByText);
+router.get('/messages/public/:username/text/:text', messageController.getMessageByText);
 router.get(
 	'/privateMessages/:username/text/:text',
 	messageController.getPrivateMessByText
 );
 router.get('/allMessages', messageController.getAllMessages);
+
 
 module.exports = router;

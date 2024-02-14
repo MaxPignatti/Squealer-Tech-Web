@@ -30,7 +30,7 @@ const UserMention = () => {
 					<Card className='text-center'>
 						<Card.Body>
 							<Image
-								src={`${userData.profileImage || 'defaultProfileImage.png'}`}
+								src={`${userData.profileImage}`}
 								alt={`${userData.username}'s profile`}
 								roundedCircle
 								style={{ maxWidth: '20%', margin: '0 auto' }}

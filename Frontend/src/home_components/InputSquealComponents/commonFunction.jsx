@@ -13,8 +13,8 @@ export const handleMessageChange = (
 ) => {
   const inputMessage = event.target.value;
   const charCounter =
-    (currentLocation != null ? 50 : 0) +
-    (image != null ? 50 : 0) +
+    (currentLocation != null ? 125 : 0) +
+    (image != null ? 125 : 0) +
     inputMessage.length;
 
   if (!publicMessage) {
@@ -45,13 +45,13 @@ export const handleImageChange = (
 ) => {
   if (publicMessage) {
     if (
-      dailyCharacters >= 50 &&
-      weeklyCharacters >= 50 &&
-      monthlyCharacters >= 50
+      dailyCharacters >= 125 &&
+      weeklyCharacters >= 125 &&
+      monthlyCharacters >= 125
     ) {
-      setDailyCharacters(dailyCharacters - 50);
-      setWeeklyCharacters(weeklyCharacters - 50);
-      setMonthlyCharacters(monthlyCharacters - 50);
+      setDailyCharacters(dailyCharacters - 125);
+      setWeeklyCharacters(weeklyCharacters - 125);
+      setMonthlyCharacters(monthlyCharacters - 125);
     } else {
       alert("Not enough characters for an image upload.");
       return;
@@ -83,9 +83,9 @@ export const handleRemoveImage = (
   setImage(null);
   setImagePreview(null);
   if (publicMessage) {
-    setDailyCharacters(dailyCharacters + 50);
-    setWeeklyCharacters(weeklyCharacters + 50);
-    setMonthlyCharacters(monthlyCharacters + 50);
+    setDailyCharacters(dailyCharacters + 125);
+    setWeeklyCharacters(weeklyCharacters + 125);
+    setMonthlyCharacters(monthlyCharacters + 125);
   }
 };
 
@@ -141,13 +141,13 @@ export const handleOpenMap = (
 ) => {
   if (publicMessage) {
     if (
-      dailyCharacters >= 50 &&
-      weeklyCharacters >= 50 &&
-      monthlyCharacters >= 50
+      dailyCharacters >= 125 &&
+      weeklyCharacters >= 125 &&
+      monthlyCharacters >= 125
     ) {
-      setDailyCharacters(dailyCharacters - 50);
-      setWeeklyCharacters(weeklyCharacters - 50);
-      setMonthlyCharacters(monthlyCharacters - 50);
+      setDailyCharacters(dailyCharacters - 125);
+      setWeeklyCharacters(weeklyCharacters - 125);
+      setMonthlyCharacters(monthlyCharacters - 125);
     } else {
       alert("Not enough characters for a position upload.");
       return;
@@ -171,9 +171,9 @@ export const handleCloseMap = (
   setShowMap(false);
   setCurrentLocation(null);
   if (publicMessage) {
-    setDailyCharacters(dailyCharacters + 50);
-    setWeeklyCharacters(weeklyCharacters + 50);
-    setMonthlyCharacters(monthlyCharacters + 50);
+    setDailyCharacters(dailyCharacters + 125);
+    setWeeklyCharacters(weeklyCharacters + 125);
+    setMonthlyCharacters(monthlyCharacters + 125);
   }
 };
 

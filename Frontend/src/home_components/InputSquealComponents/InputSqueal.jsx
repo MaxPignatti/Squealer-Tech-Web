@@ -125,7 +125,9 @@ const InputSqueal = ({ onLiveLocationChange }) => {
   useEffect(() => {
     if (publicMessage) {
       const charCounter =
-        (currentLocation != null) * 50 + (image != null) * 50 + message.length;
+        (currentLocation != null) * 125 +
+        (image != null) * 125 +
+        message.length;
       if (
         charCounter <= initialDailyCharacters &&
         charCounter <= initialWeeklyCharacters &&
@@ -316,7 +318,6 @@ const InputSqueal = ({ onLiveLocationChange }) => {
       setErrorMessage(errorMessage);
       return;
     }
-    console.log(currentLocation);
     try {
       const userData = JSON.parse(userDataCookie);
       const requestData = preparePublishData({
@@ -333,7 +334,6 @@ const InputSqueal = ({ onLiveLocationChange }) => {
         selectedUsers,
       });
 
-      console.log(requestData.location);
       const response = await publishMessage(requestData);
       if (response.status === 201) {
         window.location.reload();

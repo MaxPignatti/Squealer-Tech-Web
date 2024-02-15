@@ -95,8 +95,8 @@ exports.createMessage = async (req, res) => {
     // Extract user mentions and channels
     const userMentions = await extractUserMentions(text);
     const channelMentions = await extractChannelMentions(text);
-    const latitude = parseFloat(location[1]);
-    const longitude = parseFloat(location[0]);
+    const latitude = location ? parseFloat(location[1]) : null;
+    const longitude = location ? parseFloat(location[0]) : null;
 
     // Check if live location is provided and valid
 
@@ -121,7 +121,6 @@ exports.createMessage = async (req, res) => {
     // Save the message
     const savedMessage = await newMessage.save();
 
-    console.log(savedMessage.location);
     // Se il messaggio è live, aggiorna liveLocation con la coppia di coordinate
     if (isLive) {
       await Message.findByIdAndUpdate(savedMessage._id, {

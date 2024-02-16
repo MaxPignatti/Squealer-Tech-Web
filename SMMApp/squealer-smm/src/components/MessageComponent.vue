@@ -37,10 +37,8 @@
 				:src="mapSrc"
 				width="100%"
 				height="250"
-				frameborder="0"
-				scrolling="no"
-				marginheight="0"
-				marginwidth="0"
+				title="Descrizione del contenuto dell'iframe"
+				style="border: 0"
 			></iframe>
 		</div>
 
@@ -57,7 +55,7 @@
 				@click="toggleReplies"
 				class="toggle-reply-button"
 			>
-				{{ showReplies ? "Nascondi risposte" : "Vedi Risposte" }}
+				{{ showReplies ? 'Nascondi risposte' : 'Vedi Risposte' }}
 			</button>
 			<p class="text-sm text-gray-500 italic">
 				{{ formatDate(message.createdAt) }}
@@ -100,9 +98,9 @@ export default {
 	methods: {
 		loadReplies() {
 			fetch(`http://localhost:3500/messages/${this.message._id}/replies`, {
-				method: "GET",
+				method: 'GET',
 				headers: {
-					"Content-Type": "application/json",
+					'Content-Type': 'application/json',
 				},
 			})
 				.then((response) => response.json())
@@ -110,7 +108,7 @@ export default {
 					this.replies = data;
 				})
 				.catch((error) => {
-					console.error("Errore durante il recupero delle risposte:", error);
+					console.error('Errore durante il recupero delle risposte:', error);
 				});
 		},
 		toggleReplies() {
@@ -121,7 +119,7 @@ export default {
 			this.$nextTick(() => {
 				if (this.$refs.toggleButton) {
 					this.$refs.toggleButton.setAttribute(
-						"aria-expanded",
+						'aria-expanded',
 						this.showReplies
 					);
 				}
@@ -129,13 +127,13 @@ export default {
 		},
 		formatDate(dateString) {
 			const options = {
-				year: "numeric",
-				month: "long",
-				day: "numeric",
-				hour: "2-digit",
-				minute: "2-digit",
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric',
+				hour: '2-digit',
+				minute: '2-digit',
 			};
-			return new Date(dateString).toLocaleDateString("it-IT", options);
+			return new Date(dateString).toLocaleDateString('it-IT', options);
 		},
 	},
 };
@@ -144,5 +142,10 @@ export default {
 <style>
 .toggle-reply-button {
 	color: blue; /* Imposta il colore del testo */
+}
+
+iframe {
+	overflow: hidden;
+	border: none;
 }
 </style>

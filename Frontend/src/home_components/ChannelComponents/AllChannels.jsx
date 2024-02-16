@@ -12,7 +12,7 @@ const AllChannels = ({
 	const [filteredChannels, setFilteredChannels] = useState([]);
 
 	const listGroupStyle = {
-		maxHeight: '142px',
+		maxHeight: '243px',
 		overflowY: 'auto',
 	};
 
@@ -74,41 +74,42 @@ const AllChannels = ({
 	};
 
 	return (
-		<div className='container mt-3'>
-			<h1 className='display-4 text-center'>TUTTI I CANALI</h1>
-			<Form.Group className='mb-3'>
-				<Form.Label htmlFor='searchTerm'>Cerca canale</Form.Label>
-				<Form.Control
-					type='text'
-					id='searchTerm'
-					value={searchTerm}
-					onChange={(e) => setSearchTerm(e.target.value)}
-				/>
-			</Form.Group>
-			<Card>
-				<ListGroup
-					variant='flush'
-					style={listGroupStyle}
+	<div className='container mt-4'>
+		<h1 className='display-4 text-center mb-5'>Tutti i Canali</h1>
+		<Form.Group className='mb-4 shadow'>
+			<Form.Control
+			type='text'
+			id='searchTerm'
+			placeholder='Cerca canale...'
+			value={searchTerm}
+			onChange={(e) => setSearchTerm(e.target.value)}
+			className="py-2"
+			aria-label='ricerca canale'
+			style={{ border: '0', borderRadius: '0.25rem' }}
+			/>
+		</Form.Group>
+		<Card className='shadow'>
+			<ListGroup variant='flush' style={listGroupStyle}>
+			{filteredChannels.map((channel) => (
+				<ListGroup.Item key={channel._id} className="d-flex justify-content-between align-items-center py-3">
+				<div className="ms-3">
+					<h5 className="mb-0">{channel.name}</h5>
+					<span className='badge bg-primary ms-2'>{channel.members.length} Iscritti</span>
+				</div>
+				<Button
+					variant='outline-success'
+					size='sm'
+					className='me-3'
+					onClick={() => handleSubscribe(channel)}
 				>
-					{filteredChannels.map((channel) => (
-						<ListGroup.Item key={channel._id}>
-							{channel.name}
-							<span className='badge bg-primary ms-2'>
-								{channel.members.length} Iscritti
-							</span>
-							<Button
-								variant='success'
-								size='sm'
-								className='float-end'
-								onClick={() => handleSubscribe(channel)}
-							>
-								Iscriviti
-							</Button>
-						</ListGroup.Item>
-					))}
-				</ListGroup>
-			</Card>
-		</div>
+					Iscriviti
+				</Button>
+				</ListGroup.Item>
+			))}
+			</ListGroup>
+		</Card>
+	</div>
+
 	);
 };
 

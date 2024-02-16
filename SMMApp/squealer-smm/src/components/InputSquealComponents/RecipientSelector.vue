@@ -68,6 +68,7 @@ export default {
         !this.selectedChannels.some((selected) => selected._id === channel._id)
       ) {
         this.selectedChannels.push(channel);
+        console.log("Canale selezionato:", channel); // Aggiunto console.log per il controllo
       }
       this.searchTerm = "";
       this.isFocused = false;

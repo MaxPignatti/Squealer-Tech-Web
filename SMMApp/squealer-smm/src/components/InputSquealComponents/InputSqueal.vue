@@ -1,79 +1,89 @@
 <template>
-	<div class="flex">
-		<div
-			class="input-squeal-container"
-			role="form"
-			aria-labelledby="form-heading"
-		>
-			<RecipientSelector
-				:searchTerm="searchTerm"
-				@update:searchTerm="searchTerm = $event"
-				:filteredChannels="filteredChannels"
-				@channelSelect="handleChannelSelect"
-				:selectedChannels="selectedChannels"
-				@removeChannel="handleRemoveChannel"
-			/>
-			<div class="flex flex-wrap message-input-row">
-				<div class="flex-1 min-w-0">
-					<MessageInput
-						:message="message"
-						:dailyCharactersLimit="initialDailyCharacters"
-						:weeklyCharactersLimit="initialWeeklyCharacters"
-						:monthlyCharactersLimit="initialMonthlyCharacters"
-						:imageAttached="image != null"
-						@messageChange="handleMessageChange"
-						@textSelect="handleTextSelect"
-					/>
-				</div>
-				<div class="flex-none px-2">
-					<LinkInserter @insertLink="handleInsertLink" />
-				</div>
-			</div>
+  <div class="flex">
+    <div
+      class="input-squeal-container"
+      role="form"
+      aria-labelledby="form-heading"
+    >
+      <RecipientSelector
+        :searchTerm="searchTerm"
+        @update:searchTerm="searchTerm = $event"
+        :filteredChannels="filteredChannels"
+        @channelSelect="handleChannelSelect"
+        :selectedChannels="selectedChannels"
+        @removeChannel="handleRemoveChannel"
+      />
+      <div class="flex flex-wrap message-input-row">
+        <div class="flex-1 min-w-0">
+          <MessageInput
+            :message="message"
+            :dailyCharactersLimit="initialDailyCharacters"
+            :weeklyCharactersLimit="initialWeeklyCharacters"
+            :monthlyCharactersLimit="initialMonthlyCharacters"
+            :imageAttached="image != null"
+            @messageChange="handleMessageChange"
+            @textSelect="handleTextSelect"
+          />
+        </div>
+        <div class="flex-none px-2">
+          <LinkInserter @insertLink="handleInsertLink" />
+        </div>
+      </div>
 
-			<div class="flex justify-between items-center mt-4">
-				<ImageUploader
-					:image="image"
-					:imagePreview="imagePreview"
-					@imageChange="handleImageChange"
-					@removeImage="handleRemoveImage"
-				/>
-				<TemporaryMessageOptions
-					:isTemp="isTemp"
-					@toggleTemp="toggleTemp"
-					:updateInterval="updateInterval"
-					@updateIntervalChange="handleUpdateIntervalChange"
-					:maxSendCount="maxSendCount"
-					@maxSendCountChange="handleMaxSendCountChange"
-				/>
-			</div>
-			<div class="flex flex-wrap mt-4">
-				<div class="flex-1 min-w-0">
-					<CharCounter
-						:dailyCharacters="dailyCharacters"
-						:weeklyCharacters="weeklyCharacters"
-						:monthlyCharacters="monthlyCharacters"
-					/>
-				</div>
+      <div
+        class="flex flex-col md:flex-row md:justify-between md:items-center mt-4"
+      >
+        <div class="mb-4 md:mb-0 md:w-1/3">
+          <ImageUploader
+            :image="image"
+            :imagePreview="imagePreview"
+            @imageChange="handleImageChange"
+            @removeImage="handleRemoveImage"
+          />
+        </div>
+        <div class="mb-4 md:mb-0 md:w-1/3">
+          <MapLocationPicker
+            :location="location"
+            @locationChange="handleLocationChange"
+            @removeLocation="handleRemoveLocation"
+          />
+        </div>
+        <div class="md:w-1/3">
+          <TemporaryMessageOptions
+            :isTemp="isTemp"
+            @toggleTemp="toggleTemp"
+            :updateInterval="updateInterval"
+            @updateIntervalChange="handleUpdateIntervalChange"
+            :maxSendCount="maxSendCount"
+            @maxSendCountChange="handleMaxSendCountChange"
+          />
+        </div>
+      </div>
 
-				<div class="flex-1 flex flex-col justify-end">
-					<button
-						class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-end"
-						@click="handlePublish"
-						aria-label="Pubblica messaggio"
-					>
-						Pubblica
-					</button>
-				</div>
-			</div>
-			<div
-				v-if="errorMessage"
-				role="alert"
-				style="color: red"
-			>
-				{{ errorMessage }}
-			</div>
-		</div>
-	</div>
+      <div class="flex flex-wrap mt-4">
+        <div class="flex-1 min-w-0">
+          <CharCounter
+            :dailyCharacters="dailyCharacters"
+            :weeklyCharacters="weeklyCharacters"
+            :monthlyCharacters="monthlyCharacters"
+          />
+        </div>
+
+        <div class="flex-1 flex flex-col justify-end">
+          <button
+            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded self-end"
+            @click="handlePublish"
+            aria-label="Pubblica messaggio"
+          >
+            Pubblica
+          </button>
+        </div>
+      </div>
+      <div v-if="errorMessage" role="alert" style="color: red">
+        {{ errorMessage }}
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -85,351 +95,368 @@ import LinkInserter from "./LinkInserter.vue";
 import MessageInput from "./MessageInput.vue";
 import RecipientSelector from "./RecipientSelector.vue";
 import TemporaryMessageOptions from "./TemporaryMessageOptions.vue";
+import MapLocationPicker from "./MapLocationPicker.vue";
 
 export default {
-	components: {
-		CharCounter,
-		RecipientSelector,
-		ImageUploader,
-		LinkInserter,
-		MessageInput,
-		TemporaryMessageOptions,
-	},
-	setup() {
-		const message = ref("");
+  components: {
+    CharCounter,
+    RecipientSelector,
+    ImageUploader,
+    LinkInserter,
+    MessageInput,
+    TemporaryMessageOptions,
+    MapLocationPicker,
+  },
+  setup() {
+    const message = ref("");
 
-		const dailyCharacters = ref(0);
-		const weeklyCharacters = ref(0);
-		const monthlyCharacters = ref(0);
-		const initialDailyCharacters = ref(0);
-		const initialWeeklyCharacters = ref(0);
-		const initialMonthlyCharacters = ref(0);
+    const dailyCharacters = ref(0);
+    const weeklyCharacters = ref(0);
+    const monthlyCharacters = ref(0);
+    const initialDailyCharacters = ref(0);
+    const initialWeeklyCharacters = ref(0);
+    const initialMonthlyCharacters = ref(0);
 
-		const errorMessage = ref("");
+    const errorMessage = ref("");
 
-		const selection = ref({ start: 0, end: 0 });
+    const selection = ref({ start: 0, end: 0 });
 
-		const isTemp = ref(false);
-		const updateInterval = ref(0);
-		const maxSendCount = ref(0);
+    const isTemp = ref(false);
+    const updateInterval = ref(0);
+    const maxSendCount = ref(0);
 
-		const filteredChannels = ref([]);
-		const searchTerm = ref("");
-		const channels = ref([]);
-		const selectedChannels = ref([]);
+    const filteredChannels = ref([]);
+    const searchTerm = ref("");
+    const channels = ref([]);
+    const selectedChannels = ref([]);
 
-		const image = ref(null);
-		const imagePreview = ref(null);
+    const image = ref(null);
+    const imagePreview = ref(null);
 
-		const vipUsername = ref(null);
+    const vipUsername = ref(null);
 
-		onMounted(() => {
-			const authToken = Cookies.get("authToken");
-			if (authToken) {
-				fetch("http://localhost:3500/smm/session", {
-					headers: {
-						Authorization: `Bearer ${authToken}`,
-					},
-				})
-					.then((response) => response.json())
-					.then((data) => {
-						vipUsername.value = data.vip; // Salva lo username del VIP
+    const location = ref(null); // Assicurati che questa ref sia definita
 
-						// Prima chiamata API per i canali
-						return fetch(
-							`http://localhost:3500/channels?subscribedBy=${username}`
-						);
-					})
-					.then((response) => response.json())
-					.then((data) => {
-						const nonModeratorChannels = data.filter(
-							(channel) => !channel.moderatorChannel
-						);
-						channels.value = nonModeratorChannels;
+    // Definisci le funzioni di gestione degli eventi
+    const handleLocationChange = (newLocation) => {
+      location.value = newLocation;
+    };
 
-						// Seconda chiamata API per gli utenti
-						return fetch(`http://localhost:3500/usr/${vipUsername.value}`);
-					})
-					.then((response) => {
-						if (response.status === 200) {
-							return response.json();
-						} else {
-							throw new Error("API call failed");
-						}
-					})
-					.then((data) => {
-						dailyCharacters.value = data.dailyChars;
-						weeklyCharacters.value = data.weeklyChars;
-						monthlyCharacters.value = data.monthlyChars;
-						initialDailyCharacters.value = data.dailyChars;
-						initialWeeklyCharacters.value = data.weeklyChars;
-						initialMonthlyCharacters.value = data.monthlyChars;
-					})
-					.catch((error) => {
-						console.error("API call error:", error);
-					});
-			} else {
-				console.error("User data not found in cookies");
-			}
-		});
+    const handleRemoveLocation = () => {
+      location.value = null;
+    };
+    onMounted(() => {
+      const authToken = Cookies.get("authToken");
+      if (authToken) {
+        fetch("http://localhost:3500/smm/session", {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            vipUsername.value = data.vip; // Salva lo username del VIP
 
-		watch([searchTerm, channels], () => {
-			filteredChannels.value = channels.value
-				.filter((channel) =>
-					channel.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-				)
-				.slice(0, 5);
-		});
+            // Prima chiamata API per i canali
+            return fetch(
+              `http://localhost:3500/users/${vipUsername.value}/subscribedChannels`
+            );
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            const nonModeratorChannels = data.filter(
+              (channel) => !channel.moderatorChannel
+            );
+            channels.value = nonModeratorChannels;
 
-		watch([image], () => {
-			const charCounter = (image.value != null ? 50 : 0) + message.value.length;
+            // Seconda chiamata API per gli utenti
+            return fetch(`http://localhost:3500/usr/${vipUsername.value}`);
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              return response.json();
+            } else {
+              throw new Error("API call failed");
+            }
+          })
+          .then((data) => {
+            dailyCharacters.value = data.dailyChars;
+            weeklyCharacters.value = data.weeklyChars;
+            monthlyCharacters.value = data.monthlyChars;
+            initialDailyCharacters.value = data.dailyChars;
+            initialWeeklyCharacters.value = data.weeklyChars;
+            initialMonthlyCharacters.value = data.monthlyChars;
+          })
+          .catch((error) => {
+            console.error("API call error:", error);
+          });
+      } else {
+        console.error("User data not found in cookies");
+      }
+    });
 
-			dailyCharacters.value = initialDailyCharacters.value - charCounter;
-			weeklyCharacters.value = initialWeeklyCharacters.value - charCounter;
-			monthlyCharacters.value = initialMonthlyCharacters.value - charCounter;
-		});
+    watch([searchTerm, channels], () => {
+      filteredChannels.value = channels.value
+        .filter((channel) =>
+          channel.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+        )
+        .slice(0, 5);
+      console.log(filteredChannels.value); // Aggiunto console.log per il controllo
+    });
 
-		//FUNZIONI PER DESTINATARI
-		watch([searchTerm], () => {
-			filteredChannels.value = channels.value.filter((channel) =>
-				channel.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-			);
-		});
+    watch([image], () => {
+      const charCounter = (image.value != null ? 50 : 0) + message.value.length;
 
-		const handleChannelSelect = (newChannel) => {
-			if (
-				!selectedChannels.value.some(
-					(channel) => channel._id === newChannel._id
-				)
-			) {
-				selectedChannels.value.push(newChannel);
-			}
-		};
+      dailyCharacters.value = initialDailyCharacters.value - charCounter;
+      weeklyCharacters.value = initialWeeklyCharacters.value - charCounter;
+      monthlyCharacters.value = initialMonthlyCharacters.value - charCounter;
+    });
 
-		const handleRemoveChannel = (channelId) => {
-			selectedChannels.value = selectedChannels.value.filter(
-				(channel) => channel._id !== channelId
-			);
-		};
+    //FUNZIONI PER DESTINATARI
+    watch([searchTerm], () => {
+      filteredChannels.value = channels.value.filter((channel) =>
+        channel.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+      );
+    });
 
-		//FUNZIONI PER MESSAGGIO
-		const handleMessageChange = (newMessage) => {
-			message.value = newMessage;
-			const charCounter = (image.value != null ? 50 : 0) + newMessage.length;
+    const handleChannelSelect = (newChannel) => {
+      if (
+        !selectedChannels.value.some(
+          (channel) => channel._id === newChannel._id
+        )
+      ) {
+        selectedChannels.value.push(newChannel);
+      }
+    };
 
-			dailyCharacters.value = initialDailyCharacters.value - charCounter;
-			weeklyCharacters.value = initialWeeklyCharacters.value - charCounter;
-			monthlyCharacters.value = initialMonthlyCharacters.value - charCounter;
-		};
+    const handleRemoveChannel = (channelId) => {
+      selectedChannels.value = selectedChannels.value.filter(
+        (channel) => channel._id !== channelId
+      );
+    };
 
-		//FUNZIONI PER IMMAGINI
-		const handleImageChange = (event) => {
-			if (
-				dailyCharacters.value < 50 ||
-				weeklyCharacters.value < 50 ||
-				monthlyCharacters.value < 50
-			) {
-				alert("Not enough characters for an image upload.");
-				return;
-			}
+    //FUNZIONI PER MESSAGGIO
+    const handleMessageChange = (newMessage) => {
+      message.value = newMessage;
+      const charCounter = (image.value != null ? 50 : 0) + newMessage.length;
 
-			const file = event.target.files && event.target.files[0];
-			if (file) {
-				if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
-					alert("Please select a JPEG or PNG image.");
-					return;
-				}
-				const reader = new FileReader();
-				reader.onload = (e) => {
-					image.value = e.target.result; // Salva l'immagine in base64
-					imagePreview.value = e.target.result; // Imposta l'anteprima dell'immagine
-				};
-				reader.readAsDataURL(file);
-			}
-		};
+      dailyCharacters.value = initialDailyCharacters.value - charCounter;
+      weeklyCharacters.value = initialWeeklyCharacters.value - charCounter;
+      monthlyCharacters.value = initialMonthlyCharacters.value - charCounter;
+    };
 
-		const handleRemoveImage = () => {
-			image.value = null;
-			imagePreview.value = null;
-		};
+    //FUNZIONI PER IMMAGINI
+    const handleImageChange = (event) => {
+      if (
+        dailyCharacters.value < 50 ||
+        weeklyCharacters.value < 50 ||
+        monthlyCharacters.value < 50
+      ) {
+        alert("Not enough characters for an image upload.");
+        return;
+      }
 
-		//FUNZIONI PER LINK
-		const handleTextSelect = (event) => {
-			selection.value = {
-				start: event.target.selectionStart,
-				end: event.target.selectionEnd,
-			};
-		};
+      const file = event.target.files && event.target.files[0];
+      if (file) {
+        if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
+          alert("Please select a JPEG or PNG image.");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          image.value = e.target.result; // Salva l'immagine in base64
+          imagePreview.value = e.target.result; // Imposta l'anteprima dell'immagine
+        };
+        reader.readAsDataURL(file);
+      }
+    };
 
-		const handleInsertLink = (url) => {
-			if (url && selection.value.start !== selection.value.end) {
-				const beforeText = message.value.substring(0, selection.value.start);
-				const linkText = message.value.substring(
-					selection.value.start,
-					selection.value.end
-				);
-				const afterText = message.value.substring(selection.value.end);
-				message.value = `${beforeText}[${linkText}](${url})${afterText}`;
-			} else {
-				alert("Per favore, seleziona il testo a cui vuoi attribuire un link.");
-			}
-		};
+    const handleRemoveImage = () => {
+      image.value = null;
+      imagePreview.value = null;
+    };
 
-		//FUNZIONI PER MESSAGGI TEMPORANEI
-		const toggleTemp = () => {
-			isTemp.value = !isTemp.value;
-			if (!isTemp.value) {
-				updateInterval.value = "";
-				maxSendCount.value = "";
-			}
-		};
+    //FUNZIONI PER LINK
+    const handleTextSelect = (event) => {
+      selection.value = {
+        start: event.target.selectionStart,
+        end: event.target.selectionEnd,
+      };
+    };
 
-		const handleUpdateIntervalChange = (newInterval) => {
-			updateInterval.value = Number(newInterval) || 0;
-		};
+    const handleInsertLink = (url) => {
+      if (url && selection.value.start !== selection.value.end) {
+        const beforeText = message.value.substring(0, selection.value.start);
+        const linkText = message.value.substring(
+          selection.value.start,
+          selection.value.end
+        );
+        const afterText = message.value.substring(selection.value.end);
+        message.value = `${beforeText}[${linkText}](${url})${afterText}`;
+      } else {
+        alert("Per favore, seleziona il testo a cui vuoi attribuire un link.");
+      }
+    };
 
-		const handleMaxSendCountChange = (newMaxSendCount) => {
-			maxSendCount.value = Number(newMaxSendCount) || 0;
-		};
+    //FUNZIONI PER MESSAGGI TEMPORANEI
+    const toggleTemp = () => {
+      isTemp.value = !isTemp.value;
+      if (!isTemp.value) {
+        updateInterval.value = "";
+        maxSendCount.value = "";
+      }
+    };
 
-		//PUBLISH
-		const handlePublish = async () => {
-			const savedMessage = message.value;
-			const savedImage = image.value;
-			if (savedMessage && selectedChannels.value.length > 0) {
-				message.value = "";
-				image.value = null;
-				imagePreview.value = null;
-				errorMessage.value = "";
-				if (vipUsername.value) {
-					try {
-						const currentTime = new Date();
-						const isTempMessage = updateInterval.value && maxSendCount.value;
-						if (
-							isTempMessage &&
-							(!updateInterval.value || !maxSendCount.value)
-						) {
-							alert(
-								"Please enter valid update interval and max send count for temporary messages."
-							);
-							return;
-						}
-						const requestData = {
-							userName: vipUsername.value,
-							image: savedImage,
-							text: savedMessage,
-							dailyCharacters: dailyCharacters.value,
-							weeklyCharacters: weeklyCharacters.value,
-							monthlyCharacters: monthlyCharacters.value,
-							updateInterval: isTempMessage ? updateInterval.value : undefined,
-							maxSendCount: isTempMessage ? maxSendCount.value : undefined,
-							nextSendTime: isTempMessage
-								? new Date(currentTime.getTime() + updateInterval.value * 60000)
-								: undefined,
-							location: null,
-							recipients: {
-								channels: selectedChannels.value.map((channel) => channel.name),
-								users: [],
-							},
-						};
+    const handleUpdateIntervalChange = (newInterval) => {
+      updateInterval.value = Number(newInterval) || 0;
+    };
 
-						const url = "http://localhost:3500/messages";
-						const requestOptions = {
-							method: "POST",
-							headers: { "Content-Type": "application/json" },
-							body: JSON.stringify(requestData),
-						};
+    const handleMaxSendCountChange = (newMaxSendCount) => {
+      maxSendCount.value = Number(newMaxSendCount) || 0;
+    };
 
-						const response = await fetch(url, requestOptions);
+    //PUBLISH
+    const handlePublish = async () => {
+      console.log(selectedChannels.value);
+      const savedMessage = message.value;
+      const savedImage = image.value;
+      if (savedMessage && selectedChannels.value.length > 0) {
+        message.value = "";
+        image.value = null;
+        imagePreview.value = null;
+        errorMessage.value = "";
+        if (vipUsername.value) {
+          try {
+            const currentTime = new Date();
+            const isTempMessage = updateInterval.value && maxSendCount.value;
+            if (
+              isTempMessage &&
+              (!updateInterval.value || !maxSendCount.value)
+            ) {
+              alert(
+                "Please enter valid update interval and max send count for temporary messages."
+              );
+              return;
+            }
+            const requestData = {
+              userName: vipUsername.value,
+              image: savedImage,
+              text: savedMessage,
+              dailyCharacters: dailyCharacters.value,
+              weeklyCharacters: weeklyCharacters.value,
+              monthlyCharacters: monthlyCharacters.value,
+              updateInterval: isTempMessage ? updateInterval.value : undefined,
+              maxSendCount: isTempMessage ? maxSendCount.value : undefined,
+              nextSendTime: isTempMessage
+                ? new Date(currentTime.getTime() + updateInterval.value * 60000)
+                : undefined,
+              location: location.value,
+              recipients: {
+                channels: selectedChannels.value.map((channel) => channel.name),
+                users: [],
+              },
+            };
 
-						if (response.status === 201) {
-							window.location.reload(); //Da modificare, non va bene ricaricare tutto
-						} else {
-							const data = await response.json();
-							console.error(
-								"Errore nella creazione del messaggio:",
-								data.error
-							);
-						}
-					} catch (error) {
-						console.error("Errore nella creazione del messaggio:", error);
-					}
-				}
-			} else {
-				let errorText = "";
-				if (!savedMessage) {
-					errorText = "Scrivi qualcosa";
-				} else if (selectedChannels.value.length === 0) {
-					errorText = "Seleziona un destinatario";
-				}
-				errorMessage.value = errorText;
-			}
-		};
+            const url = "http://localhost:3500/messages";
+            const requestOptions = {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(requestData),
+            };
 
-		return {
-			message,
-			dailyCharacters,
-			weeklyCharacters,
-			monthlyCharacters,
-			initialDailyCharacters,
-			initialWeeklyCharacters,
-			initialMonthlyCharacters,
-			errorMessage,
-			isTemp,
-			updateInterval,
-			maxSendCount,
-			filteredChannels,
-			searchTerm,
-			channels,
-			selectedChannels,
-			image,
-			imagePreview,
+            const response = await fetch(url, requestOptions);
 
-			handleChannelSelect,
-			handleRemoveChannel,
-			handleMessageChange,
-			handleImageChange,
-			handleRemoveImage,
-			handleTextSelect,
-			handleInsertLink,
-			toggleTemp,
-			handleUpdateIntervalChange,
-			handleMaxSendCountChange,
-			handlePublish,
-		};
-	},
+            if (response.status === 201) {
+              window.location.reload(); //Da modificare, non va bene ricaricare tutto
+            } else {
+              const data = await response.json();
+              console.error(
+                "Errore nella creazione del messaggio:",
+                data.error
+              );
+            }
+          } catch (error) {
+            console.error("Errore nella creazione del messaggio:", error);
+          }
+        }
+      } else {
+        let errorText = "";
+        if (!savedMessage) {
+          errorText = "Scrivi qualcosa";
+        } else if (selectedChannels.value.length === 0) {
+          errorText = "Seleziona un destinatario";
+        }
+        errorMessage.value = errorText;
+      }
+    };
+
+    return {
+      message,
+      dailyCharacters,
+      weeklyCharacters,
+      monthlyCharacters,
+      initialDailyCharacters,
+      initialWeeklyCharacters,
+      initialMonthlyCharacters,
+      errorMessage,
+      isTemp,
+      updateInterval,
+      maxSendCount,
+      filteredChannels,
+      searchTerm,
+      channels,
+      selectedChannels,
+      location,
+      image,
+      imagePreview,
+
+      handleChannelSelect,
+      handleRemoveChannel,
+      handleMessageChange,
+      handleImageChange,
+      handleRemoveImage,
+      handleTextSelect,
+      handleInsertLink,
+      toggleTemp,
+      handleLocationChange,
+      handleRemoveLocation,
+      handleUpdateIntervalChange,
+      handleMaxSendCountChange,
+      handlePublish,
+    };
+  },
 };
 </script>
 
 <style>
 .input-squeal-container {
-	width: 100%;
-	margin: 1rem;
-	padding: 2rem;
-	box-shadow: 0 8px 16px rgba(0, 128, 0, 0.4); /* Ombra verde più intensa e più grande */
-	color: #333; /* Colore del testo scuro per miglior contrasto */
-	background-color: #fff; /* Sfondo chiaro */
+  width: 100%;
+  margin: 1rem;
+  padding: 2rem;
+  box-shadow: 0 8px 16px rgba(0, 128, 0, 0.4); /* Ombra verde più intensa e più grande */
+  color: #333; /* Colore del testo scuro per miglior contrasto */
+  background-color: #fff; /* Sfondo chiaro */
 }
 
 /* Stili specifici per i componenti interni */
 .flex.flex-wrap {
-	gap: 1rem; /* Spazio tra i componenti */
+  gap: 1rem; /* Spazio tra i componenti */
 }
 
 @media (max-width: 768px) {
-	.input-squeal-container .flex-1 {
-		flex-basis: 100%; /* MessageInput occupa tutta la larghezza */
-	}
+  .input-squeal-container .flex-1 {
+    flex-basis: 100%; /* MessageInput occupa tutta la larghezza */
+  }
 
-	.input-squeal-container .flex-none {
-		flex-basis: 100%; /* Anche il componente LinkInserter diventa a tutta larghezza */
-	}
-	.input-squeal-container .flex.justify-between {
-		gap: 1rem;
-	}
+  .input-squeal-container .flex-none {
+    flex-basis: 100%; /* Anche il componente LinkInserter diventa a tutta larghezza */
+  }
+  .input-squeal-container .flex.justify-between {
+    gap: 1rem;
+  }
 }
 
 .input-squeal-container .message-input-row {
-	margin-top: 0.5rem; /* Aggiunge un piccolo margine superiore */
+  margin-top: 0.5rem; /* Aggiunge un piccolo margine superiore */
 }
 </style>

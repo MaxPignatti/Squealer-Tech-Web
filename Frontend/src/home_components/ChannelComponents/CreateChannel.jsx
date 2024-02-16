@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
-import { Button, Alert, Form } from 'react-bootstrap';
+import { Button, Alert, Form, Card } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
@@ -66,47 +66,66 @@ const CreateChannel = ({ setSubscribedChannels, setYourChannels }) => {
 	};
 
 	return (
-		<div className='container mt-3'>
+	<div className='container mt-5'>
+		<div className="d-flex justify-content-center">
 			<Button
-				variant='primary'
+				variant='outline-primary'
+				size="lg"
 				onClick={() => setShowForm(!showForm)}
+				className="mb-4"
 			>
-				{showForm ? 'Nascondi' : 'Crea nuovo canale'}
+				{showForm ? 'Nascondi Form' : 'Crea Nuovo Canale'}
 			</Button>
-
-			{showForm && (
-				<div className='mt-3'>
-					<h2>Crea un nuovo canale</h2>
-					<Form.Group className='mb-3'>
-						<Form.Label htmlFor='channelName'>Nome del canale</Form.Label>
-						<Form.Control
-							type='text'
-							id='channelName'
-							value={channelName}
-							onChange={handleChannelNameChange}
-						/>
-					</Form.Group>
-					{errorMessage && <Alert variant='danger'>{errorMessage}</Alert>}
-					<Form.Group className='mb-3'>
-						<Form.Label htmlFor='channelDescription'>
-							Descrizione del canale
-						</Form.Label>
-						<Form.Control
-							type='text'
-							id='channelDescription'
-							value={channelDescription}
-							onChange={(e) => setChannelDescription(e.target.value)}
-						/>
-					</Form.Group>
-					<Button
-						variant='success'
-						onClick={handleCreateChannel}
-					>
-						Crea canale
-					</Button>
-				</div>
-			)}
 		</div>
+
+		{showForm && (
+			<Card className="shadow p-4 mb-5 bg-white rounded" aria-labelledby="formTitle">
+				<Card.Body>
+					<h2 id="formTitle" className="text-center mb-4">Crea un Nuovo Canale</h2>
+					<Form>
+						<Form.Group className='mb-3'>
+							<Form.Label htmlFor='channelName'>Nome del canale</Form.Label>
+							<Form.Control
+								type='text'
+								id='channelName'
+								placeholder="Inserisci il nome del canale"
+								value={channelName}
+								onChange={handleChannelNameChange}
+								aria-describedby="channelNameHelpBlock"
+							/>
+							<Form.Text id="channelNameHelpBlock" muted>
+								Il nome del canale deve essere univoco.
+							</Form.Text>
+						</Form.Group>
+						{errorMessage && <Alert variant='danger'>{errorMessage}</Alert>}
+						<Form.Group className='mb-4'>
+							<Form.Label htmlFor='channelDescription'>Descrizione del canale</Form.Label>
+							<Form.Control
+								type='text'
+								id='channelDescription'
+								placeholder="Descrivi brevemente il canale"
+								value={channelDescription}
+								onChange={(e) => setChannelDescription(e.target.value)}
+								aria-describedby="channelDescriptionHelpBlock"
+							/>
+							<Form.Text id="channelDescriptionHelpBlock" muted>
+								Fornisci una breve descrizione per il tuo canale.
+							</Form.Text>
+						</Form.Group>
+						<div className="d-flex justify-content-center">
+							<Button
+								variant='success'
+								onClick={handleCreateChannel}
+							>
+								Crea Canale
+							</Button>
+						</div>
+					</Form>
+				</Card.Body>
+			</Card>
+		)}
+	</div>
+
 	);
 };
 

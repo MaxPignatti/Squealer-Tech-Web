@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
-import { Card, ListGroup, Button } from 'react-bootstrap';
+import { Card, ListGroup, Button, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 const YourChannels = ({
@@ -13,7 +13,7 @@ const YourChannels = ({
 	const [selectedChannelId, setSelectedChannelId] = useState(null);
 
 	const listGroupStyle = {
-		maxHeight: '142px',
+		maxHeight: '243px',
 		overflowY: 'auto',
 	};
 
@@ -69,10 +69,17 @@ const YourChannels = ({
 		}
 	};
 
-	const handleShowMembers = async (members, channelId) => {
-		setMembersList(members);
-		setSelectedChannelId(channelId);
-	};
+	const toggleShowMembers = (members, channelId) => {
+		if (selectedChannelId === channelId) {
+		  // Se l'ID del canale selezionato è già aperto, chiudilo
+		  setSelectedChannelId(null);
+		  setMembersList([]);
+		} else {
+		  // Altrimenti, apri la lista dei membri per il canale cliccato
+		  setMembersList(members);
+		  setSelectedChannelId(channelId);
+		}
+	  };
 
 	const handleRemoveMember = async (username) => {
 		try {
@@ -104,66 +111,68 @@ const YourChannels = ({
 			);
 		}
 	};
+	const renderTooltip = (props) => (
+		<Tooltip {...props}>
+		  Clicca per visualizzare gli iscritti
+		</Tooltip>
+	);
 
 	return (
 		<div className='container mt-3'>
-			<h1 className='display-4 text-center'>I TUOI CANALI</h1>
-			<Card>
-				<ListGroup
-					variant='flush'
-					style={listGroupStyle}
-				>
-					{yourChannels.map((channel) => (
-						<ListGroup.Item key={channel._id}>
-							{channel.name}
-							<button
-								className='badge bg-primary ms-2'
-								style={{
-									cursor: 'pointer',
-									border: 'none',
-									background: 'none',
-								}}
-								onClick={() => {
-									if (selectedChannelId === channel._id) {
-										setSelectedChannelId(null);
-									} else {
-										handleShowMembers(channel.members, channel._id);
-									}
-								}}
-							>
-								{channel.members.length} Iscritti
-							</button>
-							<Button
-								variant='danger'
-								size='sm'
-								className='float-end'
-								onClick={() => handleDeleteChannel(channel)}
-							>
-								Elimina
-							</Button>
-							{selectedChannelId === channel._id && (
-								<ListGroup className='mt-2'>
-									{membersList.map((member) => (
-										<ListGroup.Item key={member}>
-											{member}
-											<Button
-												variant='danger'
-												size='sm'
-												className='float-end'
-												onClick={() => handleRemoveMember(member)}
-											>
-												Rimuovi
-											</Button>
-										</ListGroup.Item>
-									))}
-								</ListGroup>
-							)}
+		  <h1  className='display-4 text-center mb-5'>I Tuoi Canali</h1>
+		  <Card className="shadow">
+			<ListGroup variant='flush' style={listGroupStyle}>
+			  {yourChannels.map((channel) => (
+				<ListGroup.Item key={channel._id} className="d-flex justify-content-between align-items-center py-3">
+				  <div className="ms-3">
+					<h5 className="mb-0">{channel.name}</h5>
+					<OverlayTrigger
+					  placement="top"
+					  overlay={renderTooltip}
+					>
+					  <Button
+						className='badge bg-primary ms-2'
+						style={{ cursor: 'pointer', border: 'none', background: 'none' }}
+						aria-label={`Visualizza iscritti a ${channel.name}`}
+						aria-expanded={selectedChannelId === channel._id}
+						onClick={() => toggleShowMembers(channel.members, channel._id)}
+					  >
+						{channel.members.length} Iscritti
+					  </Button>
+					</OverlayTrigger>
+				  </div>
+				  <Button
+					variant='outline-danger'
+					size='sm'
+					onClick={() => handleDeleteChannel(channel)}
+					aria-label={`Elimina canale ${channel.name}`}
+				  >
+					Elimina
+				  </Button>
+				  {selectedChannelId === channel._id && (
+					<ListGroup className='mt-2'>
+					  {membersList.map((member) => (
+						<ListGroup.Item key={member}>
+						  {member}
+						  <Button
+							variant='danger'
+							size='sm'
+							className='float-end'
+							onClick={() => handleRemoveMember(member)}
+							aria-label={`Rimuovi ${member} da ${channel.name}`}
+						  >
+							Rimuovi
+						  </Button>
 						</ListGroup.Item>
-					))}
-				</ListGroup>
-			</Card>
+					  ))}
+					</ListGroup>
+				  )}
+				</ListGroup.Item>
+			  ))}
+			</ListGroup>
+		  </Card>
 		</div>
-	);
+	  );
 };
 
 YourChannels.propTypes = {

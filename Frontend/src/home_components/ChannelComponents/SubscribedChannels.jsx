@@ -9,7 +9,7 @@ const SubscribedChannels = ({
 	setAllChannels,
 }) => {
 	const listGroupStyle = {
-		maxHeight: '142px',
+		maxHeight: '243px',
 		overflowY: 'auto',
 	};
 
@@ -63,23 +63,19 @@ const SubscribedChannels = ({
 	};
 
 	return (
-		<div className='container mt-3'>
-			<h1 className='display-4 text-center'>CANALI A CUI SEI ISCRITTO</h1>
-			<Card>
-				<ListGroup
-					variant='flush'
-					style={listGroupStyle}
-				>
+		<div className='container mt-4'>
+			<h1 className='display-4 text-center mb-5'>Canali a cui sei iscritto</h1>
+			<Card className='shadow'>
+				<ListGroup variant='flush' style={listGroupStyle}>
 					{subscribedChannels.map((channel) => (
-						<ListGroup.Item key={channel._id}>
-							{channel.name}
-							<span className='badge bg-primary ms-2'>
-								{channel.members.length} Iscritti
-							</span>
+						<ListGroup.Item key={channel._id} className="d-flex justify-content-between align-items-center py-3">
+							<div className="ms-3">
+								<h5 className="mb-0">{channel.name}</h5>
+								<span className='badge bg-primary ms-2'>{channel.members.length} Iscritti</span>
+							</div>
 							<Button
-								variant='danger'
+								variant='outline-danger'
 								size='sm'
-								className='float-end'
 								onClick={() => handleUnsubscribe(channel)}
 							>
 								Disiscriviti
@@ -89,6 +85,7 @@ const SubscribedChannels = ({
 				</ListGroup>
 			</Card>
 		</div>
+
 	);
 };
 

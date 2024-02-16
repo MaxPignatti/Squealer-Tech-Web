@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 function AutoLogin() {
-	const { isAuthenticated, login } = useAuth();
+	const { login } = useAuth();
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
@@ -46,11 +46,6 @@ function AutoLogin() {
 	}, [login]);
 
 	// Helper function to get a cookie by name
-	function getCookie(name) {
-		const value = `; ${document.cookie}`;
-		const parts = value.split(`; ${name}=`);
-		if (parts.length === 2) return parts.pop().split(';').shift();
-	}
 
 	if (loading) {
 		return <div>Loading...</div>;

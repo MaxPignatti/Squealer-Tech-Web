@@ -272,13 +272,13 @@ const Profile = () => {
 					  </>
 					) : (
 						<>
-							<div>
+							<div className="d-flex flex-column align-items-center">
 								<p>First Name: {userData.firstName}</p>
 								<p>Last Name: {userData.lastName}</p>
 								<p>Username: {userData.username}</p>
 								<p>Email: {userData.email}</p>
 							</div>
-							<div className="d-flex flex-column align-items-start">
+							<div className="d-flex flex-column align-items-center">
 								<Button variant="primary" onClick={handleModifica} className="mb-2">
 									Modifica Profilo
 								</Button>

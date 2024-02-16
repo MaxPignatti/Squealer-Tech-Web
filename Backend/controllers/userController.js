@@ -288,3 +288,30 @@ exports.handleProAction = async (req, res) => {
 		res.status(500).json({ error: 'Errore interno del server' });
 	}
 };
+
+exports.proAcceptance = async (req, res) => {
+	try {
+		const { username } = req.params;
+		const { accept } = req.body;
+
+		const user = await User.findOne({ username });
+		if (!user) {
+			return res.status(404).json({ error: 'Utente non trovato' });
+		}
+
+		if (accept) {
+			user.isPro = true;
+		}
+		user.isProRequested = false;
+
+		await user.save();
+		res.json({
+			message: `Richiesta Pro ${
+				accept ? 'accettata' : 'rifiutata'
+			} con successo per ${username}`,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: 'Errore interno del server' });
+	}
+};

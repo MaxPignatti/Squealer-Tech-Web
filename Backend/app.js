@@ -49,33 +49,31 @@ mongoose
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	})
-	.then(() => {
-		Channel.findOne({ name: 'PUBLIC' })
-			.then((channel) => {
-				if (!channel) {
-					const publicChannel = new Channel({
-						name: 'PUBLIC',
-						creator: 'Squealer',
-						description: 'Canale Pubblico',
-						moderatorChannel: true,
-					});
-					publicChannel
-						.save()
-						.then(() => console.log('Canale "PUBLIC" creato con successo.'))
-						.catch((err) =>
-							console.error('Errore durante il salvataggio del canale:', err)
-						);
-				}
-			})
-			.catch((err) =>
-				console.error('Errore durante la ricerca del canale:', err)
-			);
-	})
+	.then(() => {})
 	.catch((err) => console.error('MongoDB connection error:', err));
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.on('connected', console.error.bind(console, 'MongoDB connected:'));
+
+Channel.findOne({ name: 'PUBLIC' })
+	.then((channel) => {
+		if (!channel) {
+			const publicChannel = new Channel({
+				name: 'PUBLIC',
+				creator: 'Squealer',
+				description: 'Canale Pubblico',
+				moderatorChannel: true,
+			});
+			publicChannel
+				.save()
+				.then(() => console.log('Canale "PUBLIC" creato con successo.'))
+				.catch((err) =>
+					console.error('Errore durante il salvataggio del canale:', err)
+				);
+		}
+	})
+	.catch((err) => console.error('Errore durante la ricerca del canale:', err));
 
 Channel.findOne({ name: 'CONTROVERSIAL' })
 	.then((channel) => {
@@ -374,7 +372,5 @@ cron.schedule('0 0 * * *', async () => {
 		}
 	}
 });
-
-app.use('/messages', messageRoutes);
 
 module.exports = app;

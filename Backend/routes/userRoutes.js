@@ -16,5 +16,6 @@ router.delete('/api/deleteUser/:username', userController.deleteUser);
 router.patch('/usr/:username/block', userController.toggleBlockUser);
 router.patch('/usr/:username/mod', userController.toggleModUser);
 router.patch('/usr/:username/proStatus', userController.handleProAction);
+router.patch('/usr/:username/proAcceptance', userController.proAcceptance);
 
 module.exports = router;

@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('userPage').addEventListener('click', () => {
 		window.location.href = '../userPage/user.html';
 	});
+	document.getElementById('proPage').addEventListener('click', () => {
+		window.location.href = '../proPage/request.html';
+	});
 });
 
 function checkLoginStatus() {

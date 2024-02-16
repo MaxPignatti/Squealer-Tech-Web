@@ -19,11 +19,18 @@ function displayUsers(users) {
 	usersList.innerHTML = '';
 	users.forEach((user) => {
 		const userElement = document.createElement('div');
+		userElement.classList.add('col-12', 'col-md-6', 'col-lg-4', 'mb-4');
 		userElement.innerHTML = `
-            <p>Name: ${user.firstName} ${user.lastName}</p>
-            <p>Email: ${user.email}</p>
-            <button onclick="handleProAcceptance('${user.username}', true)">Accept</button>
-            <button onclick="handleProAcceptance('${user.username}', false)">Reject</button>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">${user.firstName} ${user.lastName}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">${user.email}</h6>
+                    <div class="card-text">
+                        <button onclick="handleProAcceptance('${user.username}', true)" class="btn btn-success">Accept</button>
+                        <button onclick="handleProAcceptance('${user.username}', false)" class="btn btn-danger">Reject</button>
+                    </div>
+                </div>
+            </div>
         `;
 		usersList.appendChild(userElement);
 	});

@@ -98,9 +98,9 @@ body {
 
 .form-control,
 .btn-primary {
-	max-width: 250px; /* O la larghezza che preferisci */
-	display: block; /* Importante per applicare margin: auto */
-	margin: 0 auto 10px auto; /* Centra l'elemento e aggiunge un margine in basso */
+	max-width: 250px;
+	display: block;
+	margin: 0 auto 10px auto;
 }
 
 .form-control {
@@ -132,4 +132,18 @@ body {
 	height: auto;
 	display: block;
 	margin: 10px auto;
+}
+
+.btn-equal-width {
+	flex: 1;
+	margin: 0 5px;
+}
+
+@media (max-width: 768px) {
+	.btn-equal-width {
+		margin-bottom: 10px;
+	}
+	.d-flex {
+		flex-direction: column;
+	}
 }

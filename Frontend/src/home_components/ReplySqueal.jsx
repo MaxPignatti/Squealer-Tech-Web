@@ -13,11 +13,6 @@ import {
 	handleImageChange,
 	handleRemoveImage,
 	toggleMap,
-	handleOpenMap,
-	handleCloseMap,
-	handleGetLocation,
-	sendLocationPeriodically,
-	sendLocationToBackend,
 	handleTextSelect,
 	handleInsertLink,
 } from './InputSquealComponents/commonFunction';
@@ -39,7 +34,6 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 
 	const [currentLocation, setCurrentLocation] = useState(null);
 	const [showMap, setShowMap] = useState(false);
-	const [_id, set_id] = useState(null);
 
 	const [image, setImage] = useState(null); // Stato per l'immagine in base64
 	const [imagePreview, setImagePreview] = useState(null); // Stato per l'anteprima dell'immagine
@@ -81,68 +75,88 @@ const ReplySqueal = ({ originalMessage, onStartReplying, onEndReplying }) => {
 	}, []);
 
 	useEffect(() => {
-		setPublicMessage(!(originalMessage.channel.length == 0));
+		setPublicMessage(originalMessage.channel.length !== 0);
 	}, []);
-	/*
-  useEffect(() => {
-    const interval = setInterval(() => {
-      
-      sendLocationPeriodically(_id);
-    }, 10000); // Aggiorna ogni 10 secondi
-
-    return () => clearInterval(interval);
-  }, []);
-  */
 
 	//PUBLISH
-	const handlePublish = async () => {
-		const savedMessage = message;
+	const resetStates = () => {
+		setMessage('');
+		setImage(null);
+		setImagePreview(null);
+		setErrorMessage('');
+	};
 
-		if (savedMessage) {
-			const userDataCookie = Cookies.get('user_data');
-			setMessage('');
-			setImage(null);
-			setImagePreview(null);
-			setErrorMessage(''); // Reset del messaggio di errore
-			if (userDataCookie) {
-				try {
-					const userData = JSON.parse(userDataCookie);
-					const requestData = {
-						username: userData.username,
-						image: image !== null ? image : null,
-						text: savedMessage,
-						dailyCharacters: dailyCharacters,
-						weeklyCharacters: weeklyCharacters,
-						monthlyCharacters: monthlyCharacters,
-						location: currentLocation
-							? { latitude: currentLocation[0], longitude: currentLocation[1] }
-							: null,
-					};
-					const requestOptions = {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify(requestData),
-					};
+	const createRequestData = (
+		savedMessage,
+		image,
+		dailyCharacters,
+		weeklyCharacters,
+		monthlyCharacters,
+		currentLocation,
+		userData
+	) => {
+		return {
+			username: userData.username,
+			image: image !== null ? image : null,
+			text: savedMessage,
+			dailyCharacters: dailyCharacters,
+			weeklyCharacters: weeklyCharacters,
+			monthlyCharacters: monthlyCharacters,
+			location: currentLocation
+				? { latitude: currentLocation[0], longitude: currentLocation[1] }
+				: null,
+		};
+	};
 
-					const response = await fetch(
-						`http://localhost:3500/messages/${originalMessage._id}/replies`,
-						requestOptions
-					);
-					onEndReplying();
-					if (response.status === 201) {
-						const data = await response.json();
-						set_id(data._id);
-						window.location.reload();
-					} else {
-						const data = await response.json();
-						console.error('Errore nella creazione della risposta:', data.error);
-					}
-				} catch (error) {
-					console.error('Errore nella creazione della risposta:', error);
-				}
-			}
+	const handleResponse = async (response) => {
+		onEndReplying();
+		if (response.status === 201) {
+			window.location.reload();
 		} else {
+			const data = await response.json();
+			console.error('Errore nella creazione della risposta:', data.error);
+		}
+	};
+
+	const handlePublish = async () => {
+		if (!message) {
 			setErrorMessage('Scrivi qualcosa');
+			return;
+		}
+
+		const userDataCookie = Cookies.get('user_data');
+		if (!userDataCookie) {
+			console.error('User data not found in cookies');
+			return;
+		}
+
+		resetStates();
+
+		try {
+			const userData = JSON.parse(userDataCookie);
+			const requestData = createRequestData(
+				message,
+				image,
+				dailyCharacters,
+				weeklyCharacters,
+				monthlyCharacters,
+				currentLocation,
+				userData
+			);
+
+			const requestOptions = {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(requestData),
+			};
+
+			const response = await fetch(
+				`http://localhost:3500/messages/${originalMessage._id}/replies`,
+				requestOptions
+			);
+			await handleResponse(response);
+		} catch (error) {
+			console.error('Errore nella creazione della risposta:', error);
 		}
 	};
 

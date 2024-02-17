@@ -9,8 +9,8 @@
 				:searchTerm="searchTerm"
 				@update:searchTerm="searchTerm = $event"
 				:filteredChannels="filteredChannels"
-				@channelSelect="handleChannelSelect"
 				:selectedChannels="selectedChannels"
+				@channelSelect="handleChannelSelect"
 				@removeChannel="handleRemoveChannel"
 			/>
 			<div class="flex flex-wrap message-input-row">
@@ -30,22 +30,36 @@
 				</div>
 			</div>
 
-			<div class="flex justify-between items-center mt-4">
-				<ImageUploader
-					:image="image"
-					:imagePreview="imagePreview"
-					@imageChange="handleImageChange"
-					@removeImage="handleRemoveImage"
-				/>
-				<TemporaryMessageOptions
-					:isTemp="isTemp"
-					@toggleTemp="toggleTemp"
-					:updateInterval="updateInterval"
-					@updateIntervalChange="handleUpdateIntervalChange"
-					:maxSendCount="maxSendCount"
-					@maxSendCountChange="handleMaxSendCountChange"
-				/>
+			<div
+				class="flex flex-col md:flex-row md:justify-between md:items-center mt-4"
+			>
+				<div class="mb-4 md:mb-0 md:w-1/3">
+					<ImageUploader
+						:image="image"
+						:imagePreview="imagePreview"
+						@imageChange="handleImageChange"
+						@removeImage="handleRemoveImage"
+					/>
+				</div>
+				<div class="mb-4 md:mb-0 md:w-1/3">
+					<MapLocationPicker
+						:location="location"
+						@locationChange="handleLocationChange"
+						@removeLocation="handleRemoveLocation"
+					/>
+				</div>
+				<div class="md:w-1/3">
+					<TemporaryMessageOptions
+						:isTemp="isTemp"
+						@toggleTemp="toggleTemp"
+						:updateInterval="updateInterval"
+						@updateIntervalChange="handleUpdateIntervalChange"
+						:maxSendCount="maxSendCount"
+						@maxSendCountChange="handleMaxSendCountChange"
+					/>
+				</div>
 			</div>
+
 			<div class="flex flex-wrap mt-4">
 				<div class="flex-1 min-w-0">
 					<CharCounter
@@ -77,14 +91,15 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue';
-import Cookies from 'js-cookie';
-import CharCounter from './CharCounter.vue';
-import ImageUploader from './ImageUploader.vue';
-import LinkInserter from './LinkInserter.vue';
-import MessageInput from './MessageInput.vue';
-import RecipientSelector from './RecipientSelector.vue';
-import TemporaryMessageOptions from './TemporaryMessageOptions.vue';
+import { ref, onMounted, watch } from "vue";
+import Cookies from "js-cookie";
+import CharCounter from "./CharCounter.vue";
+import ImageUploader from "./ImageUploader.vue";
+import LinkInserter from "./LinkInserter.vue";
+import MessageInput from "./MessageInput.vue";
+import RecipientSelector from "./RecipientSelector.vue";
+import TemporaryMessageOptions from "./TemporaryMessageOptions.vue";
+import MapLocationPicker from "./MapLocationPicker.vue";
 
 export default {
 	components: {
@@ -94,9 +109,10 @@ export default {
 		LinkInserter,
 		MessageInput,
 		TemporaryMessageOptions,
+		MapLocationPicker,
 	},
 	setup() {
-		const message = ref('');
+		const message = ref("");
 
 		const dailyCharacters = ref(0);
 		const weeklyCharacters = ref(0);
@@ -105,7 +121,7 @@ export default {
 		const initialWeeklyCharacters = ref(0);
 		const initialMonthlyCharacters = ref(0);
 
-		const errorMessage = ref('');
+		const errorMessage = ref("");
 
 		const selection = ref({ start: 0, end: 0 });
 
@@ -114,7 +130,7 @@ export default {
 		const maxSendCount = ref(0);
 
 		const filteredChannels = ref([]);
-		const searchTerm = ref('');
+		const searchTerm = ref("");
 		const channels = ref([]);
 		const selectedChannels = ref([]);
 
@@ -123,10 +139,20 @@ export default {
 
 		const vipUsername = ref(null);
 
+		const location = ref(null); // Assicurati che questa ref sia definita
+
+		// Definisci le funzioni di gestione degli eventi
+		const handleLocationChange = (newLocation) => {
+			location.value = newLocation;
+		};
+
+		const handleRemoveLocation = () => {
+			location.value = null;
+		};
 		onMounted(() => {
-			const authToken = Cookies.get('authToken');
+			const authToken = Cookies.get("authToken");
 			if (authToken) {
-				fetch('http://localhost:3500/smm/session', {
+				fetch("http://localhost:3500/smm/session", {
 					headers: {
 						Authorization: `Bearer ${authToken}`,
 					},
@@ -137,7 +163,7 @@ export default {
 
 						// Prima chiamata API per i canali
 						return fetch(
-							`http://localhost:3500/channels?subscribedBy=${username}`
+							`http://localhost:3500/users/${vipUsername.value}/subscribedChannels`
 						);
 					})
 					.then((response) => response.json())
@@ -154,7 +180,7 @@ export default {
 						if (response.status === 200) {
 							return response.json();
 						} else {
-							throw new Error('API call failed');
+							throw new Error("API call failed");
 						}
 					})
 					.then((data) => {
@@ -166,10 +192,10 @@ export default {
 						initialMonthlyCharacters.value = data.monthlyChars;
 					})
 					.catch((error) => {
-						console.error('API call error:', error);
+						console.error("API call error:", error);
 					});
 			} else {
-				console.error('User data not found in cookies');
+				console.error("User data not found in cookies");
 			}
 		});
 
@@ -179,6 +205,7 @@ export default {
 					channel.name.toLowerCase().includes(searchTerm.value.toLowerCase())
 				)
 				.slice(0, 5);
+			console.log(filteredChannels.value); // Aggiunto console.log per il controllo
 		});
 
 		watch([image], () => {
@@ -229,14 +256,14 @@ export default {
 				weeklyCharacters.value < 50 ||
 				monthlyCharacters.value < 50
 			) {
-				alert('Not enough characters for an image upload.');
+				alert("Not enough characters for an image upload.");
 				return;
 			}
 
 			const file = event.target.files?.[0];
 			if (file) {
-				if (!file.type.match('image/jpeg') && !file.type.match('image/png')) {
-					alert('Please select a JPEG or PNG image.');
+				if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
+					alert("Please select a JPEG or PNG image.");
 					return;
 				}
 				const reader = new FileReader();
@@ -271,7 +298,7 @@ export default {
 				const afterText = message.value.substring(selection.value.end);
 				message.value = `${beforeText}[${linkText}](${url})${afterText}`;
 			} else {
-				alert('Per favore, seleziona il testo a cui vuoi attribuire un link.');
+				alert("Per favore, seleziona il testo a cui vuoi attribuire un link.");
 			}
 		};
 
@@ -279,8 +306,8 @@ export default {
 		const toggleTemp = () => {
 			isTemp.value = !isTemp.value;
 			if (!isTemp.value) {
-				updateInterval.value = '';
-				maxSendCount.value = '';
+				updateInterval.value = "";
+				maxSendCount.value = "";
 			}
 		};
 
@@ -294,29 +321,26 @@ export default {
 
 		//PUBLISH
 		const validateMessageAndChannels = () => {
-			let errorText = '';
-			if (!message.value) {
-				errorText = 'Scrivi qualcosa';
-			} else if (selectedChannels.value.length === 0) {
-				errorText = 'Seleziona un destinatario';
-			}
-			return errorText;
-		};
+			const savedMessage = message.value;
+			const channelsLength = selectedChannels.value.length;
 
-		const validateTempMessageSettings = () => {
-			const isValid = updateInterval.value > 0 && maxSendCount.value > 0;
-
-			if (!isValid) {
-				alert(
-					'Please enter valid update interval and max send count for temporary messages.'
-				);
+			if (!savedMessage) {
+				errorMessage.value = "Scrivi qualcosa";
+				return false;
+			} else if (channelsLength === 0) {
+				errorMessage.value = "Seleziona un destinatario";
+				return false;
 			}
 
-			return isValid;
+			return true;
 		};
 
-		const constructRequestData = (isTempMessage, savedMessage, savedImage) => {
+		const prepareRequestData = () => {
+			const savedMessage = message.value;
+			const savedImage = image.value;
+			const isTempMessage = updateInterval.value && maxSendCount.value;
 			const currentTime = new Date();
+
 			return {
 				userName: vipUsername.value,
 				image: savedImage,
@@ -329,7 +353,7 @@ export default {
 				nextSendTime: isTempMessage
 					? new Date(currentTime.getTime() + updateInterval.value * 60000)
 					: undefined,
-				location: null,
+				location: location.value,
 				recipients: {
 					channels: selectedChannels.value.map((channel) => channel.name),
 					users: [],
@@ -337,50 +361,36 @@ export default {
 			};
 		};
 
-		const postMessage = async (requestData) => {
-			const url = 'http://localhost:3500/messages';
-			const requestOptions = {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(requestData),
-			};
-			const response = await fetch(url, requestOptions);
-			if (response.status === 201) {
-				window.location.reload(); // Considera di aggiornare l'UI invece di ricaricare la pagina
-			} else {
-				const data = await response.json();
-				console.error('Errore nella creazione del messaggio:', data.error);
+		const handlePublishRequest = async () => {
+			try {
+				const requestData = prepareRequestData();
+				const url = "http://localhost:3500/messages";
+				const requestOptions = {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(requestData),
+				};
+
+				const response = await fetch(url, requestOptions);
+
+				if (response.status === 201) {
+					window.location.reload(); // Da modificare, non va bene ricaricare tutto
+				} else {
+					const data = await response.json();
+					console.error("Errore nella creazione del messaggio:", data.error);
+				}
+			} catch (error) {
+				console.error("Errore nella creazione del messaggio:", error);
 			}
 		};
 
 		const handlePublish = async () => {
-			const savedMessage = message.value;
-			const savedImage = image.value;
+			console.log(selectedChannels.value);
 
-			const errorText = validateMessageAndChannels();
-			if (errorText) {
-				errorMessage.value = errorText;
-				return;
-			}
-
-			message.value = '';
-			image.value = null;
-			imagePreview.value = null;
-			errorMessage.value = '';
-
-			if (vipUsername.value) {
-				try {
-					const isTempMessage = validateTempMessageSettings();
-					if (!isTempMessage) return;
-
-					const requestData = constructRequestData(
-						isTempMessage,
-						savedMessage,
-						savedImage
-					);
-					await postMessage(requestData);
-				} catch (error) {
-					console.error('Errore nella creazione del messaggio:', error);
+			if (validateMessageAndChannels()) {
+				errorMessage.value = "";
+				if (vipUsername.value) {
+					await handlePublishRequest();
 				}
 			}
 		};
@@ -401,6 +411,7 @@ export default {
 			searchTerm,
 			channels,
 			selectedChannels,
+			location,
 			image,
 			imagePreview,
 
@@ -412,6 +423,8 @@ export default {
 			handleTextSelect,
 			handleInsertLink,
 			toggleTemp,
+			handleLocationChange,
+			handleRemoveLocation,
 			handleUpdateIntervalChange,
 			handleMaxSendCountChange,
 			handlePublish,

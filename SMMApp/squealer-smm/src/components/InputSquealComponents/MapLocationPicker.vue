@@ -23,14 +23,14 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
-import { fromLonLat } from "ol/proj";
+import { toLonLat, fromLonLat } from "ol/proj";
 
 export default {
   emits: ["locationChange", "removeLocation"],
   props: {
     location: {
       type: Object,
-      default: () => ({ lat: 45.464211, lon: 9.191383 }),
+      default: () => null,
     },
   },
 
@@ -82,7 +82,8 @@ export default {
 
       this.map.on("singleclick", (event) => {
         const coordinates = event.coordinate;
-        this.selectedLocation = fromLonLat(coordinates);
+        this.selectedLocation = toLonLat(coordinates);
+        this.$emit("locationChange", this.selectedLocation);
         this.addMarker(coordinates);
       });
     },
@@ -105,6 +106,7 @@ export default {
         this.map.removeLayer(this.markerLayer);
         this.markerLayer = null;
         this.selectedLocation = null;
+        this.$emit("locationChange", this.selectedLocation);
       }
       this.mapActive = false; // Nasconde la mappa
       this.mapContainerHeight = "auto";

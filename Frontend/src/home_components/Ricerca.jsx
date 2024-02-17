@@ -62,7 +62,7 @@ const Ricerca = () => {
 					xs={12}
 					md={8}
 				>
-					<h1>Qui puoi cercare e filtrare i messaggi</h1>
+					<h1 className='text-center mb-4'>Qui puoi cercare e filtrare i messaggi</h1>
 					<Form className='mb-4'>
 						<Form.Group as={Row}>
 							<Col sm='3'>
@@ -71,7 +71,7 @@ const Ricerca = () => {
 									value={searchCriteria}
 									onChange={(e) => setSearchCriteria(e.target.value)}
 									aria-label='Tipo di ricerca'
-									id='searchCriteriaSelect' // Aggiunta di un ID unico
+									id='searchCriteriaSelect' 
 								>
 									<option value='user'>Utente</option>
 									<option value='channel'>Canale</option>
@@ -86,10 +86,10 @@ const Ricerca = () => {
 									value={tempSearchText}
 									onChange={(e) => setTempSearchText(e.target.value)}
 									aria-label={`Cerca per ${searchCriteria}`}
-									id='searchTextInput' // Aggiunta di un ID unico
+									id='searchTextInput' 
 								/>
 							</Col>
-							<Col sm='2'>
+							<Col sm={2} className='mt-2 mt-sm-0'>
 								<ButtonGroup>
 									<Button
 										variant='primary'

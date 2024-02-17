@@ -8,6 +8,13 @@ const ImageUploader = ({
   handleImageChange,
   handleRemoveImage,
 }) => {
+
+    // Funzione per gestire la pressione dei tasti quando il label è in focus
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter') {
+        document.getElementById('imageUpload').click();
+      }
+    };
   return (
     <div>
       {!image ? (
@@ -20,7 +27,14 @@ const ImageUploader = ({
             hidden
             id="imageUpload"
           />
-          <label htmlFor="imageUpload" className="btn btn-primary mb-2">
+          <label 
+            htmlFor="imageUpload" 
+            className="btn btn-primary mb-2" 
+            tabIndex={0} 
+            role="button" 
+            aria-label="Upload Image"
+            onKeyDown={handleKeyDown} 
+          >
             Allega Foto
           </label>
         </>
@@ -30,8 +44,11 @@ const ImageUploader = ({
             src={imagePreview}
             alt="Anteprima"
             className="img-fluid mb-2"
+            tabIndex={0} 
+            role="img"
+            aria-label="Image Preview"
           />
-          <Button variant="danger" onClick={handleRemoveImage} className="mb-2">
+          <Button variant="danger" onClick={handleRemoveImage} className="mb-2" aria-label="annulla immagine">
             Annulla Foto
           </Button>
         </>
@@ -48,3 +65,4 @@ ImageUploader.propTypes = {
 };
 
 export default ImageUploader;
+

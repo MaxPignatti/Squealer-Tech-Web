@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Form } from 'react-bootstrap';
+import React from "react";
+import PropTypes from "prop-types";
+import { Form } from "react-bootstrap";
 
 const MessageInput = ({ message, handleMessageChange, handleTextSelect }) => {
 	return (
@@ -10,9 +10,9 @@ const MessageInput = ({ message, handleMessageChange, handleTextSelect }) => {
 			onChange={handleMessageChange}
 			onSelect={handleTextSelect}
 			placeholder='Inserisci il tuo messaggio...'
-			id="messageInput" 
-            name="messageInput"
-			style={{ height: '100px', marginBottom: '10px' }}
+			id='messageInput'
+			name='messageInput'
+			style={{ height: "100px", marginBottom: "10px" }}
 		/>
 	);
 };

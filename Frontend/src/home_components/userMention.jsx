@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Card, Container, Row, Col, Button, Image } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { Card, Container, Row, Col, Button, Image } from "react-bootstrap";
+import { BASE_URL } from "../config";
 
 const UserMention = () => {
 	const [searchParams] = useSearchParams();
-	const username = searchParams.get('user');
+	const username = searchParams.get("user");
 	const [userData, setUserData] = useState({});
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		fetch(`http://localhost:3500/usr/${username}`)
+		fetch(`${BASE_URL}/usr/${username}`)
 			.then((response) => response.json())
 			.then((data) => setUserData(data))
-			.catch((error) => console.error('Error fetching user data:', error));
+			.catch((error) => console.error("Error fetching user data:", error));
 	}, [username]);
 
 	const handleSearchRedirect = () => {
@@ -33,7 +34,7 @@ const UserMention = () => {
 								src={`${userData.profileImage}`}
 								alt={`${userData.username}'s profile`}
 								roundedCircle
-								style={{ maxWidth: '20%', margin: '0 auto' }}
+								style={{ maxWidth: "20%", margin: "0 auto" }}
 							/>
 							<Card.Text>
 								<strong>First Name:</strong> {userData.firstName}

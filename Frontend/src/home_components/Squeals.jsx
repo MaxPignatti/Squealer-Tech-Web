@@ -1,32 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { Col, Container, Row, Button, ButtonGroup } from 'react-bootstrap';
-import Cookies from 'js-cookie';
-import Message from './Message';
-import { useMessageRefs } from '../MessageRefsContext';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from "react";
+import { Col, Container, Row, Button, ButtonGroup } from "react-bootstrap";
+import Cookies from "js-cookie";
+import Message from "./Message";
+import { useMessageRefs } from "../MessageRefsContext";
+import PropTypes from "prop-types";
+import { BASE_URL } from "../config";
 
 const Squeals = ({ searchType, searchText }) => {
 	const [messages, setMessages] = useState([]);
-	const [viewMode, setViewMode] = useState('public'); // 'public' o 'private'
+	const [viewMode, setViewMode] = useState("public"); // 'public' o 'private'
 	const [currentUser, setCurrentUser] = useState(null);
 	const { messageRefs } = useMessageRefs();
 	const [isEditing, setIsEditing] = useState(false);
 	const [isReplying, setIsReplying] = useState(false);
-	const [customPublicMessage, setCustomPublicMessage] = useState('');
-	const [customPrivateMessage, setCustomPrivateMessage] = useState('');
+	const [customPublicMessage, setCustomPublicMessage] = useState("");
+	const [customPrivateMessage, setCustomPrivateMessage] = useState("");
 
 	// Funzione per costruire l'URL basato su vari parametri
 	const buildUrl = (viewMode, username, searchType, searchText) => {
-		let baseUrl = `http://localhost:3500/${
-			viewMode === 'public' ? 'messages/public' : 'privateMessages'
+		let baseUrl = `${BASE_URL}/${
+			viewMode === "public" ? "messages/public" : "privateMessages"
 		}/${username}`;
 		if (searchType && searchText) {
 			const encodedSearchText = encodeURIComponent(searchText);
 			const endpoints = {
-				hashtag: 'hashtag',
-				channel: 'channel',
-				text: 'text',
-				user: 'targetUsername',
+				hashtag: "hashtag",
+				channel: "channel",
+				text: "text",
+				user: "targetUsername",
 			};
 			baseUrl += `/${endpoints[searchType]}/${encodedSearchText}`;
 		}
@@ -41,14 +42,14 @@ const Squeals = ({ searchType, searchText }) => {
 			setMessages(data.messages || []);
 			setCustomMessages(data);
 		} catch (error) {
-			console.error('Failed to fetch messages:', error);
+			console.error("Failed to fetch messages:", error);
 			setMessages([]);
 		}
 	};
 
 	// Utilizzo all'interno del useEffect
 	useEffect(() => {
-		const userDataCookie = Cookies.get('user_data');
+		const userDataCookie = Cookies.get("user_data");
 		if (userDataCookie && !isEditing && !isReplying) {
 			const userData = JSON.parse(userDataCookie);
 			setCurrentUser(userData.username);
@@ -76,17 +77,17 @@ const Squeals = ({ searchType, searchText }) => {
 	}, [viewMode, isEditing, isReplying, searchType, searchText]);
 
 	const handleReaction = async (messageId, isPositiveReaction) => {
-		const userDataCookie = Cookies.get('user_data');
+		const userDataCookie = Cookies.get("user_data");
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 			try {
 				const response = await fetch(
-					`http://localhost:3500/messages/${messageId}/reactions/`,
+					`${BASE_URL}/messages/${messageId}/reactions/`,
 					{
-						method: 'POST',
+						method: "POST",
 						headers: {
-							'Content-Type': 'application/json',
+							"Content-Type": "application/json",
 						},
 						body: JSON.stringify({
 							reaction: isPositiveReaction,
@@ -106,10 +107,10 @@ const Squeals = ({ searchType, searchText }) => {
 
 					setMessages([...messages]);
 				} else {
-					console.error('Failed to update reaction:', response.status);
+					console.error("Failed to update reaction:", response.status);
 				}
 			} catch (error) {
-				console.error('API call error:', error);
+				console.error("API call error:", error);
 			}
 		}
 	};
@@ -127,25 +128,22 @@ const Squeals = ({ searchType, searchText }) => {
 
 	const scrollToMessage = (messageId) => {
 		const ref = messageRefs.current[messageId];
-		ref?.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+		ref?.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 	};
 
 	const handleSaveChanges = async (messageId, editedText) => {
-		const userDataCookie = Cookies.get('user_data');
+		const userDataCookie = Cookies.get("user_data");
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
 			const username = userData.username;
 			try {
-				const response = await fetch(
-					`http://localhost:3500/messages/${messageId}`,
-					{
-						method: 'PATCH',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({ text: editedText, username: username }),
-					}
-				);
+				const response = await fetch(`${BASE_URL}/messages/${messageId}`, {
+					method: "PATCH",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ text: editedText, username: username }),
+				});
 
 				if (response.status === 200) {
 					const updatedMessage = messages.find(
@@ -160,10 +158,10 @@ const Squeals = ({ searchType, searchText }) => {
 					handleEditButtonClick(messageId);
 					setIsEditing(false);
 				} else {
-					console.error('Failed to save changes:', response.status);
+					console.error("Failed to save changes:", response.status);
 				}
 			} catch (error) {
-				console.error('API call error:', error);
+				console.error("API call error:", error);
 			}
 		}
 	};
@@ -185,14 +183,14 @@ const Squeals = ({ searchType, searchText }) => {
 			<Row className='justify-content-center my-3'>
 				<ButtonGroup>
 					<Button
-						variant={viewMode === 'public' ? 'primary' : 'secondary'}
-						onClick={() => setViewMode('public')}
+						variant={viewMode === "public" ? "primary" : "secondary"}
+						onClick={() => setViewMode("public")}
 					>
 						Squeals Pubblici
 					</Button>
 					<Button
-						variant={viewMode === 'private' ? 'primary' : 'secondary'}
-						onClick={() => setViewMode('private')}
+						variant={viewMode === "private" ? "primary" : "secondary"}
+						onClick={() => setViewMode("private")}
 					>
 						Messaggi Privati
 					</Button>
@@ -221,12 +219,12 @@ const Squeals = ({ searchType, searchText }) => {
 					) : (
 						<div className='text-center mt-4'>
 							<p className='lead'>
-								{viewMode === 'public'
+								{viewMode === "public"
 									? customPublicMessage ||
-									  'Al momento non ci sono Squeals pubblici da mostrare.'
-									: customPrivateMessage || 'Non hai messaggi privati.'}
+									  "Al momento non ci sono Squeals pubblici da mostrare."
+									: customPrivateMessage || "Non hai messaggi privati."}
 							</p>
-							{viewMode === 'public' && !customPublicMessage && (
+							{viewMode === "public" && !customPublicMessage && (
 								<p>
 									Iscriviti a dei canali per iniziare a esplorare i messaggi e
 									interagire con la community!

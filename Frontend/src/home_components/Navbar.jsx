@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
 	faUser,
 	faBars,
@@ -8,10 +8,10 @@ import {
 	faCheckCircle,
 	faTv,
 	faShoppingBag,
-} from '@fortawesome/free-solid-svg-icons';
-import { Link, NavLink } from 'react-router-dom';
-import './Navbar.css';
-import { Navbar, Nav, Container } from 'react-bootstrap';
+} from "@fortawesome/free-solid-svg-icons";
+import { Link, NavLink } from "react-router-dom";
+import "./Navbar.css";
+import { Navbar, Nav, Container } from "react-bootstrap";
 
 const CustomNavbar = () => {
 	const [verticalNavbarOpen, setVerticalNavbarOpen] = useState(false);
@@ -56,7 +56,7 @@ const CustomNavbar = () => {
 							<FontAwesomeIcon
 								icon={faUser}
 								className='profile-icon'
-							/>{' '}
+							/>{" "}
 							<span className='nav-text'>Profile</span>
 						</Nav.Link>
 						<Nav.Link
@@ -64,7 +64,7 @@ const CustomNavbar = () => {
 							to='/Channels'
 							className='nav-link'
 						>
-							<FontAwesomeIcon icon={faTv} />{' '}
+							<FontAwesomeIcon icon={faTv} />{" "}
 							<span className='nav-text'>Canali</span>
 						</Nav.Link>
 						<Nav.Link
@@ -72,7 +72,7 @@ const CustomNavbar = () => {
 							to='/Shop'
 							className='nav-link'
 						>
-							<FontAwesomeIcon icon={faShoppingBag} />{' '}
+							<FontAwesomeIcon icon={faShoppingBag} />{" "}
 							<span className='nav-text'>Shop</span>
 						</Nav.Link>
 						<Nav.Link
@@ -80,7 +80,7 @@ const CustomNavbar = () => {
 							to='/Ricerca'
 							className='nav-link'
 						>
-							<FontAwesomeIcon icon={faMagnifyingGlass} />{' '}
+							<FontAwesomeIcon icon={faMagnifyingGlass} />{" "}
 							<span className='nav-text'>Ricerca</span>
 						</Nav.Link>
 						<Nav.Link
@@ -88,7 +88,7 @@ const CustomNavbar = () => {
 							to='/Pro'
 							className='nav-link'
 						>
-							<FontAwesomeIcon icon={faCheckCircle} />{' '}
+							<FontAwesomeIcon icon={faCheckCircle} />{" "}
 							<span className='nav-text'>Richiedi il Pro!</span>
 						</Nav.Link>
 					</Nav>

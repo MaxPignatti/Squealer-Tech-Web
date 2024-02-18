@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import CreateChannel from './CreateChannel';
-import YourChannels from './YourChannels';
-import SubscribedChannels from './SubscribedChannels';
-import AllChannels from './AllChannels';
+import React, { useState } from "react";
+import CreateChannel from "./CreateChannel";
+import YourChannels from "./YourChannels";
+import SubscribedChannels from "./SubscribedChannels";
+import AllChannels from "./AllChannels";
 
 const ChannelsPage = () => {
 	const [subscribedChannels, setSubscribedChannels] = useState([]);
@@ -12,7 +12,7 @@ const ChannelsPage = () => {
 	return (
 		<div
 			className='container mt-3'
-			style={{ marginBottom: '30px' }}
+			style={{ marginBottom: "30px" }}
 		>
 			<CreateChannel
 				subscribedChannels={subscribedChannels}

@@ -1,35 +1,36 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { BASE_URL } from "./config";
 
 const RegistrationPage = () => {
 	const [formData, setFormData] = useState({
-		firstName: '',
-		lastName: '',
-		username: '',
-		email: '',
-		password: '',
-		confirmPassword: '',
-		socialMediaManagerEmail: '',
+		firstName: "",
+		lastName: "",
+		username: "",
+		email: "",
+		password: "",
+		confirmPassword: "",
+		socialMediaManagerEmail: "",
 	});
 
-	const [errorMessage, setErrorMessage] = useState(''); // State for error message
+	const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
 	const handleRegister = async (event) => {
 		event.preventDefault();
 
 		try {
 			// Send a POST request to your backend registration endpoint
-			const response = await fetch('http://localhost:3500/register', {
-				method: 'POST',
+			const response = await fetch(`${BASE_URL}/register`, {
+				method: "POST",
 				headers: {
-					'Content-Type': 'application/json',
+					"Content-Type": "application/json",
 				},
 				body: JSON.stringify(formData),
 			});
 
 			if (response.status === 201) {
-				window.location.href = '/login'; // Redirect to the login page
+				window.location.href = "/login"; // Redirect to the login page
 			} else {
 				const data = await response.json();
 				setErrorMessage(data.error); // Set the error message
@@ -52,12 +53,12 @@ const RegistrationPage = () => {
 								<img
 									src='pic/logo.png'
 									alt='Logo'
-									style={{ maxWidth: '80%', height: 'auto' }}
+									style={{ maxWidth: "80%", height: "auto" }}
 								/>
 							</div>
 							<h2
 								className='text-center'
-								style={{ color: 'black' }}
+								style={{ color: "black" }}
 							>
 								Register
 							</h2>
@@ -66,7 +67,7 @@ const RegistrationPage = () => {
 									controlId='formBasicFirstName'
 									className='mb-4'
 								>
-									<Form.Label style={{ color: 'green' }}>First Name</Form.Label>
+									<Form.Label style={{ color: "green" }}>First Name</Form.Label>
 									<Form.Control
 										type='text'
 										placeholder='Enter first name'
@@ -82,7 +83,7 @@ const RegistrationPage = () => {
 									controlId='formBasicLastName'
 									className='mb-4'
 								>
-									<Form.Label style={{ color: 'green' }}>Last Name</Form.Label>
+									<Form.Label style={{ color: "green" }}>Last Name</Form.Label>
 									<Form.Control
 										type='text'
 										placeholder='Enter last name'
@@ -98,7 +99,7 @@ const RegistrationPage = () => {
 									controlId='formBasicUsername'
 									className='mb-4'
 								>
-									<Form.Label style={{ color: 'green' }}>Username</Form.Label>
+									<Form.Label style={{ color: "green" }}>Username</Form.Label>
 									<Form.Control
 										type='text'
 										placeholder='Enter username'
@@ -114,7 +115,7 @@ const RegistrationPage = () => {
 									controlId='formBasicEmail'
 									className='mb-4'
 								>
-									<Form.Label style={{ color: 'green' }}>
+									<Form.Label style={{ color: "green" }}>
 										Email address
 									</Form.Label>
 									<Form.Control
@@ -132,7 +133,7 @@ const RegistrationPage = () => {
 									controlId='formBasicPassword'
 									className='mb-4'
 								>
-									<Form.Label style={{ color: 'green' }}>Password</Form.Label>
+									<Form.Label style={{ color: "green" }}>Password</Form.Label>
 									<Form.Control
 										type='password'
 										placeholder='Password'
@@ -148,7 +149,7 @@ const RegistrationPage = () => {
 									controlId='formBasicConfirmPassword'
 									className='mb-4'
 								>
-									<Form.Label style={{ color: 'green' }}>
+									<Form.Label style={{ color: "green" }}>
 										Confirm Password
 									</Form.Label>
 									<Form.Control
@@ -169,7 +170,7 @@ const RegistrationPage = () => {
 									variant='success'
 									type='submit'
 									block={true.toString()}
-									style={{ background: 'purple' }}
+									style={{ background: "purple" }}
 								>
 									Register
 								</Button>
@@ -180,12 +181,12 @@ const RegistrationPage = () => {
 							</Form>
 						</Card.Body>
 						<Card.Footer className='text-center mt-4'>
-							<p style={{ color: 'red' }}>
+							<p style={{ color: "red" }}>
 								Already have an account? <Link to='/login'>Login</Link>
 							</p>
 						</Card.Footer>
 						<Card.Footer className='text-center'>
-							<p style={{ color: 'orange' }}>
+							<p style={{ color: "orange" }}>
 								<a href='http://localhost:8080/login'>Sei un SMM? Premi qui</a>
 							</p>
 						</Card.Footer>

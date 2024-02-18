@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { useAuth } from './AuthContext';
-import Cookies from 'js-cookie';
-import Message from './home_components/Message';
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "./AuthContext";
+import Cookies from "js-cookie";
+import Message from "./home_components/Message";
+import { BASE_URL } from "./config";
 
 const LoginPage = () => {
 	const { login } = useAuth();
 	const [formData, setFormData] = useState({
-		username: '',
-		password: '',
+		username: "",
+		password: "",
 	});
 	const [showPassword, setShowPassword] = useState(false);
-	const [errorMessage, setErrorMessage] = useState('');
+	const [errorMessage, setErrorMessage] = useState("");
 
 	const navigate = useNavigate();
 
@@ -24,18 +25,15 @@ const LoginPage = () => {
 		event.preventDefault();
 		try {
 			const requestOptions = {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(formData),
 			};
 
-			const response = await fetch(
-				'http://localhost:3500/login',
-				requestOptions
-			);
+			const response = await fetch(`${BASE_URL}/login`, requestOptions);
 			if (response.status === 200) {
 				const data = await response.json();
-				if (data && data.user_data) {
+				if (data?.user_data) {
 					const { username, accessToken } = data.user_data;
 
 					const userData = {
@@ -43,13 +41,13 @@ const LoginPage = () => {
 						access_token: accessToken,
 					};
 
-					Cookies.set('user_data', JSON.stringify(userData), { expires: 1 });
+					Cookies.set("user_data", JSON.stringify(userData), { expires: 1 });
 
 					login();
-					console.log('Navigating to /home...');
-					navigate('/');
+					console.log("Navigating to /home...");
+					navigate("/");
 				} else {
-					setErrorMessage('Access token not found in the response');
+					setErrorMessage("Access token not found in the response");
 				}
 			} else {
 				const data = await response.json();
@@ -67,15 +65,15 @@ const LoginPage = () => {
 	useEffect(() => {
 		const fetchTrendingMessages = async () => {
 			try {
-				const response = await fetch('http://localhost:3500/api/topMessages');
+				const response = await fetch(`${BASE_URL}/api/topMessages`);
 				if (response.ok) {
 					const data = await response.json();
 					setTrendingMessages(data);
 				} else {
-					console.error('Failed to fetch trending messages');
+					console.error("Failed to fetch trending messages");
 				}
 			} catch (error) {
-				console.error('Error fetching trending messages:', error);
+				console.error("Error fetching trending messages:", error);
 			}
 		};
 
@@ -95,12 +93,12 @@ const LoginPage = () => {
 								<img
 									src='pic/logo.png'
 									alt='Logo'
-									style={{ maxWidth: '80%', height: 'auto' }}
+									style={{ maxWidth: "80%", height: "auto" }}
 								/>
 							</div>
 							<h2
 								className='text-center'
-								style={{ color: 'black' }}
+								style={{ color: "black" }}
 							>
 								Login
 							</h2>
@@ -109,7 +107,7 @@ const LoginPage = () => {
 									controlId='formBasicUsername'
 									className='mb-4'
 								>
-									<Form.Label style={{ color: 'green' }}>Username</Form.Label>
+									<Form.Label style={{ color: "green" }}>Username</Form.Label>
 									<Form.Control
 										type='text'
 										placeholder='Enter username'
@@ -125,10 +123,10 @@ const LoginPage = () => {
 									controlId='formBasicPassword'
 									className='mb-4'
 								>
-									<Form.Label style={{ color: 'green' }}>Password</Form.Label>
+									<Form.Label style={{ color: "green" }}>Password</Form.Label>
 									<div className='input-group'>
 										<Form.Control
-											type={showPassword ? 'text' : 'password'}
+											type={showPassword ? "text" : "password"}
 											placeholder='Password'
 											value={formData.password}
 											onChange={(e) =>
@@ -154,7 +152,7 @@ const LoginPage = () => {
 									variant='success'
 									type='submit'
 									block={true.toString()}
-									style={{ background: 'purple' }}
+									style={{ background: "purple" }}
 								>
 									Login
 								</Button>
@@ -165,12 +163,12 @@ const LoginPage = () => {
 							</Form>
 						</Card.Body>
 						<Card.Footer className='text-center mt-4'>
-							<p style={{ color: 'red' }}>
+							<p style={{ color: "red" }}>
 								Don't have an account? <Link to='/registration'>Register</Link>
 							</p>
 						</Card.Footer>
 						<Card.Footer className='text-center'>
-							<p style={{ color: 'orange' }}>
+							<p style={{ color: "orange" }}>
 								<a href='http://localhost:8080/login'>Sei un SMM? Premi qui</a>
 							</p>
 						</Card.Footer>
@@ -181,7 +179,7 @@ const LoginPage = () => {
 				<Col md={8}>
 					<h3
 						className='text-center'
-						style={{ color: 'red', marginBottom: '15px' }}
+						style={{ color: "red", marginBottom: "15px" }}
 					>
 						TRENDING MESSAGES
 					</h3>
@@ -191,8 +189,8 @@ const LoginPage = () => {
 						)
 						.map((channelInfo, index) => (
 							<div key={channelInfo.channelName}>
-								{index !== 0 && <hr style={{ margin: '20px 0' }} />}
-								<h4 style={{ color: 'black' }}>{channelInfo.channelName}</h4>
+								{index !== 0 && <hr style={{ margin: "20px 0" }} />}
+								<h4 style={{ color: "black" }}>{channelInfo.channelName}</h4>
 								{channelInfo.messages
 									.filter((message) => message.replyTo === null)
 									.map((message) => (

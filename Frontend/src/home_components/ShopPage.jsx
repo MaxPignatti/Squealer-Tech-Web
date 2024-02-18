@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Button, Badge } from "react-bootstrap";
 import { useAuth } from "../AuthContext";
 import { Navigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { BASE_URL } from "../config";
 
 const ShopPage = () => {
 	const { isAuthenticated } = useAuth();
@@ -48,10 +49,7 @@ const ShopPage = () => {
 					body: JSON.stringify(data),
 				};
 
-				const response = await fetch(
-					"http://localhost:3500/purchase",
-					requestOptions
-				);
+				const response = await fetch(`${BASE_URL}/purchase`, requestOptions);
 
 				if (response.status === 200) {
 					const result = await response.json();

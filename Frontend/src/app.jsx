@@ -1,14 +1,14 @@
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './AuthContext';
-import Login from './login';
-import Registration from './registration';
-import Home from './home_components/home';
-import Profile from './home_components/Profile';
-import AutoLogin from './AutoLogin';
-import { MessageRefsProvider } from './MessageRefsContext';
-import { Container } from 'react-bootstrap';
+import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./AuthContext";
+import Login from "./login";
+import Registration from "./registration";
+import Home from "./home_components/home";
+import Profile from "./home_components/Profile";
+import AutoLogin from "./AutoLogin";
+import { MessageRefsProvider } from "./MessageRefsContext";
+import { Container } from "react-bootstrap";
 
 function App() {
 	return (

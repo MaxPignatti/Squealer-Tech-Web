@@ -1,5 +1,5 @@
-import { Card } from 'react-bootstrap';
-import PropTypes from 'prop-types';
+import { Card } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const CharCounter = ({
 	dailyCharacters,

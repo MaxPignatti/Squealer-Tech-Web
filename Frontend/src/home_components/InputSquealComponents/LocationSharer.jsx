@@ -1,6 +1,6 @@
-import React from 'react';
-import { Button, Alert } from 'react-bootstrap';
-import PropTypes from 'prop-types';
+import React from "react";
+import { Button, Alert } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const LocationSharer = ({ showMap, toggleMap }) => (
 	<>

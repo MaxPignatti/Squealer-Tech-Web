@@ -79,34 +79,35 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import Cookies from 'js-cookie';
+import { ref, watch } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+import Cookies from "js-cookie";
+import { BASE_URL } from "../config";
 
 export default {
 	setup() {
 		const store = useStore();
 		const router = useRouter();
-		const email = ref('');
-		const password = ref('');
-		const errorMessage = ref('');
+		const email = ref("");
+		const password = ref("");
+		const errorMessage = ref("");
 
 		watch(
 			() => store.state.isAuthenticated,
 			(isAuthenticated) => {
 				if (isAuthenticated) {
-					router.push('/');
+					router.push("/");
 				}
 			}
 		);
 
 		const handleLogin = async () => {
 			try {
-				const response = await fetch('http://localhost:3500/loginSMM', {
-					method: 'POST',
+				const response = await fetch(`${BASE_URL}/loginSMM`, {
+					method: "POST",
 					headers: {
-						'Content-Type': 'application/json',
+						"Content-Type": "application/json",
 					},
 					body: JSON.stringify({
 						email: email.value,
@@ -116,19 +117,19 @@ export default {
 
 				if (response.status === 200) {
 					const data = await response.json();
-					Cookies.set('authToken', data.user_data.accessToken, { expires: 1 });
-					store.dispatch('login', data.user_data.email); // Aggiorna lo stato globale con userData
+					Cookies.set("authToken", data.user_data.accessToken, { expires: 1 });
+					store.dispatch("login", data.user_data.email); // Aggiorna lo stato globale con userData
 					if (data.user_data.vip) {
-						store.commit('setVip', data.user_data.vip);
+						store.commit("setVip", data.user_data.vip);
 					}
-					router.push('/');
+					router.push("/");
 				} else {
 					const data = await response.json();
 					errorMessage.value = data.error;
 				}
 			} catch (error) {
 				console.error(error);
-				errorMessage.value = 'Si è verificato un errore durante il login.';
+				errorMessage.value = "Si è verificato un errore durante il login.";
 			}
 		};
 

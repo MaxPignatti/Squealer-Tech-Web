@@ -5,7 +5,4 @@ Frontend/package-lock.json
 Backend/npm-debug.log
 mod_dash/node_modules
 SMMApp/squealer-smm/node_modules
-
-
-
-
+Frontend/build

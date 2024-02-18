@@ -1,25 +1,25 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
 	fetchUsersWithProRequest();
 });
 
 function fetchUsersWithProRequest() {
-	fetch('http://localhost:3500/usr', {
-		method: 'GET',
+	fetch("http://site222327.tw.cs.unibo.it/api/usr", {
+		method: "GET",
 	})
 		.then((response) => response.json())
 		.then((users) => {
 			const proRequestedUsers = users.filter((user) => user.isProRequested);
 			displayUsers(proRequestedUsers);
 		})
-		.catch((error) => console.error('Error fetching users:', error));
+		.catch((error) => console.error("Error fetching users:", error));
 }
 
 function displayUsers(users) {
-	const usersList = document.getElementById('usersList');
-	usersList.innerHTML = '';
+	const usersList = document.getElementById("usersList");
+	usersList.innerHTML = "";
 	users.forEach((user) => {
-		const userElement = document.createElement('div');
-		userElement.classList.add('col-12', 'col-md-6', 'col-lg-4', 'mb-4');
+		const userElement = document.createElement("div");
+		userElement.classList.add("col-12", "col-md-6", "col-lg-4", "mb-4");
 		userElement.innerHTML = `
             <div class="card">
                 <div class="card-body">
@@ -37,16 +37,16 @@ function displayUsers(users) {
 }
 
 function handleProAcceptance(username, accept) {
-	fetch(`http://localhost:3500/usr/${username}/proAcceptance`, {
-		method: 'PATCH',
+	fetch(`http://site222327.tw.cs.unibo.it/api/usr/${username}/proAcceptance`, {
+		method: "PATCH",
 		headers: {
-			'Content-Type': 'application/json',
+			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({ accept }),
 	})
 		.then((response) => {
 			if (!response.ok) {
-				throw new Error('Failed to update user status');
+				throw new Error("Failed to update user status");
 			}
 			return response.json();
 		})
@@ -55,7 +55,7 @@ function handleProAcceptance(username, accept) {
 			fetchUsersWithProRequest(); // Refresh the user list
 		})
 		.catch((error) => {
-			console.error('Error updating user status:', error);
+			console.error("Error updating user status:", error);
 			alert(error.message);
 		});
 }

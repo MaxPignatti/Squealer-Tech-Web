@@ -81,7 +81,7 @@
 <script>
 import MessageComponent from "./MessageComponent.vue";
 import Cookies from "js-cookie";
-
+import { BASE_URL } from "../config";
 export default {
 	components: {
 		MessageComponent,
@@ -102,7 +102,7 @@ export default {
 		verifyTokenAndFetchMessages() {
 			const authToken = Cookies.get("authToken");
 			if (authToken) {
-				fetch("http://localhost:3500/smm/session", {
+				fetch(`${BASE_URL}/smm/session`, {
 					headers: {
 						Authorization: `Bearer ${authToken}`,
 					},
@@ -110,9 +110,7 @@ export default {
 					.then((response) => response.json())
 					.then((data) => {
 						this.vipUsername = data.vip;
-						return fetch(
-							`http://localhost:3500/messages/public/${this.vipUsername}`
-						);
+						return fetch(`${BASE_URL}/messages/public/${this.vipUsername}`);
 					})
 					.then((response) => response.json())
 					.then((data) => {

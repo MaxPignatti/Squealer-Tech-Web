@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
 	checkLoginStatus();
 	validateUserAndFetchMessages();
 	applyResponsiveTableStyles();
@@ -6,22 +6,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let allMessages = [];
 
-const logoutLink = document.getElementById('logoutLink');
-logoutLink.setAttribute('role', 'button');
-logoutLink.setAttribute('aria-label', 'Effettua logout');
+const logoutLink = document.getElementById("logoutLink");
+logoutLink.setAttribute("role", "button");
+logoutLink.setAttribute("aria-label", "Effettua logout");
 
-logoutLink.addEventListener('click', () => {
-	localStorage.removeItem('userData');
+logoutLink.addEventListener("click", () => {
+	localStorage.removeItem("userData");
 
-	window.location.href = '../loginPage/login.html';
+	window.location.href = "../loginPage/login.html";
 });
 
 function validateUserAndFetchMessages() {
-	const userData = JSON.parse(localStorage.getItem('userData'));
+	const userData = JSON.parse(localStorage.getItem("userData"));
 	if (!userData) {
 		redirectToLogin();
 	} else {
-		fetch(`http://localhost:3500/usr/${userData.username}`)
+		fetch(`http://site222327.tw.cs.unibo.it/api/usr/${userData.username}`)
 			.then((response) => response.json())
 			.then((userDetails) => {
 				if (!userDetails.isMod) {
@@ -41,18 +41,18 @@ function validateUserAndFetchMessages() {
 }
 
 function redirectToLogin() {
-	localStorage.removeItem('userData');
-	window.location.href = '../loginPage/login.html';
+	localStorage.removeItem("userData");
+	window.location.href = "../loginPage/login.html";
 }
 
 function fetchAllMessages() {
-	const messageList = document.getElementById('messageList');
-	messageList.innerHTML = 'Caricamento messaggi in corso...';
+	const messageList = document.getElementById("messageList");
+	messageList.innerHTML = "Caricamento messaggi in corso...";
 
-	fetch('http://localhost:3500/allMessages')
+	fetch("http://site222327.tw.cs.unibo.it/api/allMessages")
 		.then((response) => {
 			if (!response.ok) {
-				throw new Error('Network response was not ok: ' + response.statusText);
+				throw new Error("Network response was not ok: " + response.statusText);
 			}
 			return response.json();
 		})
@@ -61,45 +61,45 @@ function fetchAllMessages() {
 			renderMessages(messages);
 		})
 		.catch((error) => {
-			console.error('Errore durante il recupero dei messaggi:', error);
-			messageList.innerHTML = 'Impossibile caricare i messaggi. ' + error;
+			console.error("Errore durante il recupero dei messaggi:", error);
+			messageList.innerHTML = "Impossibile caricare i messaggi. " + error;
 		});
 }
 
 function applyResponsiveTableStyles() {
-	const tableContainer = document.querySelector('.table-responsive');
+	const tableContainer = document.querySelector(".table-responsive");
 	if (!tableContainer) return;
 
 	// Controlla se la viewport è più piccola di 768px (ad esempio, schermi di smartphone)
 	if (window.innerWidth < 768) {
 		// Applica stili per dispositivi mobili
-		tableContainer.style.maxWidth = '100%';
-		tableContainer.style.overflowX = 'auto';
+		tableContainer.style.maxWidth = "100%";
+		tableContainer.style.overflowX = "auto";
 	} else {
 		// Rimuovi stili specifici per dispositivi mobili per schermi più grandi
-		tableContainer.style.maxWidth = 'none';
-		tableContainer.style.overflowX = 'visible';
+		tableContainer.style.maxWidth = "none";
+		tableContainer.style.overflowX = "visible";
 	}
 }
 
 function renderMessages(messages) {
-	const messageListContainer = document.getElementById('messageList');
-	const responsiveTableContainer = document.createElement('div');
-	responsiveTableContainer.className = 'table-responsive';
+	const messageListContainer = document.getElementById("messageList");
+	const responsiveTableContainer = document.createElement("div");
+	responsiveTableContainer.className = "table-responsive";
 
-	const table = document.createElement('table');
-	table.className = 'table';
-	table.style.width = '100%';
-	table.style.textAlign = 'center';
+	const table = document.createElement("table");
+	table.className = "table";
+	table.style.width = "100%";
+	table.style.textAlign = "center";
 
 	// Assegna uno stile specifico quando la larghezza della viewport supera i 768px
-	if (window.matchMedia('(min-width: 768px)').matches) {
+	if (window.matchMedia("(min-width: 768px)").matches) {
 		// Qui puoi definire gli stili specifici per dispositivi più grandi
 		// Ad esempio, rimuovere il comportamento scorrevole della table-responsive
-		responsiveTableContainer.style.overflowX = 'visible';
+		responsiveTableContainer.style.overflowX = "visible";
 	}
 
-	const thead = document.createElement('thead');
+	const thead = document.createElement("thead");
 	thead.innerHTML = `
         <tr>
             <th>Mittente</th>
@@ -115,9 +115,9 @@ function renderMessages(messages) {
         </tr>`;
 	table.appendChild(thead);
 
-	const tbody = document.createElement('tbody');
+	const tbody = document.createElement("tbody");
 	messages.forEach((message) => {
-		const tr = document.createElement('tr');
+		const tr = document.createElement("tr");
 		tr.innerHTML = `
             <td>${message.user}</td>
             <td>${formatChannels(message.channel)}</td>
@@ -162,15 +162,15 @@ function renderMessages(messages) {
 	table.appendChild(tbody);
 
 	responsiveTableContainer.appendChild(table);
-	messageListContainer.innerHTML = '';
+	messageListContainer.innerHTML = "";
 	messageListContainer.appendChild(responsiveTableContainer);
 }
 
 function formatDate(date) {
-	return date.toLocaleDateString('en-US', {
-		month: '2-digit',
-		day: '2-digit',
-		year: 'numeric',
+	return date.toLocaleDateString("en-US", {
+		month: "2-digit",
+		day: "2-digit",
+		year: "numeric",
 	});
 }
 function formatBooleanIcon(value) {
@@ -181,7 +181,7 @@ function formatBooleanIcon(value) {
 }
 
 function formatChannels(channels) {
-	return channels && channels.length > 0 ? channels.join(', ') : 'Nessuno';
+	return channels && channels.length > 0 ? channels.join(", ") : "Nessuno";
 }
 
 function isTemporizzato(message) {
@@ -190,9 +190,9 @@ function isTemporizzato(message) {
 
 // Funzione per eliminare un messaggio
 function deleteMessage(messageId) {
-	if (confirm('Sei sicuro di voler eliminare questo messaggio?')) {
-		fetch(`http://localhost:3500/messages/${messageId}`, {
-			method: 'DELETE',
+	if (confirm("Sei sicuro di voler eliminare questo messaggio?")) {
+		fetch(`http://site222327.tw.cs.unibo.it/api/messages/${messageId}`, {
+			method: "DELETE",
 		})
 			.then(() => {
 				fetchAllMessages();
@@ -205,20 +205,20 @@ function deleteMessage(messageId) {
 
 function applyFilters() {
 	const senderFilter = document
-		.getElementById('senderFilter')
+		.getElementById("senderFilter")
 		.value.toLowerCase();
-	const dateFilter = document.getElementById('dateFilter').value;
+	const dateFilter = document.getElementById("dateFilter").value;
 	const recipientFilter = document
-		.getElementById('recipientFilter')
+		.getElementById("recipientFilter")
 		.value.toLowerCase();
 
 	const filteredMessages = allMessages.filter((message) => {
-		const messageDate = new Date(message.createdAt).toISOString().split('T')[0];
+		const messageDate = new Date(message.createdAt).toISOString().split("T")[0];
 		return (
-			(senderFilter === '' ||
+			(senderFilter === "" ||
 				message.user.toLowerCase().includes(senderFilter)) &&
-			(dateFilter === '' || messageDate === dateFilter) &&
-			(recipientFilter === '' ||
+			(dateFilter === "" || messageDate === dateFilter) &&
+			(recipientFilter === "" ||
 				message.channel.some((channel) =>
 					channel.toLowerCase().includes(recipientFilter)
 				))
@@ -233,20 +233,20 @@ function editMessage(messageId) {
 	if (!message) return;
 
 	const channelsString = prompt(
-		'Modifica i canali (separati da virgola):',
-		message.channel.join(', ')
+		"Modifica i canali (separati da virgola):",
+		message.channel.join(", ")
 	);
 	if (channelsString !== null) {
-		const updatedChannels = channelsString.split(',').map((ch) => ch.trim());
+		const updatedChannels = channelsString.split(",").map((ch) => ch.trim());
 		updateMessageChannels(messageId, updatedChannels);
 	}
 }
 
 // Funzione per inviare la richiesta di aggiornamento dei canali al server
 function updateMessageChannels(messageId, newChannels) {
-	fetch(`http://localhost:3500/messages/${messageId}/channels`, {
-		method: 'PATCH',
-		headers: { 'Content-Type': 'application/json' },
+	fetch(`http://site222327.tw.cs.unibo.it/api/messages/${messageId}/channels`, {
+		method: "PATCH",
+		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ channels: newChannels }),
 	})
 		.then((response) => response.json())
@@ -275,15 +275,18 @@ function updateReactions(messageId) {
 		positiveReactions < 0 ||
 		negativeReactions < 0
 	) {
-		alert('Le reazioni devono essere numeri non negativi.');
+		alert("Le reazioni devono essere numeri non negativi.");
 		return;
 	}
 
-	fetch(`http://localhost:3500/messages/${messageId}/reactions`, {
-		method: 'PATCH',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ positiveReactions, negativeReactions }),
-	})
+	fetch(
+		`http://site222327.tw.cs.unibo.it/api/messages/${messageId}/reactions`,
+		{
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ positiveReactions, negativeReactions }),
+		}
+	)
 		.then((response) => response.json())
 		.then((data) => {
 			fetchAllMessages();
@@ -294,12 +297,12 @@ function updateReactions(messageId) {
 }
 
 function checkLoginStatus() {
-	const isLoggedIn = localStorage.getItem('userData') !== null;
-	const currentPage = window.location.pathname.split('/').pop();
+	const isLoggedIn = localStorage.getItem("userData") !== null;
+	const currentPage = window.location.pathname.split("/").pop();
 
-	if (!isLoggedIn && currentPage !== 'login.html') {
-		window.location.href = '../loginPage/login.html';
+	if (!isLoggedIn && currentPage !== "login.html") {
+		window.location.href = "../loginPage/login.html";
 	}
 }
 
-window.addEventListener('resize', applyResponsiveTableStyles);
+window.addEventListener("resize", applyResponsiveTableStyles);

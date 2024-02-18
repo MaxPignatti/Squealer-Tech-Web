@@ -169,7 +169,9 @@ const LoginPage = () => {
 						</Card.Footer>
 						<Card.Footer className='text-center'>
 							<p style={{ color: "orange" }}>
-								<a href='http://localhost:8080/login'>Sei un SMM? Premi qui</a>
+								<a href='http://site222327.tw.cs.unibo.it/smm'>
+									Sei un SMM? Premi qui
+								</a>
 							</p>
 						</Card.Footer>
 					</Card>

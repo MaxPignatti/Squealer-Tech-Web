@@ -24,6 +24,7 @@ const corsOptions = {
 		"http://localhost:3002",
 		"http://localhost:8080",
 		"http://127.0.0.1:5500",
+		"http://site222327.tw.cs.unibo.it",
 	],
 	credentials: true,
 };
@@ -46,7 +47,7 @@ app.use("/api", channelRoutes);
 app.use("/api", shopRoutes);
 
 mongoose
-	.connect("mongodb://127.0.0.1:27017/test", {
+	.connect("mongodb://site222327:uo9feeGu@mongo_site222327", {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	})

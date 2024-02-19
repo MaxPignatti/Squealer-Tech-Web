@@ -378,12 +378,10 @@ cron.schedule("0 0 * * *", async () => {
 //mod dashboard
 app.use(
 	"/moddash",
-	express.static(path.join(__dirname, "../mod_dash/mod_dash/loginPage/"))
+	express.static(path.join(__dirname, "../mod_dash/loginPage/"))
 );
 app.get("/moddash", (req, res) => {
-	res.sendFile(
-		path.join(__dirname, "../mod_dash/mod_dash/loginPage/", "index.html")
-	);
+	res.sendFile(path.join(__dirname, "../mod_dash/loginPage/", "index.html"));
 });
 
 //smm app

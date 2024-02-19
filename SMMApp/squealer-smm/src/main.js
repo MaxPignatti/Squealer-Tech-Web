@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faImages } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-const BASE_URL = "http://localhost:3500";
+const BASE_URL = "http://site222327.tw.cs.unibo.it/api";
 
 library.add(faImages);
 async function verifyAuthentication() {
@@ -32,11 +32,11 @@ async function verifyAuthentication() {
 			console.error(error.message);
 			Cookies.remove("authToken");
 			store.dispatch("logout");
-			router.push("/login");
+			router.push("/smm/login");
 		}
 	} else {
 		store.dispatch("logout");
-		router.push("/login");
+		router.push("/smm/login");
 	}
 }
 

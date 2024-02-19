@@ -86,7 +86,7 @@ export default {
 		const logout = () => {
 			Cookies.remove("authToken");
 			store.dispatch("logout");
-			router.push("/login");
+			router.push("/smm/login");
 		};
 
 		const toggleInputSqueal = () => {

@@ -97,7 +97,7 @@ export default {
 			() => store.state.isAuthenticated,
 			(isAuthenticated) => {
 				if (isAuthenticated) {
-					router.push("/");
+					router.push("/smm");
 				}
 			}
 		);
@@ -122,7 +122,7 @@ export default {
 					if (data.user_data.vip) {
 						store.commit("setVip", data.user_data.vip);
 					}
-					router.push("/");
+					router.push("/smm");
 				} else {
 					const data = await response.json();
 					errorMessage.value = data.error;

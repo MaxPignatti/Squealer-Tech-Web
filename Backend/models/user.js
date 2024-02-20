@@ -58,11 +58,19 @@ const userSchema = new mongoose.Schema({
 		ref: 'Message',
 		default: [],
 	},
-	positiveReactionsGiven: {
+	likeReactionsGiven: {
+		type: [mongoose.Schema.Types.ObjectId],
+		default: [],
+	  },
+	loveReactionsGiven: {
 		type: [mongoose.Schema.Types.ObjectId],
 		default: [],
 	},
-	negativeReactionsGiven: {
+	dislikeReactionsGiven: {
+		type: [mongoose.Schema.Types.ObjectId],
+		default: [],
+	},
+	sadReactionsGiven: {
 		type: [mongoose.Schema.Types.ObjectId],
 		default: [],
 	},

@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Card, Button, Form, Badge } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-	faThumbsUp,
-	faThumbsDown,
+	faFaceSmile,
+	faFaceLaugh,
 	faPenToSquare,
+	faFaceFrownOpen, faFaceAngry
 } from "@fortawesome/free-solid-svg-icons";
 import Maps from "./Maps";
 import { marked } from "marked";
@@ -450,24 +451,33 @@ const Message = ({
 						{currentUser && handleReaction && (
 							<>
 								<div>
-									<button
-										className='btn btn-link'
-										onClick={() => handleReaction(message._id, true)}
-									>
-										<FontAwesomeIcon icon={faThumbsUp} />
-									</button>
-									<span>{message.positiveReactions}</span>
+									<Button className='btn btn-link' onClick={() => handleReaction(message._id, 'love')} style={{ backgroundColor: 'transparent', border: 'none', color: 'green', outline: 'none' }}>
+										<FontAwesomeIcon icon={faFaceLaugh} />
+									</Button>
+									<span>{message.loveReactions}</span>
 								</div>
 
 								<div>
-									<button
-										className='btn btn-link'
-										onClick={() => handleReaction(message._id, false)}
-									>
-										<FontAwesomeIcon icon={faThumbsDown} />
-									</button>
-									<span>{message.negativeReactions}</span>
+									<Button className='btn btn-link' onClick={() => handleReaction(message._id, 'like')} style={{ backgroundColor: 'transparent', border: 'none', color: 'green', outline: 'none' }}>
+										<FontAwesomeIcon icon={faFaceSmile}/>
+									</Button>
+									<span>{message.likeReactions}</span>
 								</div>
+
+								<div>
+									<Button className='btn btn-link' onClick={() => handleReaction(message._id, 'dislike')} style={{ backgroundColor: 'transparent', border: 'none', color: 'red', outline: 'none' }}>
+										<FontAwesomeIcon icon={faFaceFrownOpen} />
+									</Button>
+									<span>{message.dislikeReactions}</span>
+								</div>
+								
+								<div>
+									<Button className='btn btn-link' onClick={() => handleReaction(message._id, 'sad')} style={{ backgroundColor: 'transparent', border: 'none', color: 'red', outline: 'none' }}>
+										<FontAwesomeIcon icon={faFaceAngry} />
+									</Button>
+									<span>{message.sadReactions}</span>
+								</div>
+
 							</>
 						)}
 					</div>

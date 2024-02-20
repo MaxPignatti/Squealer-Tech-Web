@@ -187,7 +187,7 @@ const RegistrationPage = () => {
 						</Card.Footer>
 						<Card.Footer className='text-center'>
 							<p style={{ color: "orange" }}>
-								<a href='http://site222327.tw.cs.unibo.it/smm'>
+								<a href='https://site222327.tw.cs.unibo.it/smm'>
 									Sei un SMM? Premi qui
 								</a>
 							</p>

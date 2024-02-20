@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			queryParams.append("sortOrder", currentFilter.order);
 		}
 
-		const url = `http://site222327.tw.cs.unibo.it/api/usr?${queryParams.toString()}`;
+		const url = `https://site222327.tw.cs.unibo.it/api/usr?${queryParams.toString()}`;
 
 		userList.innerHTML = "Loading users...";
 		fetch(url)
@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			monthlyChars: monthlyChars,
 		};
 
-		fetch("http://site222327.tw.cs.unibo.it/api/usr/${username}/chars", {
+		fetch("https://site222327.tw.cs.unibo.it/api/usr/${username}/chars", {
 			method: "PATCH",
 			headers: {
 				"Content-Type": "application/json",
@@ -182,9 +182,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	window.deleteUser = function (username) {
 		if (confirm("Sei sicuro di voler eliminare questo utente?")) {
-			fetch(`http://site222327.tw.cs.unibo.it/api/api/deleteUser/${username}`, {
-				method: "DELETE",
-			})
+			fetch(
+				`https://site222327.tw.cs.unibo.it/api/api/deleteUser/${username}`,
+				{
+					method: "DELETE",
+				}
+			)
 				.then(() => {
 					fetchUsers();
 				})
@@ -198,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		const modButton = document.getElementById("modUserBtn-" + username);
 
 		// Invia una richiesta al backend per impostare/rimuovere il ruolo di moderatore per l'utente
-		fetch(`http://site222327.tw.cs.unibo.it/api/usr/${username}/mod`, {
+		fetch(`https://site222327.tw.cs.unibo.it/api/usr/${username}/mod`, {
 			method: "PATCH",
 		})
 			.then((response) => response.json())
@@ -244,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function toggleBlockUser(username) {
 	const blockButton = document.getElementById("blockUserBtn-" + username);
 
-	fetch(`http://site222327.tw.cs.unibo.it/api/usr/${username}/block`, {
+	fetch(`https://site222327.tw.cs.unibo.it/api/usr/${username}/block`, {
 		method: "PATCH",
 	})
 		.then((response) => response.json())

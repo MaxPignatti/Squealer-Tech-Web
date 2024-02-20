@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Send a request to check the credentials and isMod status
 		const response = await fetch(
-			"http://site222327.tw.cs.unibo.it/api/loginMod",
+			"https://site222327.tw.cs.unibo.it/api/loginMod",
 			{
 				method: "POST",
 				headers: {

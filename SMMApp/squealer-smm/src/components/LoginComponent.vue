@@ -67,7 +67,7 @@
 			<p class="mt-8 text-center text-sm text-gray-600">
 				Non sei ancora registrato?
 				<a
-					href="http://localhost:3000/registration"
+					href="https://site222327.tw.cs.unibo.it/registration"
 					class="text-blue-500 hover:text-blue-800"
 					aria-label="Registrati sull'app principale"
 				>

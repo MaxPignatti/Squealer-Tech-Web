@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faImages } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-const BASE_URL = "http://site222327.tw.cs.unibo.it/api";
+const BASE_URL = "https://site222327.tw.cs.unibo.it/api";
 
 library.add(faImages);
 async function verifyAuthentication() {

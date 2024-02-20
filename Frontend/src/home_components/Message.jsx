@@ -284,7 +284,7 @@ const Message = ({
 		// Gestione dei link
 		formattedText = formattedText.replace(
 			/\[([^\]]+)\]\(((?!http:\/\/|https:\/\/).+)\)/g,
-			"[$1](http://$2)"
+			"[$1](https://$2)"
 		);
 
 		const rawMarkup = marked.parse(formattedText);

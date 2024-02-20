@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function fetchUsersWithProRequest() {
-	fetch("http://site222327.tw.cs.unibo.it/api/usr", {
+	fetch("https://site222327.tw.cs.unibo.it/api/usr", {
 		method: "GET",
 	})
 		.then((response) => response.json())
@@ -37,7 +37,7 @@ function displayUsers(users) {
 }
 
 function handleProAcceptance(username, accept) {
-	fetch(`http://site222327.tw.cs.unibo.it/api/usr/${username}/proAcceptance`, {
+	fetch(`https://site222327.tw.cs.unibo.it/api/usr/${username}/proAcceptance`, {
 		method: "PATCH",
 		headers: {
 			"Content-Type": "application/json",

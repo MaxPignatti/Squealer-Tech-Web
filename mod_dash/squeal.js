@@ -106,8 +106,10 @@ function renderMessages(messages) {
             <th>Canali</th>
             <th>Messaggio</th>
             <th>Creazione</th>
-            <th>Reazioni Pos.</th>
-            <th>Reazioni Neg.</th>
+            <th>Love</th>
+			<th>Like</th>
+            <th>Dislike</th>
+            <th>Sad</th>
             <th>Posizione Reale</th>
             <th>Immagine</th>
             <th>Temporizzato</th>
@@ -123,20 +125,28 @@ function renderMessages(messages) {
             <td>${formatChannels(message.channel)}</td>
             <td>${message.text}</td>
             <td>${formatDate(new Date(message.createdAt))}</td>
-            <td><input type="number" value="${
-							message.positiveReactions
-						}" id="positive-${
+			<td><input type="number" value="${message.loveReactions}" id="love-${
 			message._id
-		}" style="width: 80px;" aria-label="Reazioni positive per messaggio ID ${
+		}" style="width: 80px;" aria-label="Love reactions for message ID ${
 			message._id
 		}"></td>
-            <td><input type="number" value="${
-							message.negativeReactions
-						}" id="negative-${
+			<td><input type="number" value="${message.likeReactions}" id="like-${
 			message._id
-		}" style="width: 80px;" aria-label="Reazioni negative per messaggio ID ${
+		}" style="width: 80px;" aria-label="Like reactions for message ID ${
 			message._id
 		}"></td>
+			<td><input type="number" value="${message.dislikeReactions}" id="dislike-${
+			message._id
+		}" style="width: 80px;" aria-label="Dislike reactions for message ID ${
+			message._id
+		}"></td>
+			
+			<td><input type="number" value="${message.sadReactions}" id="sad-${
+			message._id
+		}" style="width: 80px;" aria-label="Sad reactions for message ID ${
+			message._id
+		}"></td>
+			
             <td>${formatBooleanIcon(message.location)}</td>
             <td>${formatBooleanIcon(message.image)}</td>
             <td>${formatBooleanIcon(isTemporizzato(message))}</td>
@@ -263,20 +273,32 @@ function updateMessageChannels(messageId, newChannels) {
 }
 
 function updateReactions(messageId) {
-	const positiveReactions = parseInt(
-		document.getElementById(`positive-${messageId}`).value,
+	const likeReactions = parseInt(
+		document.getElementById(`like-${messageId}`).value,
 		10
 	);
-	const negativeReactions = parseInt(
-		document.getElementById(`negative-${messageId}`).value,
+	const dislikeReactions = parseInt(
+		document.getElementById(`dislike-${messageId}`).value,
+		10
+	);
+	const loveReactions = parseInt(
+		document.getElementById(`love-${messageId}`).value,
+		10
+	);
+	const sadReactions = parseInt(
+		document.getElementById(`sad-${messageId}`).value,
 		10
 	);
 
 	if (
-		isNaN(positiveReactions) ||
-		isNaN(negativeReactions) ||
-		positiveReactions < 0 ||
-		negativeReactions < 0
+		isNaN(likeReactions) ||
+		isNaN(dislikeReactions) ||
+		isNaN(loveReactions) ||
+		isNaN(sadReactions) ||
+		likeReactions < 0 ||
+		dislikeReactions < 0 ||
+		loveReactions < 0 ||
+		sadReactions < 0
 	) {
 		alert("Le reazioni devono essere numeri non negativi.");
 		return;
@@ -287,7 +309,12 @@ function updateReactions(messageId) {
 		{
 			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ positiveReactions, negativeReactions }),
+			body: JSON.stringify({
+				likeReactions,
+				dislikeReactions,
+				loveReactions,
+				sadReactions,
+			}),
 		}
 	)
 		.then((response) => response.json())

@@ -19,8 +19,10 @@ const checkAndSendTempMessages = () => {
 					text: message.text,
 					channel: message.channel,
 					createdAt: currentTime.getTime(),
-					positiveReactions: message.positiveReactions,
-					negativeReactions: message.negativeReactions,
+					loveReactions: message.loveReactions,
+					sadReactions: message.sadReactions,
+					likeReactions: message.likeReactions,
+					dislikeReactions: message.dislikeReactions,
 					updateInterval: message.updateInterval,
 					maxSendCount: message.maxSendCount - 1,
 					nextSendTime: new Date(

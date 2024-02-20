@@ -1,7 +1,7 @@
 const User = require("../models/user");
 const Message = require("../models/message");
 const bcrypt = require("bcrypt");
-const Channel = require("../models/Channel");
+const Channel = require("../models/channel");
 
 exports.getUser = async (req, res) => {
 	try {

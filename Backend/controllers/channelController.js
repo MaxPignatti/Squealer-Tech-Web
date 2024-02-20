@@ -249,10 +249,16 @@ exports.getTopMessages = async (req, res) => {
 		const topMessagesPerChannel = [];
 
 		for (const channel of squealerChannels) {
-			const topMessages = await Message.find({ channel: channel.name })
-				.sort({ positiveReactions: -1 })
-				.limit(5);
-
+			const topMessages = await Message.aggregate([
+				{ $match: { channel: channel.name } },
+				{
+					$addFields: {
+						totalReactions: { $sum: ["$likeReactions", "$loveReactions"] },
+					},
+				},
+				{ $sort: { totalReactions: -1 } },
+				{ $limit: 5 },
+			]);
 			if (topMessages.length > 0) {
 				topMessagesPerChannel.push({
 					channelName: channel.name,

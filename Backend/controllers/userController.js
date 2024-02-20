@@ -21,7 +21,7 @@ function determineSortObject(sortField, sortOrder) {
 	const sortDirection = sortOrder === "asc" ? 1 : -1;
 	switch (sortField) {
 		case "popularity":
-			return { positiveMessages: sortDirection };
+			return { totalReactions: sortDirection };
 		case "accountType":
 			return { isPro: sortDirection };
 		default:
@@ -32,10 +32,27 @@ function determineSortObject(sortField, sortOrder) {
 exports.getAllUsers = async (req, res) => {
 	try {
 		const { sortField, sortOrder } = req.query;
-		// Usa la funzione helper per costruire l'oggetto sort
-		const sort =
-			sortField && sortOrder ? determineSortObject(sortField, sortOrder) : {};
-		const users = await User.find({}).sort(sort);
+		let sort = {};
+		if (sortField && sortOrder) {
+			if (sortField === "popularity") {
+				sort = { totalReactions: sortOrder === "asc" ? 1 : -1 };
+			} else {
+				sort = determineSortObject(sortField, sortOrder);
+			}
+		}
+		const users = await User.aggregate([
+			{
+				$project: {
+					_id: 1,
+					name: 1,
+					accountType: 1,
+					loveReactions: { $size: "$loveReactions" },
+					likeReactions: { $size: "$likeReactions" },
+					totalReactions: { $add: ["$loveReactions", "$likeReactions"] },
+				},
+			},
+			{ $sort: sort },
+		]);
 		res.json(users);
 	} catch (error) {
 		console.error(error);

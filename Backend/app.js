@@ -230,7 +230,10 @@ cron.schedule("*/30 * * * *", async () => {
 		controversialMessages.forEach((message) => {
 			if (!message.channel.includes("CONTROVERSIAL")) {
 				const totalReactions =
-					message.positiveReactions + message.negativeReactions;
+					message.loveReactions +
+					message.likeReactions +
+					message.dislikeReactions +
+					message.angryReactions;
 				if (totalReactions > highestReactionCount) {
 					mostControversialMessage = message;
 					highestReactionCount = totalReactions;
@@ -373,41 +376,35 @@ cron.schedule("0 0 * * *", async () => {
 	}
 });
 app.use((req, res, next) => {
-  if (path.extname(req.path).toLowerCase() === ".js") {
-    res.type("text/javascript");
-  }
-  next();
+	if (path.extname(req.path).toLowerCase() === ".js") {
+		res.type("text/javascript");
+	}
+	next();
 });
 
 app.use((req, res, next) => {
-  if (path.extname(req.path).toLowerCase() === ".css") {
-    res.type("text/css");
-  }
-  next();
+	if (path.extname(req.path).toLowerCase() === ".css") {
+		res.type("text/css");
+	}
+	next();
 });
 
 //mod dashboard
 
 //app.use('/moddash', (req, res, next) => {
-    // Effettua il reindirizzamento a /moddash/loginPage/login.html
-   // res.redirect('/moddash/loginPage/login.html');
+// Effettua il reindirizzamento a /moddash/loginPage/login.html
+// res.redirect('/moddash/loginPage/login.html');
 //});
 
-app.use(
-	"/moddash",
-	express.static(path.join(__dirname, "../mod_dash"))
-);
+app.use("/moddash", express.static(path.join(__dirname, "../mod_dash")));
 app.get("/moddash", (req, res) => {
-	res.sendFile(
-		path.join(__dirname, "../mod_dash/", "login.html")
-	);
+	res.sendFile(path.join(__dirname, "../mod_dash/", "login.html"));
 });
 
 app.use("/smm", express.static(path.join(__dirname, "../smm/dist")));
 app.use("/smm", (req, res) => {
 	res.sendFile(path.join(__dirname, "../smm/dist", "index.html"));
 });
-
 
 //react app
 app.use(express.static(path.join(__dirname, "../app/build")));

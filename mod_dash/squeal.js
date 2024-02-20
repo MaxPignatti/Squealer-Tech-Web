@@ -141,7 +141,7 @@ function renderMessages(messages) {
 			message._id
 		}"></td>
 			
-			<td><input type="number" value="${message.sadReactions}" id="sad-${
+			<td><input type="number" value="${message.angryReactions}" id="sad-${
 			message._id
 		}" style="width: 80px;" aria-label="Sad reactions for message ID ${
 			message._id
@@ -285,7 +285,7 @@ function updateReactions(messageId) {
 		document.getElementById(`love-${messageId}`).value,
 		10
 	);
-	const sadReactions = parseInt(
+	const angryReactions = parseInt(
 		document.getElementById(`sad-${messageId}`).value,
 		10
 	);
@@ -294,11 +294,11 @@ function updateReactions(messageId) {
 		isNaN(likeReactions) ||
 		isNaN(dislikeReactions) ||
 		isNaN(loveReactions) ||
-		isNaN(sadReactions) ||
+		isNaN(angryReactions) ||
 		likeReactions < 0 ||
 		dislikeReactions < 0 ||
 		loveReactions < 0 ||
-		sadReactions < 0
+		angryReactions < 0
 	) {
 		alert("Le reazioni devono essere numeri non negativi.");
 		return;
@@ -313,7 +313,7 @@ function updateReactions(messageId) {
 				likeReactions,
 				dislikeReactions,
 				loveReactions,
-				sadReactions,
+				angryReactions,
 			}),
 		}
 	)

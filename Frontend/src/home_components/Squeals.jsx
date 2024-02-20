@@ -105,7 +105,7 @@ const Squeals = ({ searchType, searchText }) => {
 					updatedMessage.likeReactions = updatedData.likeReactions;
 					updatedMessage.loveReactions = updatedData.loveReactions;
 					updatedMessage.dislikeReactions = updatedData.dislikeReactions;
-					updatedMessage.sadReactions = updatedData.sadReactions;
+					updatedMessage.angryReactions = updatedData.angryReactions;
 
 					setMessages([...messages]);
 				} else {

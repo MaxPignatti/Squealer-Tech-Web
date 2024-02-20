@@ -276,7 +276,7 @@ function updateReactionArrays({ user, message, messageId, reaction }) {
 		like: "likeReactionsGiven",
 		love: "loveReactionsGiven",
 		dislike: "dislikeReactionsGiven",
-		sad: "sadReactionsGiven",
+		sad: "angryReactionsGiven",
 	};
 
 	// Controlla se l'utente ha già dato questa specifica reazione
@@ -315,12 +315,12 @@ function determineMessagePopularityAndAdjustChars({
 
 	if (
 		message.likeReactions + message.loveReactions > cm &&
-		message.sadReactions + message.dislikeReactions <= cm
+		message.angryReactions + message.dislikeReactions <= cm
 	) {
 		popularityChange = "popular";
 	} else if (
 		message.likeReactions + message.loveReactions <= cm &&
-		message.sadReactions + message.dislikeReactions > cm
+		message.angryReactions + message.dislikeReactions > cm
 	) {
 		popularityChange = "unpopular";
 	}
@@ -389,7 +389,7 @@ exports.addReactionToMessage = async (req, res) => {
 			likeReactions: message.likeReactions,
 			loveReactions: message.loveReactions,
 			dislikeReactions: message.dislikeReactions,
-			sadReactions: message.sadReactions,
+			angryReactions: message.angryReactions,
 		});
 	} catch (error) {
 		console.error(error);
@@ -888,7 +888,7 @@ exports.updateMessageChannels = async (req, res) => {
 exports.updateReactions = async (req, res) => {
 	try {
 		const { messageId } = req.params;
-		const { loveReactions, likeReactions, dislikeReactions, sadReactions } =
+		const { loveReactions, likeReactions, dislikeReactions, angryReactions } =
 			req.body;
 
 		const message = await Message.findById(messageId);
@@ -900,7 +900,7 @@ exports.updateReactions = async (req, res) => {
 		message.loveReactions = loveReactions;
 		message.likeReactions = likeReactions;
 		message.dislikeReactions = dislikeReactions;
-		message.sadReactions = sadReactions;
+		message.angryReactions = angryReactions;
 		await message.save();
 
 		res.status(200).json({

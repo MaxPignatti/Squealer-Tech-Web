@@ -1,8 +1,8 @@
-const schedule = require('node-schedule');
-const Message = require('../models/message');
+const schedule = require("node-schedule");
+const Message = require("../models/message");
 
 const checkAndSendTempMessages = () => {
-	schedule.scheduleJob('* * * * * *', async () => {
+	schedule.scheduleJob("* * * * * *", async () => {
 		try {
 			const currentTime = new Date();
 			const tempMessages = await Message.find({
@@ -20,7 +20,7 @@ const checkAndSendTempMessages = () => {
 					channel: message.channel,
 					createdAt: currentTime.getTime(),
 					loveReactions: message.loveReactions,
-					sadReactions: message.sadReactions,
+					angryReactions: message.angryReactions,
 					likeReactions: message.likeReactions,
 					dislikeReactions: message.dislikeReactions,
 					updateInterval: message.updateInterval,
@@ -41,7 +41,7 @@ const checkAndSendTempMessages = () => {
 				await Message.deleteOne({ _id: message._id });
 			}
 		} catch (error) {
-			console.error('Error checking and sending temp messages:', error);
+			console.error("Error checking and sending temp messages:", error);
 		}
 	});
 };

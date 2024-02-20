@@ -512,7 +512,7 @@ const Message = ({
 									>
 										<FontAwesomeIcon icon={faFaceAngry} />
 									</Button>
-									<span>{message.sadReactions}</span>
+									<span>{message.angryReactions}</span>
 								</div>
 							</>
 						)}

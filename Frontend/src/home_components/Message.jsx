@@ -7,7 +7,7 @@ import {
 	faFaceLaugh,
 	faPenToSquare,
 	faFaceFrownOpen,
-	faFaceSad,
+	faFaceAngry,
 } from "@fortawesome/free-solid-svg-icons";
 import Maps from "./Maps";
 import { marked } from "marked";
@@ -510,7 +510,7 @@ const Message = ({
 											outline: "none",
 										}}
 									>
-										<FontAwesomeIcon icon={faFaceSad} />{" "}
+										<FontAwesomeIcon icon={faFaceAngry} />
 									</Button>
 									<span>{message.sadReactions}</span>
 								</div>

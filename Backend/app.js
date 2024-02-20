@@ -391,11 +391,6 @@ app.use((req, res, next) => {
 
 //mod dashboard
 
-//app.use('/moddash', (req, res, next) => {
-// Effettua il reindirizzamento a /moddash/loginPage/login.html
-// res.redirect('/moddash/loginPage/login.html');
-//});
-
 app.use("/moddash", express.static(path.join(__dirname, "../mod_dash")));
 app.get("/moddash", (req, res) => {
 	res.sendFile(path.join(__dirname, "../mod_dash/", "login.html"));

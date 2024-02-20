@@ -104,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		table.style.width = "100%";
 		table.style.textAlign = "center";
 		const thead = document.createElement("thead");
-		// ...intestazione della tabella...
 		table.appendChild(thead);
 
 		const tbody = document.createElement("tbody");

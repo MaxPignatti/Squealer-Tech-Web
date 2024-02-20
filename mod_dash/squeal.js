@@ -109,7 +109,7 @@ function renderMessages(messages) {
             <th>Love</th>
 			<th>Like</th>
             <th>Dislike</th>
-            <th>Sad</th>
+            <th>Angry</th>
             <th>Posizione Reale</th>
             <th>Immagine</th>
             <th>Temporizzato</th>

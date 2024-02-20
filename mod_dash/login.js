@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					username: username,
 				};
 				localStorage.setItem("userData", JSON.stringify(userData));
-				window.location.href = "../homePage/home.html";
+				window.location.href = "./home.html";
 			} else {
 				alert("You are not a moderator.");
 			}
@@ -42,6 +42,6 @@ function checkLoginStatus() {
 	const currentPage = window.location.pathname.split("/").pop();
 
 	if (isLoggedIn && currentPage === "login.html") {
-		window.location.href = "../homePage/home.html";
+		window.location.href = "./home.html";
 	}
 }

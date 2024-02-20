@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 	<head>
 		<meta charset="UTF-8" />
 		<meta
 			name="viewport"
 			content="width=device-width, initial-scale=1.0"
 		/>
+		<title>Moderator App</title>
 		<link
+			rel="stylesheet"
 			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-			rel="stylesheet"
 		/>
 		<link
 			rel="stylesheet"
-			href="../commonStyle.css"
+			href="./commonStyle.css"
 		/>
-		<title>Pro Requests</title>
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -49,28 +49,28 @@
 					<li class="nav-item">
 						<a
 							class="nav-link"
-							href="../privateSquealPage/private.html"
+							href="./private.html"
 							>Private Squeal Page</a
 						>
 					</li>
 					<li class="nav-item">
 						<a
 							class="nav-link"
-							href="../squealPage/squeal.html"
+							href="./squeal.html"
 							>Squeal Page</a
 						>
 					</li>
 					<li class="nav-item">
 						<a
 							class="nav-link"
-							href="../userPage/user.html"
+							href="./user.html"
 							>User Page</a
 						>
 					</li>
 					<li class="nav-item">
 						<a
 							class="nav-link"
-							href="../proPage/request.html"
+							href="./request.html"
 							>Pro Request</a
 						>
 					</li>
@@ -87,14 +87,44 @@
 				</ul>
 			</div>
 		</nav>
+
 		<div class="container mt-5">
-			<h1 class="text-center mb-4">Pro Account Requests</h1>
+			<h1 class="text-center">Gestione CANALI</h1>
+			<div class="input-group mb-3">
+				<input
+					type="text"
+					id="newChannelName"
+					class="form-control"
+					placeholder="Nome del nuovo canale"
+					aria-label="Nome del nuovo canale"
+					aria-describedby="button-addon2"
+				/>
+				<input
+					type="text"
+					id="newChannelDesc"
+					class="form-control"
+					placeholder="Descrizione del nuovo canale"
+					aria-label="Descrizione del nuovo canale"
+				/>
+				<div class="input-group-append">
+					<button
+						class="btn btn-outline-secondary"
+						type="button"
+						id="button-addon2"
+						onclick="createNewChannel()"
+					>
+						Crea Nuovo Canale
+					</button>
+				</div>
+			</div>
 			<div
-				id="usersList"
-				class="row"
+				id="channelList"
+				class="mt-4"
 			></div>
 		</div>
-
-		<script src="./script.js"></script>
+		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+		<script src="private.js"></script>
 	</body>
 </html>

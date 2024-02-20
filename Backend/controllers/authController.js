@@ -94,6 +94,7 @@ exports.login = async (req, res) => {
 		if (user.isBlocked) {
 			return res.status(402).json({ error: "User is currently blocked" });
 		}
+		console.log("Valore di SECRET_KEY:", process.env.SECRET_KEY);
 		const userData = {
 			username: user.username,
 			accessToken: jwt.sign(
@@ -105,7 +106,7 @@ exports.login = async (req, res) => {
 
 		res.cookie("user_data", JSON.stringify(userData), {
 			path: "/",
-			domain: "localhost:3000",
+			domain: "site222327.tw.cs.unibo.it",
 			httpOnly: true,
 		});
 
@@ -171,7 +172,7 @@ exports.loginSMM = async (req, res) => {
 		// Imposta il token nel cookie
 		res.cookie("authToken", accessToken, {
 			path: "/",
-			domain: "localhost:8080",
+			domain: "site222327.tw.cs.unibo.it",
 			httpOnly: true,
 		});
 

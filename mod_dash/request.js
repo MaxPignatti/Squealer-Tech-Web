@@ -59,3 +59,12 @@ function handleProAcceptance(username, accept) {
 			alert(error.message);
 		});
 }
+function checkLoginStatus() {
+        const isLoggedIn = localStorage.getItem("userData") !== null;
+        const currentPage = window.location.pathname.split("/").pop();
+
+        if (!isLoggedIn && currentPage !== "login.html") {
+                window.location.href = "./login.html";
+        }
+}
+

@@ -12,7 +12,7 @@ logoutLink.style.display = "block";
 
 logoutLink.addEventListener("click", () => {
 	localStorage.removeItem("userData");
-	window.location.href = "../loginPage/login.html";
+	window.location.href = "./login.html";
 });
 
 // Fetch e mostra tutti i canali
@@ -289,6 +289,6 @@ function checkLoginStatus() {
 	const currentPage = window.location.pathname.split("/").pop();
 
 	if (!isLoggedIn && currentPage !== "login.html") {
-		window.location.href = "../loginPage/login.html";
+		window.location.href = "./login.html";
 	}
 }

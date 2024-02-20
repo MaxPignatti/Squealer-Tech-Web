@@ -1,19 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
 	checkLoginStatus();
 	document.getElementById('publicPage').addEventListener('click', () => {
-		window.location.href = '../publicSquealPage/public.html';
+		window.location.href = './public.html';
 	});
 	document.getElementById('privatePage').addEventListener('click', () => {
-		window.location.href = '../privateSquealPage/private.html';
+		window.location.href = './private.html';
 	});
 	document.getElementById('squealPage').addEventListener('click', () => {
-		window.location.href = '../squealPage/squeal.html';
+		window.location.href = './squeal.html';
 	});
 	document.getElementById('userPage').addEventListener('click', () => {
-		window.location.href = '../userPage/user.html';
+		window.location.href = './user.html';
 	});
 	document.getElementById('proPage').addEventListener('click', () => {
-		window.location.href = '../proPage/request.html';
+		window.location.href = './request.html';
 	});
 });
 
@@ -22,6 +22,6 @@ function checkLoginStatus() {
 	const currentPage = window.location.pathname.split('/').pop();
 
 	if (!isLoggedIn && currentPage !== 'login.html') {
-		window.location.href = '../loginPage/login.html';
+		window.location.href = './login.html';
 	}
 }

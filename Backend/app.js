@@ -1,4 +1,5 @@
 const express = require("express");
+require("./config/env");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
@@ -13,9 +14,6 @@ const path = require("path");
 const port = 8000;
 const app = express();
 
-// Load environment variables
-require("./config/env");
-
 app.use(bodyParser.json({ limit: "10mb" }));
 const corsOptions = {
 	origin: [
@@ -24,7 +22,7 @@ const corsOptions = {
 		"http://localhost:3002",
 		"http://localhost:8080",
 		"http://127.0.0.1:5500",
-		"http://site222327.tw.cs.unibo.it",
+		"https://site222327.tw.cs.unibo.it",
 	],
 	credentials: true,
 };
@@ -374,27 +372,42 @@ cron.schedule("0 0 * * *", async () => {
 		}
 	}
 });
+app.use((req, res, next) => {
+  if (path.extname(req.path).toLowerCase() === ".js") {
+    res.type("text/javascript");
+  }
+  next();
+});
+
+app.use((req, res, next) => {
+  if (path.extname(req.path).toLowerCase() === ".css") {
+    res.type("text/css");
+  }
+  next();
+});
 
 //mod dashboard
+
+//app.use('/moddash', (req, res, next) => {
+    // Effettua il reindirizzamento a /moddash/loginPage/login.html
+   // res.redirect('/moddash/loginPage/login.html');
+//});
+
 app.use(
 	"/moddash",
-	express.static(path.join(__dirname, "../mod_dash/loginPage/"))
+	express.static(path.join(__dirname, "../mod_dash"))
 );
 app.get("/moddash", (req, res) => {
-	res.sendFile(path.join(__dirname, "../mod_dash/loginPage/", "index.html"));
+	res.sendFile(
+		path.join(__dirname, "../mod_dash/", "login.html")
+	);
 });
 
-//smm app
-app.use((req, res, next) => {
-	if (path.extname(req.path).toLowerCase() === ".js") {
-		res.type("text/javascript");
-	}
-	next();
-});
 app.use("/smm", express.static(path.join(__dirname, "../smm/dist")));
 app.use("/smm", (req, res) => {
 	res.sendFile(path.join(__dirname, "../smm/dist", "index.html"));
 });
+
 
 //react app
 app.use(express.static(path.join(__dirname, "../app/build")));

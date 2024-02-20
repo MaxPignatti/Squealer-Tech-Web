@@ -238,7 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	logoutLink.addEventListener("click", () => {
 		localStorage.removeItem("userData");
 
-		window.location.href = "../loginPage/login.html";
+		window.location.href = "./login.html";
 	});
 	highlightActiveFilter();
 	fetchUsers();
@@ -293,6 +293,6 @@ function checkLoginStatus() {
 	const currentPage = window.location.pathname.split("/").pop();
 
 	if (!isLoggedIn && currentPage !== "login.html") {
-		window.location.href = "../loginPage/login.html";
+		window.location.href = "./login.html";
 	}
 }

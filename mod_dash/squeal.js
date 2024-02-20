@@ -13,7 +13,7 @@ logoutLink.setAttribute("aria-label", "Effettua logout");
 logoutLink.addEventListener("click", () => {
 	localStorage.removeItem("userData");
 
-	window.location.href = "../loginPage/login.html";
+	window.location.href = "./login.html";
 });
 
 function validateUserAndFetchMessages() {
@@ -42,7 +42,7 @@ function validateUserAndFetchMessages() {
 
 function redirectToLogin() {
 	localStorage.removeItem("userData");
-	window.location.href = "../loginPage/login.html";
+	window.location.href = "./login.html";
 }
 
 function fetchAllMessages() {
@@ -304,7 +304,7 @@ function checkLoginStatus() {
 	const currentPage = window.location.pathname.split("/").pop();
 
 	if (!isLoggedIn && currentPage !== "login.html") {
-		window.location.href = "../loginPage/login.html";
+		window.location.href = "./login.html";
 	}
 }
 

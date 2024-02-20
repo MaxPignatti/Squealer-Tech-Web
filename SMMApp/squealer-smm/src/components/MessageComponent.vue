@@ -43,9 +43,11 @@
 		</div>
 
 		<div class="flex justify-between items-center my-2">
-			<div class="flex items-center">
-				<span class="mr-2">👍 {{ message.positiveReactions }}</span>
-				<span>👎 {{ message.negativeReactions }}</span>
+			<div class="flex items-center" style="gap: 12px;">
+				<span style="margin-right: 8px;">😊 {{ message.likeReactions }}</span>
+				<span style="margin-right: 8px;">😢 {{ message.dislikeReactions }}</span>
+				<span style="margin-right: 8px;">😆 {{ message.loveReactions }}</span>
+				<span>😠 {{ message.sadReactions }}</span>
 			</div>
 		</div>
 

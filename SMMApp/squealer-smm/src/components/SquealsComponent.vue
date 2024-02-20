@@ -49,8 +49,10 @@
 						class="bg-white text-gray-700 font-bold py-2 px-4 rounded border border-gray-300"
 					>
 						<option value="createdAt">Data</option>
-						<option value="positiveReactions">Mi piace</option>
-						<option value="negativeReactions">Non mi piace</option>
+						<option value="likeReactions">Mi piace</option>
+						<option value="loveReactions">Ama</option>
+						<option value="dislikeReactions">Non mi piace</option>
+						<option value="angryReactions">Odio</option>
 					</select>
 					<button
 						@click="sortMessages(true)"

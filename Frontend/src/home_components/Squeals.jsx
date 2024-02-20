@@ -76,7 +76,7 @@ const Squeals = ({ searchType, searchText }) => {
 		}
 	}, [viewMode, isEditing, isReplying, searchType, searchText]);
 
-	const handleReaction = async (messageId, isPositiveReaction) => {
+	const handleReaction = async (messageId, reactionType) => {
 		const userDataCookie = Cookies.get("user_data");
 		if (userDataCookie) {
 			const userData = JSON.parse(userDataCookie);
@@ -90,7 +90,7 @@ const Squeals = ({ searchType, searchText }) => {
 							"Content-Type": "application/json",
 						},
 						body: JSON.stringify({
-							reaction: isPositiveReaction,
+							reaction: reactionType,
 							username: username,
 						}),
 					}
@@ -102,8 +102,10 @@ const Squeals = ({ searchType, searchText }) => {
 					);
 					const updatedData = await response.json();
 
-					updatedMessage.positiveReactions = updatedData.positiveReactions;
-					updatedMessage.negativeReactions = updatedData.negativeReactions;
+					updatedMessage.likeReactions = updatedData.likeReactions;
+					updatedMessage.loveReactions = updatedData.loveReactions;
+					updatedMessage.dislikeReactions = updatedData.dislikeReactions;
+					updatedMessage.sadReactions = updatedData.sadReactions;
 
 					setMessages([...messages]);
 				} else {

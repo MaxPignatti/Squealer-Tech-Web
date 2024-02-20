@@ -272,23 +272,32 @@ async function findMessageAndUser(messageId, username) {
 }
 
 function updateReactionArrays({ user, message, messageId, reaction }) {
-  const reactionField = reaction
-    ? "positiveReactionsGiven"
-    : "negativeReactionsGiven";
-  const oppositeField = reaction
-    ? "negativeReactionsGiven"
-    : "positiveReactionsGiven";
+  const reactionFieldMap = {
+    like: 'likeReactionsGiven',
+    love: 'loveReactionsGiven',
+    dislike: 'dislikeReactionsGiven',
+    sad: 'sadReactionsGiven',
+  };
 
-  if (user[oppositeField].includes(messageId)) {
-    const index = user[oppositeField].indexOf(messageId);
-    user[oppositeField].splice(index, 1);
-    message[reaction ? "negativeReactions" : "positiveReactions"]--;
-  }
-  if (!user[reactionField].includes(messageId)) {
-    user[reactionField].push(messageId);
-    message[reaction ? "positiveReactions" : "negativeReactions"]++;
-  }
+  // Controlla se l'utente ha già dato questa specifica reazione
+  const currentReactionField = reactionFieldMap[reaction];
+  if (!user[currentReactionField].includes(messageId)) {
+        // Rimuovi qualsiasi reazione precedente dell'utente a questo messaggio
+      Object.keys(reactionFieldMap).forEach(reactionKey => {
+        const field = reactionFieldMap[reactionKey];
+        if (user[field].includes(messageId)) {
+          const index = user[field].indexOf(messageId);
+          user[field].splice(index, 1); // Rimuovi la vecchia reazione dall'utente
+          message[`${reactionKey}Reactions`] -= 1; // Decrementa il conteggio delle reazioni precedenti
+        }
+      });
+
+      // Aggiungi la nuova reazione
+      user[currentReactionField].push(messageId);
+      message[`${reaction}Reactions`] += 1; // Incrementa il conteggio delle nuove reazioni  
+  }  
 }
+
 
 function adjustUserChars(user, adjustment) {
   user.dailyChars += adjustment;
@@ -305,11 +314,11 @@ function determineMessagePopularityAndAdjustChars({
 }) {
   let popularityChange = null;
 
-  if (message.positiveReactions > cm && message.negativeReactions <= cm) {
+  if ((message.likeReactions + message.loveReactions) > cm && (message.sadReactions + message.dislikeReactions) <= cm) {
     popularityChange = "popular";
   } else if (
-    message.positiveReactions <= cm &&
-    message.negativeReactions > cm
+    (message.likeReactions + message.loveReactions) <= cm &&
+    (message.sadReactions + message.dislikeReactions) > cm
   ) {
     popularityChange = "unpopular";
   }
@@ -375,8 +384,10 @@ exports.addReactionToMessage = async (req, res) => {
 
     res.json({
       message: "Reaction added successfully",
-      positiveReactions: message.positiveReactions,
-      negativeReactions: message.negativeReactions,
+      likeReactions: message.likeReactions,
+      loveReactions: message.loveReactions,
+      dislikeReactions: message.dislikeReactions,
+      sadReactions: message.sadReactions,
     });
   } catch (error) {
     console.error(error);

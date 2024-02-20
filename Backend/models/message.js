@@ -40,16 +40,27 @@ const messageSchema = new mongoose.Schema({
     default: Date.now,
     required: true,
   },
-  positiveReactions: {
+  likeReactions: {
     type: Number,
     default: 0,
     required: true,
   },
-  negativeReactions: {
+  dislikeReactions: {
     type: Number,
     default: 0,
     required: true,
   },
+  loveReactions: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
+  sadReactions: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
+
   popularity: {
     type: String,
     enum: ["popular", "unpopular", "controversial"],

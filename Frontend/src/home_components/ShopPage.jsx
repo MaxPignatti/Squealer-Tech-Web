@@ -41,8 +41,7 @@ const ShopPage = () => {
   const handleConfirmPurchase = async () => {
     try {
       if (username && selectedQuantity !== null) {
-        // Include username nel corpo della richiesta
-        const data = { username, quantity: selectedQuantity }; // Aggiunto username qui
+        const data = { username, quantity: selectedQuantity };
         const requestOptions = {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -53,7 +52,6 @@ const ShopPage = () => {
 
         if (response.status === 200) {
           const result = await response.json();
-          // Reset selectedQuantity after the purchase is confirmed
           setSelectedQuantity(null);
         } else {
           const data = await response.json();

@@ -18,47 +18,43 @@ exports.getUser = async (req, res) => {
 
 // Funzione helper per determinare l'oggetto sort in base ai parametri della richiesta
 function determineSortObject(sortField, sortOrder) {
-	const sortDirection = sortOrder === "asc" ? 1 : -1;
-	switch (sortField) {
-		case "popularity":
-			return { totalReactions: sortDirection };
-		case "accountType":
-			return { isPro: sortDirection };
-		default:
-			return { [sortField]: sortDirection };
-	}
+    const sortDirection = sortOrder === "asc" ? 1 : -1;
+    switch (sortField) {
+        case "popularity":
+            return User.aggregate([
+                {
+                    $addFields: {
+                        positiveMessagesCount: { $size: "$positiveMessages" }
+                    }
+                },
+                {
+                    $sort: { positiveMessagesCount: sortDirection }
+                }
+            ]);
+        case "accountType":
+            return { isPro: sortDirection };
+        case "firstName":
+            return { username: sortDirection };
+        default:
+            return { username: 1 }; // Use username as default sorting field
+    }
 }
+
 
 exports.getAllUsers = async (req, res) => {
 	try {
 		const { sortField, sortOrder } = req.query;
-		let sort = {};
-		if (sortField && sortOrder) {
-			if (sortField === "popularity") {
-				sort = { totalReactions: sortOrder === "asc" ? 1 : -1 };
-			} else {
-				sort = determineSortObject(sortField, sortOrder);
-			}
-		}
-		const users = await User.aggregate([
-			{
-				$project: {
-					_id: 1,
-					name: 1,
-					accountType: 1,
-					loveReactions: { $size: "$loveReactions" },
-					likeReactions: { $size: "$likeReactions" },
-					totalReactions: { $add: ["$loveReactions", "$likeReactions"] },
-				},
-			},
-			{ $sort: sort },
-		]);
+		// Usa la funzione helper per costruire l'oggetto sort
+		const sort =
+			sortField && sortOrder ? determineSortObject(sortField, sortOrder) : {};
+		const users = await User.find({}).sort(sort);
 		res.json(users);
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({ error: "Internal server error" });
-	}
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 };
+
 
 // Controller function to get user data by ID
 exports.getUserByEmail = async (req, res) => {

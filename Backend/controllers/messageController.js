@@ -16,7 +16,6 @@ exports.replyToMessage = async (req, res) => {
       location,
     } = req.body;
 
-    // Verifica se il messaggio originale esiste
     const originalMessage = await Message.findById(messageId);
     if (!originalMessage) {
       return res
@@ -29,7 +28,6 @@ exports.replyToMessage = async (req, res) => {
       return res.status(400).json({ error: "User not found" });
     }
 
-    // Crea un nuovo messaggio di risposta
     const replyMessage = new Message({
       user: username,
       profileImage: user.profileImage,
@@ -40,13 +38,11 @@ exports.replyToMessage = async (req, res) => {
       location: location ? [location.latitude, location.longitude] : null,
     });
 
-    // Salva il messaggio di risposta
     const savedReply = await replyMessage.save();
     if (user.privateMessagesReceived.includes(messageId)) {
       const senderUser = await User.findOne({ username: originalMessage.user });
 
       if (senderUser) {
-        // Aggiungi l'ID del messaggio di risposta ai messaggi privati del mittente
         await User.updateOne(
           { _id: senderUser._id },
           { $push: { privateMessagesReceived: savedReply._id } }
@@ -59,7 +55,6 @@ exports.replyToMessage = async (req, res) => {
     user.monthlyChars = monthlyCharacters;
     await user.save();
 
-    // Invia una risposta di successo
     res
       .status(201)
       .json({ message: "Risposta creata con successo", reply: savedReply._id });
@@ -69,7 +64,6 @@ exports.replyToMessage = async (req, res) => {
   }
 };
 
-// Create a new message
 exports.createMessage = async (req, res) => {
   try {
     const {
@@ -98,9 +92,6 @@ exports.createMessage = async (req, res) => {
     const latitude = location ? parseFloat(location[1]) : null;
     const longitude = location ? parseFloat(location[0]) : null;
 
-    // Check if live location is provided and valid
-
-    // Create a new message
     const newMessage = new Message({
       user: userName,
       profileImage: user.profileImage,
@@ -118,7 +109,6 @@ exports.createMessage = async (req, res) => {
       isLive: isLive,
     });
 
-    // Save the message
     const savedMessage = await newMessage.save();
 
     // Se il messaggio è live, aggiorna liveLocation con la coppia di coordinate
@@ -133,7 +123,6 @@ exports.createMessage = async (req, res) => {
       });
     }
 
-    // Update private messages received for each recipient user
     if (recipients.users && recipients.users.length > 0) {
       await User.updateMany(
         { username: { $in: recipients.users } },
@@ -141,7 +130,6 @@ exports.createMessage = async (req, res) => {
       );
     }
 
-    // Update remaining characters for the user
     user.dailyChars = dailyCharacters;
     user.weeklyChars = weeklyCharacters;
     user.monthlyChars = monthlyCharacters;
@@ -200,7 +188,6 @@ exports.getPrivateMessages = async (req, res) => {
   try {
     const username = req.params.username;
 
-    // Trova l'utente tramite username
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "Utente non trovato" });
@@ -221,20 +208,18 @@ exports.getPrivateMessages = async (req, res) => {
 exports.getPublicMessagesByUser = async (req, res) => {
   try {
     const { username } = req.params;
-    // Trova l'utente tramite username
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ error: "Utente non trovato" });
     }
 
-    // Trova tutti i messaggi pubblici inviati dall'utente
     // I messaggi pubblici sono quelli in cui il campo 'channel' non è un array vuoto
     const publicMessages = await Message.find({
       user: username,
       channel: { $ne: [] },
     });
 
-    res.json({ messages: publicMessages }); // Invia i messaggi come risposta JSON
+    res.json({ messages: publicMessages });
   } catch (error) {
     console.error("Errore durante il recupero dei messaggi pubblici:", error);
     res.status(500).json({ error: "Errore interno del server." });
@@ -243,8 +228,7 @@ exports.getPublicMessagesByUser = async (req, res) => {
 
 exports.getRepliesToMessage = async (req, res) => {
   try {
-    const { messageId } = req.params; // Ottiene l'ID del messaggio originale dai parametri della richiesta
-    // Verifica se il messaggio originale esiste
+    const { messageId } = req.params;
     const originalMessage = await Message.findById(messageId);
     if (!originalMessage) {
       return res
@@ -252,10 +236,9 @@ exports.getRepliesToMessage = async (req, res) => {
         .json({ error: "Messaggio originale non trovato." });
     }
 
-    // Trova tutte le risposte al messaggio originale
     const replies = await Message.find({ replyTo: messageId });
 
-    res.json(replies); // Invia le risposte come risposta JSON
+    res.json(replies);
   } catch (error) {
     console.error("Errore durante il recupero delle risposte:", error);
     res.status(500).json({ error: "Errore interno del server." });
@@ -287,14 +270,14 @@ function updateReactionArrays({ user, message, messageId, reaction }) {
       const field = reactionFieldMap[reactionKey];
       if (user[field].includes(messageId)) {
         const index = user[field].indexOf(messageId);
-        user[field].splice(index, 1); // Rimuovi la vecchia reazione dall'utente
-        message[`${reactionKey}Reactions`] -= 1; // Decrementa il conteggio delle reazioni precedenti
+        user[field].splice(index, 1);
+        message[`${reactionKey}Reactions`] -= 1;
       }
     });
 
     // Aggiungi la nuova reazione
     user[currentReactionField].push(messageId);
-    message[`${reaction}Reactions`] += 1; // Incrementa il conteggio delle nuove reazioni
+    message[`${reaction}Reactions`] += 1;
   }
 }
 
@@ -480,14 +463,13 @@ exports.deleteMessage = async (req, res) => {
 exports.updateLivePosition = async (req, res) => {
   try {
     const { messageId } = req.params;
-    const { position } = req.body; // Assumiamo che `position` sia un array [latitudine, longitudine]
+    const { position } = req.body;
 
     const message = await Message.findById(messageId);
     if (!message) {
       return res.status(404).json({ error: "Message not found" });
     }
 
-    // Verifica se la posizione fornita è valida
     if (
       !position ||
       position.length !== 2 ||
@@ -499,10 +481,9 @@ exports.updateLivePosition = async (req, res) => {
     // Crea un oggetto GeoJSON Point con le coordinate fornite
     const geoJsonPoint = {
       type: "Point",
-      coordinates: [position[0], position[1]], // Nota: MongoDB usa il formato [longitudine, latitudine]
+      coordinates: [position[0], position[1]],
     };
 
-    // Aggiunge la nuova posizione live come oggetto GeoJSON
     message.liveLocation.push(geoJsonPoint);
 
     await message.save();
@@ -522,7 +503,7 @@ exports.incrementImpressions = async (req, res) => {
     if (!message) {
       return res.status(404).json({ error: "Messaggio non trovato" });
     }
-    // Aggiungi il nome utente alle impressioni se non è già presente
+
     if (!message.impressions.includes(username)) {
       message.impressions.push(username);
       await message.save();
@@ -638,7 +619,6 @@ exports.getPrivateMessByUser = async (req, res) => {
       return res.status(404).json({ error: "Utente non trovato" });
     }
 
-    // Prendi i messaggi privati dell'utente target inviati dall'utente attuale
     const privateMessages = await Message.find({
       user: targetUsername,
       replyTo: null,
@@ -664,7 +644,6 @@ exports.getMessageByChannel = async (req, res) => {
   try {
     const { username, channel } = req.params;
 
-    // Trova l'utente e verifica se esiste
     const user = await User.findOne({ username });
     if (!user) {
       return res
@@ -672,13 +651,11 @@ exports.getMessageByChannel = async (req, res) => {
         .json({ error: "Utente non trovato", messages: [] });
     }
 
-    // Verifica se il canale esiste
     const channelExists = await Channel.findOne({ name: channel });
     if (!channelExists) {
       return res.json({ publicMessage: "Il canale non esiste", messages: [] });
     }
 
-    // Verifica se l'utente è iscritto al canale
     const isSubscribed = user.channels.includes(channel);
     if (!isSubscribed) {
       return res.json({
@@ -687,7 +664,6 @@ exports.getMessageByChannel = async (req, res) => {
       });
     }
 
-    // Se l'utente è iscritto, trova e restituisce i messaggi del canale
     const messages = await Message.find({ channel: channel });
     res.json({ messages: messages });
   } catch (error) {
@@ -731,7 +707,7 @@ exports.getMessageByText = async (req, res) => {
     const userChannels = await User.findOne({ username }).select("channels");
     const messages = await Message.find({
       channel: { $in: userChannels.channels },
-      text: { $regex: text, $options: "i" }, // La ricerca è case-insensitive
+      text: { $regex: text, $options: "i" },
     });
 
     let response = {
@@ -762,7 +738,7 @@ exports.getPrivateMessByText = async (req, res) => {
     // Prendi i messaggi privati dell'utente che contengono il testo specificato
     const privateMessages = await Message.find({
       _id: { $in: user.privateMessagesReceived },
-      text: { $regex: text, $options: "i" }, // La ricerca è case-insensitive
+      text: { $regex: text, $options: "i" },
     });
 
     let response = {
@@ -868,7 +844,6 @@ exports.updateMessageChannels = async (req, res) => {
       return res.status(404).json({ error: "Messaggio non trovato" });
     }
 
-    // Aggiorna i canali del messaggio
     message.channel = channels;
     await message.save();
 
@@ -896,7 +871,6 @@ exports.updateReactions = async (req, res) => {
       return res.status(404).json({ error: "Message not found" });
     }
 
-    // Aggiorna le reazioni
     message.loveReactions = loveReactions;
     message.likeReactions = likeReactions;
     message.dislikeReactions = dislikeReactions;

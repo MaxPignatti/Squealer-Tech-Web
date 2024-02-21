@@ -48,8 +48,8 @@ const InputSqueal = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [image, setImage] = useState(null); // Stato per l'immagine in base64
-  const [imagePreview, setImagePreview] = useState(null); // Stato per l'anteprima dell'immagine
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [liveLocationEnabled, setLiveLocationEnabled] = useState(false);
 
   //USE EFFECT

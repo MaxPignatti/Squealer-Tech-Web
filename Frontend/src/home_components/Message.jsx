@@ -61,10 +61,8 @@ const Message = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !hasBeenViewed) {
-            // Il messaggio è entrato nel viewport e non è stato ancora visualizzato
             setHasBeenViewed(true);
 
-            // Chiamata API per incrementare le impressions
             fetch(`${BASE_URL}/messages/${message._id}/impressions`, {
               method: "PATCH",
               headers: {

@@ -16,7 +16,6 @@ const Squeals = ({ searchType, searchText }) => {
   const [customPublicMessage, setCustomPublicMessage] = useState("");
   const [customPrivateMessage, setCustomPrivateMessage] = useState("");
 
-  // Funzione per costruire l'URL basato su vari parametri
   const buildUrl = (viewMode, username, searchType, searchText) => {
     let baseUrl = `${BASE_URL}/${
       viewMode === "public"
@@ -36,7 +35,6 @@ const Squeals = ({ searchType, searchText }) => {
     return baseUrl;
   };
 
-  // Funzione per gestire la fetch dei messaggi
   const fetchAndSetMessages = async (url, setMessages, setCustomMessages) => {
     try {
       const response = await fetch(url);
@@ -49,7 +47,6 @@ const Squeals = ({ searchType, searchText }) => {
     }
   };
 
-  // Utilizzo all'interno del useEffect
   useEffect(() => {
     const userDataCookie = Cookies.get("user_data");
     if (userDataCookie && !isEditing && !isReplying) {

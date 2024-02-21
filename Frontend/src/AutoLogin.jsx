@@ -34,14 +34,12 @@ function AutoLogin() {
           setError("Authentication failed, qualche errore: " + error);
         })
         .finally(() => {
-          setLoading(false); // Request completed, set loading to false
+          setLoading(false);
         });
     } else {
       setLoading(false);
     }
   }, [login]);
-
-  // Helper function to get a cookie by name
 
   if (loading) {
     return <div>Loading...</div>;

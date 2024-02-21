@@ -1,79 +1,84 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const messageController = require('../controllers/messageController');
-const { body, validationResult } = require('express-validator');
+const messageController = require("../controllers/messageController");
+const { body, validationResult } = require("express-validator");
 
-router.post('/messages', messageController.createMessage);
+router.post("/messages", messageController.createMessage);
 
 router.get(
-	'/messages/public/:username',
-	messageController.getPublicMessagesByUser
+  "/messages/public/:username",
+  messageController.getPublicMessagesByUser
 );
 router.get(
-	'/messages/:messageId/replies',
-	messageController.getRepliesToMessage
+  "/messages/:messageId/replies",
+  messageController.getRepliesToMessage
 );
 
-router.post('/messages/:messageId/replies', messageController.replyToMessage);
+router.post("/messages/:messageId/replies", messageController.replyToMessage);
 
-router.delete('/messages/:id', messageController.deleteMessage);
+router.delete("/messages/:id", messageController.deleteMessage);
 router.post(
-	'/messages/:messageId/reactions',
-	messageController.addReactionToMessage
+  "/messages/:messageId/reactions",
+  messageController.addReactionToMessage
 );
-router.patch('/messages/:messageId', messageController.updateMessage);
+router.patch("/messages/:messageId", messageController.updateMessage);
 router.patch(
-	'/messages/:messageId/position',
-	messageController.updateLivePosition
-);
-router.patch(
-	'/messages/:messageId/reactions',
-	messageController.updateReactions
+  "/messages/:messageId/position",
+  messageController.updateLivePosition
 );
 router.patch(
-	'/messages/:messageId/channels',
-	messageController.updateMessageChannels
+  "/messages/:messageId/reactions",
+  messageController.updateReactions
 );
-router.get('/message/:id', messageController.getMessageById);
+router.patch(
+  "/messages/:messageId/channels",
+  messageController.updateMessageChannels
+);
+router.get("/message/:id", messageController.getMessageById);
 
 router.patch(
-	'/messages/:messageId/impressions',
-	messageController.incrementImpressions
+  "/messages/:messageId/impressions",
+  messageController.incrementImpressions
 );
 
 router.get(
-	'/messages/public/:username/hashtag/:hashtag',
-	messageController.getMessageByHashtag
+  "/messages/public/:username/hashtag/:hashtag",
+  messageController.getMessageByHashtag
 );
 router.get(
-	'/privateMessages/:username/hashtag/:hashtag',
-	messageController.getPrivateMessByHashtag
+  "/privateMessages/:username/hashtag/:hashtag",
+  messageController.getPrivateMessByHashtag
 );
-router.patch('/messages/:id/acknowledge', messageController.acknowledgeMessage);
-router.get('/privateMessages/:username', messageController.getPrivateMessages);
+router.patch("/messages/:id/acknowledge", messageController.acknowledgeMessage);
+router.get("/privateMessages/:username", messageController.getPrivateMessages);
 
 router.get(
-	'/messages/public/:username/targetUsername/:targetUsername',
-	messageController.getMessageByUser
+  "/messages/public/:username/targetUsername/:targetUsername",
+  messageController.getMessageByUser
 );
 router.get(
-	'/privateMessages/:username/targetUsername/:targetUsername',
-	messageController.getPrivateMessByUser
+  "/privateMessages/:username/targetUsername/:targetUsername",
+  messageController.getPrivateMessByUser
 );
 router.get(
-	'/messages/public/:username/channel/:channel',
-	messageController.getMessageByChannel
+  "/messages/public/:username/channel/:channel",
+  messageController.getMessageByChannel
 );
 router.get(
-	'/privateMessages/:username/channel/:channel',
-	messageController.getPrivateMessByChannel
+  "/privateMessages/:username/channel/:channel",
+  messageController.getPrivateMessByChannel
 );
-router.get('/messages/public/:username/text/:text', messageController.getMessageByText);
 router.get(
-	'/privateMessages/:username/text/:text',
-	messageController.getPrivateMessByText
+  "/messages/public/:username/text/:text",
+  messageController.getMessageByText
 );
-router.get('/allMessages', messageController.getAllMessages);
-
+router.get(
+  "/privateMessages/:username/text/:text",
+  messageController.getPrivateMessByText
+);
+router.get(
+  "/messages/public/getAllMessages/:username",
+  messageController.getAllSqueals
+);
 
 module.exports = router;

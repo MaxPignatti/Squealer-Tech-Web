@@ -92,7 +92,6 @@ exports.login = async (req, res) => {
 		if (user.isBlocked) {
 			return res.status(402).json({ error: "User is currently blocked" });
 		}
-		console.log("Valore di SECRET_KEY:", process.env.SECRET_KEY);
 		const userData = {
 			username: user.username,
 			accessToken: jwt.sign(

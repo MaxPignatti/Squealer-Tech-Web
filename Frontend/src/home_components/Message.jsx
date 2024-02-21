@@ -248,7 +248,6 @@ const Message = ({
         );
 
         if (response.status === 200) {
-          console.log("Iscrizione avvenuta con successo.");
           setShowInviteCard(false);
           navigate(`/ricerca?channel=${channelName}`);
         } else {
@@ -519,7 +518,6 @@ const Message = ({
             currentUser === message.user &&
             handleSaveChanges && (
               <div className="mb-3">
-                {/* Aggiungiamo margine al fondo del blocco */}
                 <Form>
                   <Form.Group controlId="formBasicEditText">
                     <Form.Label>
@@ -534,9 +532,7 @@ const Message = ({
                   </Form.Group>
                 </Form>
                 <div className="mb-3"></div>{" "}
-                {/* Aggiungiamo spazio tra il form e i bottoni */}
                 <div className="d-flex justify-content-between">
-                  {/* Utilizziamo flexbox per allineare i bottoni */}
                   <Button variant="primary" onClick={handleSaveClick}>
                     Salva Modifiche
                   </Button>
@@ -548,7 +544,6 @@ const Message = ({
                   </Button>
                 </div>
                 <hr className="my-3" />{" "}
-                {/* Aggiungiamo margine sopra e sotto la linea */}
               </div>
             )}
 

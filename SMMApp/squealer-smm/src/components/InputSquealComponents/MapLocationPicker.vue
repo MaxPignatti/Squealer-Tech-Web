@@ -107,7 +107,7 @@ export default {
         this.selectedLocation = null;
         this.$emit("locationChange", this.selectedLocation);
       }
-      this.mapActive = false; // Nasconde la mappa
+      this.mapActive = false;
       this.mapContainerHeight = "auto";
     },
   },
@@ -127,7 +127,7 @@ export default {
 
 .activate-map-btn {
   position: relative;
-  background-color: #4caf50; /* Colore verde */
+  background-color: #4caf50;
   color: white;
   padding: 10px 24px;
   border: none;
@@ -140,9 +140,9 @@ export default {
   top: 10px;
   right: auto;
   left: 10px;
-  z-index: 100; /* Assicurati che il bottone sia sopra la mappa */
+  z-index: 100;
   margin-left: 10px;
-  background-color: #4caf50; /* Colore verde */
+  background-color: #4caf50;
   color: white;
   padding: 10px 24px;
   border: none;
@@ -151,6 +151,6 @@ export default {
 }
 
 .hidden {
-  display: none; /* Nasconde la mappa quando mapActive è false */
+  display: none;
 }
 </style>

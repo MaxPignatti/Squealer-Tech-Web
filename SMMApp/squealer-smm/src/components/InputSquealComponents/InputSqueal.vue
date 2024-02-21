@@ -375,7 +375,7 @@ export default {
         const response = await fetch(url, requestOptions);
 
         if (response.status === 201) {
-          window.location.reload(); // Da modificare, non va bene ricaricare tutto
+          window.location.reload();
         } else {
           const data = await response.json();
           console.error("Errore nella creazione del messaggio:", data.error);
@@ -436,23 +436,22 @@ export default {
   width: 100%;
   margin: 1rem;
   padding: 2rem;
-  box-shadow: 0 8px 16px rgba(0, 128, 0, 0.4); /* Ombra verde più intensa e più grande */
-  color: #333; /* Colore del testo scuro per miglior contrasto */
-  background-color: #fff; /* Sfondo chiaro */
+  box-shadow: 0 8px 16px rgba(0, 128, 0, 0.4);
+  color: #333;
+  background-color: #fff;
 }
 
-/* Stili specifici per i componenti interni */
 .flex.flex-wrap {
-  gap: 1rem; /* Spazio tra i componenti */
+  gap: 1rem;
 }
 
 @media (max-width: 768px) {
   .input-squeal-container .flex-1 {
-    flex-basis: 100%; /* MessageInput occupa tutta la larghezza */
+    flex-basis: 100%;
   }
 
   .input-squeal-container .flex-none {
-    flex-basis: 100%; /* Anche il componente LinkInserter diventa a tutta larghezza */
+    flex-basis: 100%;
   }
   .input-squeal-container .flex.justify-between {
     gap: 1rem;
@@ -460,6 +459,6 @@ export default {
 }
 
 .input-squeal-container .message-input-row {
-  margin-top: 0.5rem; /* Aggiunge un piccolo margine superiore */
+  margin-top: 0.5rem;
 }
 </style>

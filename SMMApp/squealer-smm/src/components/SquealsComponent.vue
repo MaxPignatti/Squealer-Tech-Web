@@ -159,11 +159,11 @@ export default {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem; /* Spazio uniforme tra i bottoni */
+  gap: 0.5rem;
 }
 
 .show-all-button {
-  margin-right: 2rem; /* Spazio dopo "Mostra Tutti" quando non ristretto */
+  margin-right: 2rem;
 }
 
 @media (max-width: 386px) {
@@ -173,7 +173,7 @@ export default {
   }
 
   .filter-buttons .show-all-button {
-    margin-bottom: 0.5rem; /* Distanza tra "Mostra Tutti" e i bottoni successivi quando ristretto */
+    margin-bottom: 0.5rem;
   }
 }
 
@@ -192,11 +192,10 @@ export default {
   }
 }
 
-/* Riduzione del padding/margin dei bottoni per adattarsi ai piccoli schermi */
 @media (max-width: 405px) {
   .filter-buttons button {
-    padding: 0.4rem; /* Riduci ulteriormente il padding */
-    font-size: 0.9rem; /* Riduci leggermente la dimensione del testo */
+    padding: 0.4rem;
+    font-size: 0.9rem;
   }
 }
 </style>

@@ -871,11 +871,22 @@ exports.updateReactions = async (req, res) => {
       return res.status(404).json({ error: "Message not found" });
     }
 
+    const user = await User.findOne({ username: message.user });
+    if (!user) {
+      return res.status(404).json({ message: "Utente non trovato" });
+    }
+
+    const cm = consts.CMParameter * message.impressions.length;
+    const newChar = 10;
+
+
     message.loveReactions = loveReactions;
     message.likeReactions = likeReactions;
     message.dislikeReactions = dislikeReactions;
     message.angryReactions = angryReactions;
-    await message.save();
+
+    determineMessagePopularityAndAdjustChars({message, user, cm, messageId, newChar});
+    await Promise.all([message.save(), user.save()]);
 
     res.status(200).json({
       message: "Reactions updated successfully",

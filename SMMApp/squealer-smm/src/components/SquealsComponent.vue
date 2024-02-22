@@ -103,7 +103,9 @@ export default {
           .then((response) => response.json())
           .then((data) => {
             this.vipUsername = data.vip;
-            return fetch(`${BASE_URL}/messages/public/${this.vipUsername}`);
+            return fetch(
+              `${BASE_URL}/messages/public/getAllMessages/${this.vipUsername}`
+            );
           })
           .then((response) => response.json())
           .then((data) => {

@@ -297,13 +297,13 @@ function determineMessagePopularityAndAdjustChars({
   let popularityChange = null;
 
   if (
-    message.likeReactions + message.loveReactions > cm &&
-    message.angryReactions + message.dislikeReactions <= cm
+    (message.likeReactions + message.loveReactions) > cm &&
+    (message.angryReactions + message.dislikeReactions) <= cm
   ) {
     popularityChange = "popular";
   } else if (
-    message.likeReactions + message.loveReactions <= cm &&
-    message.angryReactions + message.dislikeReactions > cm
+    (message.likeReactions + message.loveReactions) <= cm &&
+    (message.angryReactions + message.dislikeReactions) > cm
   ) {
     popularityChange = "unpopular";
   }

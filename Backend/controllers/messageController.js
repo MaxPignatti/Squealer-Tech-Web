@@ -296,15 +296,9 @@ function determineMessagePopularityAndAdjustChars({
 }) {
   let popularityChange = null;
 
-  if (
-    (message.likeReactions + message.loveReactions) > cm &&
-    (message.angryReactions + message.dislikeReactions) <= cm
-  ) {
+  if (message.likeReactions + message.loveReactions > cm) {
     popularityChange = "popular";
-  } else if (
-    (message.likeReactions + message.loveReactions) <= cm &&
-    (message.angryReactions + message.dislikeReactions) > cm
-  ) {
+  } else if (message.angryReactions + message.dislikeReactions > cm) {
     popularityChange = "unpopular";
   }
 
@@ -879,13 +873,18 @@ exports.updateReactions = async (req, res) => {
     const cm = consts.CMParameter * message.impressions.length;
     const newChar = 10;
 
-
     message.loveReactions = loveReactions;
     message.likeReactions = likeReactions;
     message.dislikeReactions = dislikeReactions;
     message.angryReactions = angryReactions;
 
-    determineMessagePopularityAndAdjustChars({message, user, cm, messageId, newChar});
+    determineMessagePopularityAndAdjustChars({
+      message,
+      user,
+      cm,
+      messageId,
+      newChar,
+    });
     await Promise.all([message.save(), user.save()]);
 
     res.status(200).json({

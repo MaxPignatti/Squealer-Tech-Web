@@ -6,7 +6,7 @@ const { body, validationResult } = require("express-validator");
 router.post("/messages", messageController.createMessage);
 
 router.get(
-  "/messages/public/getAllMessages/:username",
+  "/messages/public/getAllMessages/:username/all",
   messageController.getPublicMessagesByUser
 );
 router.get(

@@ -18,17 +18,17 @@ const Squeals = ({ searchType, searchText }) => {
 
   const buildUrl = (viewMode, username, searchType, searchText) => {
     let baseUrl = `${BASE_URL}/${
-      viewMode === "public"
-        ? "messages/public/getAllMessages"
-        : "privateMessages"
+      viewMode === `public`
+        ? `messages/public/getAllMessages`
+        : `privateMessages`
     }/${username}`;
     if (searchType && searchText) {
       const encodedSearchText = encodeURIComponent(searchText);
       const endpoints = {
-        hashtag: "hashtag",
-        channel: "channel",
-        text: "text",
-        user: "targetUsername",
+        hashtag: `hashtag`,
+        channel: `channel`,
+        text: `text`,
+        user: `targetUsername`,
       };
       baseUrl += `/${endpoints[searchType]}/${encodedSearchText}`;
     }

@@ -158,7 +158,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const weeklyChars = document.getElementById(`weekly-${index}`).value;
     const monthlyChars = document.getElementById(`monthly-${index}`).value;
 
-    // Creare un oggetto con i dati da inviare
     const requestData = {
       dailyChars: dailyChars,
       weeklyChars: weeklyChars,
@@ -199,7 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
   window.toggleModUser = function (username) {
     const modButton = document.getElementById("modUserBtn-" + username);
 
-    // Invia una richiesta al backend per impostare/rimuovere il ruolo di moderatore per l'utente
     fetch(`https://site222327.tw.cs.unibo.it/api/usr/${username}/mod`, {
       method: "PATCH",
     })
